@@ -17,6 +17,19 @@ import gradio as gr
 from agent import JensenAgent
 from memory import get_all_memories, delete_all_memories
 import tts as tts_module
+from ingest import ingest_all
+
+import os
+
+def initialize():
+    if not os.path.exists("chroma_db"):
+        print("Creating ChromaDB...")
+        ingest_all()
+    else:
+        print("ChromaDB already exists. Skipping.")
+
+initialize()
+
 
 VOICE_AVAILABLE = tts_module.is_available()
 

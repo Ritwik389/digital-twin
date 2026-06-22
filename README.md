@@ -1,3 +1,4 @@
+---
 title: Digital Twin
 emoji: 🚀
 colorFrom: pink
@@ -8,7 +9,7 @@ python_version: '3.11'
 app_file: app.py
 pinned: false
 
-
+---
 
 # Jensen Huang Digital Twin — Basic Edition
 
