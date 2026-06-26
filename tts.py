@@ -2,36 +2,21 @@
 tts.py
 Voice cloning for the Jensen Huang Digital Twin, using Qwen3-TTS
 (Qwen/Qwen3-TTS-12Hz-0.6B-Base by default).
-
-How it works:
-  - Clones Jensen's voice from the short reference clip `jensen_ref.wav`
-    (produced by data_collector.py's extract_reference_clip()).
-  - A transcript of that clip (`jensen_ref.txt`) gives the best cloning
-    quality (in-context-learning / ICL mode). If it's missing, it is
-    auto-transcribed once with Whisper (already used by
-    data_collector.py) and cached to disk. If Whisper isn't available
-    either, falls back to x-vector-only cloning, which needs no
-    transcript but is slightly lower fidelity.
-  - The voice-clone "prompt" (reference features) is built ONCE on
-    first use and reused for every line Jensen speaks afterwards, per
-    the Qwen3-TTS docs (avoids recomputing reference features per turn).
-
-Heavy imports (torch, qwen_tts) only happen inside _load_model(), so
-importing this module is cheap even if those packages aren't installed
-yet — speak() will simply fail gracefully and report the error via
-get_error().
 """
 
 import os
 import re
 from pathlib import Path
 
+# --- CACHE FIX: Force HuggingFace to save models locally in the project directory ---
+os.environ["HF_HOME"] = os.path.join(os.getcwd(), "model_cache")
+
 REFERENCE_WAV = "jensen_ref.wav"
 REFERENCE_TXT = "jensen_ref.txt"
 OUTPUT_WAV = "response.wav"
 MODEL_NAME = os.environ.get("QWEN_TTS_MODEL", "Qwen/Qwen3-TTS-12Hz-0.6B-Base")
 LANGUAGE = "English"
-MAX_WORDS = 250  # truncate long answers to keep synthesis latency reasonable
+MAX_WORDS = 300  # truncate long answers to keep synthesis latency reasonable
 
 _model = None        # Qwen3TTSModel, loaded lazily
 _clone_prompt = None  # cached VoiceClonePromptItem list, built once
@@ -162,8 +147,6 @@ def speak(text: str, output_path: str = OUTPUT_WAV) -> str | None:
         _load_error = f"speak failed: {e}"
         print(f"[tts] {_load_error}")
         return None
-
-
 
 
 if __name__ == "__main__":

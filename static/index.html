@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jensen Huang - Digital Twin</title>
+    <style>
+        :root {
+            --nvidia-green: #76b900;
+            --dark-bg: rgba(15, 15, 15, 0.85);
+        }
+        body, html {
+            margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-image: url('/static/jensen.png'); 
+            background-size: cover;
+            background-position: center;
+            overflow: hidden;
+            color: white;
+        }
+
+        .loader-spinner {
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top: 4px solid var(--nvidia-green);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        /* Full-screen overlay to block interaction until audio is unlocked */
+        #entrance-overlay {
+            position: fixed; 
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.7); /* Dark background */
+            backdrop-filter: blur(15px); /* Premium frosted glass effect */
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            transition: opacity 0.5s ease; /* Smooth fade out */
+        }
+
+        /* The central modal box */
+        .entrance-content {
+            background: rgba(15, 15, 15, 0.95);
+            padding: 50px 70px;
+            border-radius: 12px;
+            border: 1px solid #333;
+            box-shadow: 0 0 50px rgba(118, 185, 0, 0.15); /* Subtle NVIDIA green glow */
+        }
+
+        .entrance-content h1 {
+            color: white;
+            margin: 15px 0 5px 0;
+            font-size: 28px;
+            font-family: 'Segoe UI', sans-serif;
+            letter-spacing: 1px;
+        }
+
+        .entrance-content p {
+            color: #888;
+            margin-bottom: 35px;
+            font-size: 15px;
+            font-family: monospace;
+        }
+
+        #btn-enter {
+            background: var(--nvidia-green);
+            color: black;
+            padding: 16px 45px;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        #btn-enter:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(118, 185, 0, 0.5);
+            background: #88d400;
+        }
+
+        /* The Computer Monitor layout on the left */
+        #chat-monitor {
+            position: absolute;
+            top: 15%; left: 5%;
+            width: 350px; height: 60vh;
+            background: var(--dark-bg);
+            border: 2px solid #333;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8);
+            display: flex; flex-direction: column;
+            backdrop-filter: blur(4px);
+        }
+        .monitor-header {
+            background: #111; padding: 10px; font-size: 12px;
+            border-bottom: 1px solid #333; display: flex; justify-content: space-between;
+            color: var(--nvidia-green); font-family: monospace;
+        }
+        #chat-history {
+            flex: 1; padding: 15px; overflow-y: auto; font-size: 14px; line-height: 1.4;
+        }
+        .msg-user { color: #ccc; margin-bottom: 10px; }
+        .msg-jensen { color: white; margin-bottom: 15px; border-left: 3px solid var(--nvidia-green); padding-left: 10px; }
+
+        /* The Memo Pad input overlay at the bottom */
+        #memo-pad {
+            position: absolute;
+            bottom: 5%; left: 50%;
+            transform: translateX(-50%);
+            width: 500px;
+            background: #fdfdfd;
+            border-radius: 4px;
+            box-shadow: 0px 10px 30px rgba(0,0,0,0.5);
+            color: #333;
+        }
+        .memo-header {
+            border-bottom: 2px solid #cc0000; padding: 10px 15px;
+            display: flex; justify-content: space-between;
+            font-family: 'Courier New', Courier, monospace; font-weight: bold; text-transform: uppercase;
+        }
+        .memo-input-container {
+            padding: 15px;
+            background-image: repeating-linear-gradient(transparent, transparent 29px, #e0e0e0 30px);
+            background-attachment: local;
+        }
+        textarea {
+            width: 100%; border: none; background: transparent; resize: none;
+            outline: none; font-family: 'Georgia', serif; font-size: 16px;
+            line-height: 30px; height: 90px; color: #222;
+        }
+        .memo-controls {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 15px; background: #f0f0f0; border-top: 1px solid #ddd;
+            border-radius: 0 0 4px 4px;
+        }
+        
+        /* Buttons */
+        button {
+            background: none; border: none; cursor: pointer; font-size: 14px;
+            display: flex; align-items: center; gap: 5px; color: #555; transition: 0.2s;
+        }
+        button:hover { color: var(--nvidia-green); }
+        .btn-primary { background: var(--nvidia-green); color: black; padding: 6px 12px; border-radius: 4px; font-weight: bold; }
+        .btn-primary:hover { background: #88d400; color: black; }
+        .recording { color: red !important; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
+        /* Loading indicator */
+        #loading { display: none; font-style: italic; color: #888; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div id="entrance-overlay">
+        <div class="entrance-content">
+            <img src="/static/jensen.jpg" alt="Jensen" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid var(--nvidia-green);">
+            
+            <h1>NVIDIA Executive Office</h1>
+            <p>SYSTEM READY // AWAITING AUDIO CLEARANCE</p>
+            
+            <button id="btn-enter">Enter Room</button>
+        </div>
+    </div>
+    <div id="chat-monitor">
+        <div class="monitor-header">
+            <span>NVIDIA_SYS_OS v9.4</span>
+            <span id="status-indicator">ONLINE</span>
+        </div>
+        <div id="chat-history">
+            <!-- <div class="msg-jensen"><strong>Jensen:</strong> Ah, you must be the new intern! Right on time. Drop your bag, and take a seat. Welcome. How are you?</div>
+        </div> -->
+    </div>
+
+    <div id="memo-pad">
+        <div class="memo-header">
+            <span>NVIDIA Memo Pad</span>
+            <span id="date-display"></span>
+        </div>
+        <div class="memo-input-container">
+            <textarea id="user-input" placeholder="Type your question for Jensen..."></textarea>
+        </div>
+        <div class="memo-controls">
+            <div style="display: flex; gap: 15px;">
+                <button id="btn-mic" title="Voice Input">🎤 Dictate</button>
+                <button id="btn-replay" style="display: none;" title="Replay Last Answer">🔊 Replay Voice</button>
+            </div>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <span id="loading">Computing...</span>
+                <label style="font-size: 12px; display:flex; align-items: center; gap:4px; color: #555;">
+                    <input type="checkbox" id="voice-toggle" checked> Enable Voice Reply
+                </label>
+                <button id="btn-send" class="btn-primary">Ask ➔</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Set Date
+        document.getElementById('date-display').innerText = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+
+        const chatHistory = document.getElementById('chat-history');
+        const userInput = document.getElementById('user-input');
+        const btnSend = document.getElementById('btn-send');
+        const btnMic = document.getElementById('btn-mic');
+        const btnReplay = document.getElementById('btn-replay');
+        const voiceToggle = document.getElementById('voice-toggle');
+        const loading = document.getElementById('loading');
+
+        const overlay = document.getElementById('entrance-overlay');
+        const btnEnter = document.getElementById('btn-enter');
+        const entranceContent = document.querySelector('.entrance-content');
+
+        btnEnter.addEventListener('click', async () => {
+            // 1. Swap the entrance content for an immersive loading screen
+            entranceContent.innerHTML = `
+                <div class="loader-spinner"></div>
+                <h2 style="color: var(--nvidia-green); margin-top: 25px; font-size: 20px; letter-spacing: 2px;">SECURITY PROTOCOL</h2>
+                <p id="loading-text" style="color: #888; font-family: monospace; font-size: 14px;">Scanning intern badge...</p>
+            `;
+
+            // 2. Cycle through roleplay text every 1.5 seconds to distract the user
+            const roleplayTexts = [
+                "Scanning intern badge...",
+                "Clearing security checkpoint...",
+                "Unlocking executive office doors...",
+                "Checking my files..."
+            ];
+            let textIdx = 0;
+            const textInterval = setInterval(() => {
+                textIdx = Math.min(textIdx + 1, roleplayTexts.length - 1);
+                const txtEl = document.getElementById('loading-text');
+                if (txtEl) txtEl.innerText = roleplayTexts[textIdx];
+            }, 1500);
+            
+            try {
+                // 3. Fetch the introductory audio and text in the background
+                const res = await fetch('/api/greet');
+                const data = await res.json();
+                
+                // Stop the text cycle
+                clearInterval(textInterval);
+                
+                // 4. NOW fade out the overlay smoothly because the audio is ready
+                overlay.style.opacity = '0';
+                setTimeout(() => { overlay.style.display = 'none'; }, 500); 
+                
+                // Update UI (no loading dots needed in the chat history anymore!)
+                chatHistory.innerHTML = `<div class="msg-jensen"><strong>Jensen:</strong> ${data.text}</div>`;
+                
+                // Play Audio
+                if (data.audio_file) {
+                    lastAudioUrl = `/api/audio/${data.audio_file}?t=${new Date().getTime()}`;
+                    btnReplay.style.display = 'flex';
+                    currentAudio = new Audio(lastAudioUrl);
+                    currentAudio.play();
+                }
+            } catch (err) {
+                clearInterval(textInterval);
+                document.getElementById('loading-text').innerText = "CONNECTION FAILED. PLEASE REFRESH.";
+                document.getElementById('loading-text').style.color = "red";
+                chatHistory.innerHTML = `<div class="msg-jensen" style="color:red;"><strong>System:</strong> Failed to load greeting.</div>`;
+            }
+        });
+        let currentAudio = null;
+        let lastAudioUrl = null;
+
+        // --- Web Speech API (Input) ---
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let recognition = null;
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+
+            recognition.onstart = () => { btnMic.classList.add('recording'); btnMic.innerText = "Listening..."; };
+            recognition.onend = () => { btnMic.classList.remove('recording'); btnMic.innerText = "🎤 Dictate"; };
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                userInput.value += (userInput.value ? " " : "") + transcript;
+            };
+        } else {
+            btnMic.style.display = 'none'; // Hide if browser doesn't support
+        }
+
+        btnMic.addEventListener('click', () => {
+            if (recognition) recognition.start();
+        });
+
+        // --- Audio Replay Logic ---
+        btnReplay.addEventListener('click', () => {
+            if (lastAudioUrl) {
+                if (currentAudio) {
+                    currentAudio.pause();
+                    currentAudio.currentTime = 0;
+                }
+                currentAudio = new Audio(lastAudioUrl);
+                currentAudio.play();
+            }
+        });
+
+        // --- Chat API Logic ---
+        async function sendMessage() {
+            const text = userInput.value.trim();
+            if (!text) return;
+
+            // Append User UI
+            chatHistory.innerHTML += `<div class="msg-user"><strong>You:</strong> ${text}</div>`;
+            userInput.value = '';
+            loading.style.display = 'block';
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+
+            try {
+                const res = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message: text,
+                        user_id: "default_user",
+                        era: "all",
+                        voice_enabled: voiceToggle.checked
+                    })
+                });
+
+                const data = await res.json();
+                
+                // Append Jensen UI
+                chatHistory.innerHTML += `<div class="msg-jensen"><strong>Jensen Huang:</strong> ${data.answer}</div>`;
+                
+                // Handle Audio playback logic
+                if (data.audio_file) {
+                    lastAudioUrl = `/api/audio/${data.audio_file}?t=${new Date().getTime()}`; // Cache bust
+                    btnReplay.style.display = 'flex'; // Show replay button
+                    
+                    // Auto-play the new response
+                    if (currentAudio) currentAudio.pause();
+                    currentAudio = new Audio(lastAudioUrl);
+                    currentAudio.play();
+                }
+
+            } catch (error) {
+                chatHistory.innerHTML += `<div class="msg-jensen" style="color:red;"><strong>System:</strong> Connection error.</div>`;
+            } finally {
+                loading.style.display = 'none';
+                chatHistory.scrollTop = chatHistory.scrollHeight;
+            }
+        }
+
+        btnSend.addEventListener('click', sendMessage);
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>

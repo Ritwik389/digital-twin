@@ -18,6 +18,8 @@ from rag import retrieve
 from memory import ShortTermMemory, get_relevant_memories, save_session_memories
 from persona import build_system_prompt, get_analogy_for_concept
 from api_client import gemini_generate
+import requests
+
 
 ERA_YEAR_RANGES = {
     "all": (None, None),
@@ -78,9 +80,43 @@ class JensenAgent:
             system_prompt=system_prompt,
             query_type=rag_result["query_type"],
         )
+        try:
+            # 6. Generate (the ONE Gemini call per query)
+            answer = gemini_generate(full_prompt)
+        except Exception as e:
+            # Catches the 503 ServerError and network timeouts
+            print(f"\n[⚠️ API ERROR] Gemini generation failed: {e}")
+            print("[🔄 FALLBACK] Routing query to free Groq Cloud (Llama 3)...")
+            
+            try:
+                # Get your free Groq key from environment variables (or paste it here for testing)
+                groq_key = os.environ.get("GROQ_API_KEY", "your_free_groq_api_key_here")
+                
+                headers = {
+                    "Authorization": f"Bearer {groq_key}",
+                    "Content-Type": "application/json"
+                }
+                
+                payload = {
+                    "model": "llama-3.3-70b-versatile", # Groq's fast, free open-source model
+                    "messages": [{"role": "user", "content": full_prompt}],
+                    "temperature": 0.7
+                }
+                
+                # Groq uses standard OpenAI-compatible HTTP requests
+                response = requests.post(
+                    "https://api.groq.com/openai/v1/chat/completions", 
+                    headers=headers, 
+                    json=payload, 
+                    timeout=15 
+                )
+                response.raise_for_status()
+                answer = response.json()["choices"][0]["message"]["content"]
+                
+            except Exception as fallback_error:
+                print(f"[🚨 CRITICAL] Groq fallback also failed: {fallback_error}")
+                answer = "I'm currently experiencing a temporary neural link disruption. Both my primary servers and backup arrays are offline. Let's try again in a moment."
 
-        # 6. Generate (the ONE Gemini call per query)
-        answer = gemini_generate(full_prompt)
 
         # 7. Update short-term memory
         self.short_term.add("user", query)

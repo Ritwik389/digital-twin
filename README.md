@@ -143,4 +143,8 @@ app.py (Gradio) ── displays answer + sources + memory
 - Using a pipeline to find most common words used in transcripts to generate persona
 - RAG Architecture to be made more complex(for example Pixel RAG)
 - Deploying
+- fall back model like ollama when gemini hits ratelimits
+- proper description of Jensen in the front page
+- a landing page to input the user's name and id
+
 
