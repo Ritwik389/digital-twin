@@ -5,16 +5,25 @@ from fastapi.responses import FileResponse, HTMLResponse
 from pydantic import BaseModel
 import uvicorn
 
+from dotenv import load_dotenv
+load_dotenv(".env.local")
 # Import existing core modules
 from agent import JensenAgent
 from memory import get_all_memories, delete_all_memories
 import tts as tts_module
 from ingest import ingest_all
 
-os.environ["HF_HOME"] = "./model_cache"
-os.environ["TORCH_HOME"] = "./model_cache"
+# os.environ["HF_HOME"] = "./model_cache"
+# os.environ["TORCH_HOME"] = "./model_cache"
+
+os.environ["OPENAI_API_BASE"] = "https://api.groq.com/openai/v1"
+os.environ["OPENAI_API_KEY"] = os.environ.get("GROQ_API_KEY", "your-key-if-not-in-env")
+
+
 
 app = FastAPI(title="Jensen Huang - Digital Twin API")
+
+
 
 # Mount the static directory for HTML, CSS, JS, and Images
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -50,7 +59,6 @@ class SessionRequest(BaseModel):
 async def serve_frontend():
     with open("static/index.html", "r", encoding="utf-8") as f:
         return f.read()
-
 @app.post("/api/chat")
 async def chat_endpoint(req: ChatRequest):
     if not req.message or not req.message.strip():
@@ -59,31 +67,33 @@ async def chat_endpoint(req: ChatRequest):
     agent = get_agent(req.user_id)
     agent.set_era(req.era)
 
-    # Core generation
+    # Directly query the agent (The prompt guardrail handles the filtering natively)
     result = agent.chat(req.message)
+    
+    answer = result["answer"]
+    sources = result["sources"]
+    query_type = result.get("query_type", "unknown")
+    chunks_used = result.get("chunks_used", 0)
     
     # Audio Generation
     audio_filename = None
     tts_status = "disabled"
-    
     if req.voice_enabled and tts_module.is_available():
-        audio_path = tts_module.speak(result["answer"])
+        audio_path = tts_module.speak(answer)
         if audio_path:
-            # Extract just the filename to serve it securely via the audio endpoint
             audio_filename = os.path.basename(audio_path)
             tts_status = "success"
         else:
             tts_status = f"error: {tts_module.get_error()}"
 
     return {
-        "answer": result["answer"],
-        "sources": result["sources"],
-        "query_type": result.get("query_type", "unknown"),
-        "chunks_used": result.get("chunks_used", 0),
+        "answer": answer,
+        "sources": sources,
+        "query_type": query_type,
+        "chunks_used": chunks_used,
         "audio_file": audio_filename,
         "tts_status": tts_status
     }
-
 @app.get("/api/audio/{filename}")
 async def get_audio(filename: str):
     """Serves the generated TTS audio files."""
@@ -134,4 +144,4 @@ async def clear_memories(user_id: str):
     return {"status": "Memories cleared."}
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, port=8000)

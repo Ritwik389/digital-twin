@@ -8,8 +8,7 @@ import os
 import re
 from pathlib import Path
 
-# --- CACHE FIX: Force HuggingFace to save models locally in the project directory ---
-os.environ["HF_HOME"] = os.path.join(os.getcwd(), "model_cache")
+
 
 REFERENCE_WAV = "jensen_ref.wav"
 REFERENCE_TXT = "jensen_ref.txt"

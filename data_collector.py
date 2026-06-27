@@ -92,6 +92,14 @@ WEB_SOURCES = [
         "domain": "business_philosophy",
         "speaker_label": "Jensen Huang",
     },
+    {
+        "url": "https://en.wikipedia.org/wiki/Jensen_Huang",
+        "name": "jensen_2026",
+        "year": 2026,
+        "domain": "business_philosophy",
+        "speaker_label": None,
+    },
+
 ]
 
 

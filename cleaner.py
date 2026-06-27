@@ -37,6 +37,7 @@ SOURCE_METADATA = {
     "keynote_2024": {"source": "gtc_keynote", "year": 2024, "domain": "business_philosophy"},
     "lex_2026": {"source": "lex_podcast", "year": 2026, "domain": "business_philosophy"},
     "milken_2024": {"source": "milken_2024", "year": 2024, "domain": "ai_infrastructure"},
+    "jensen_personal" : {"source" : "jensen_personal", "year": 2007, "domain" : "business_philosophy"}
 }
 
 

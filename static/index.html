@@ -9,6 +9,7 @@
             --nvidia-green: #76b900;
             --dark-bg: rgba(15, 15, 15, 0.85);
         }
+
         body, html {
             margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-image: url('/static/jensen.png'); 
@@ -17,7 +18,40 @@
             overflow: hidden;
             color: white;
         }
-
+        #system-panel {
+            position: absolute;
+            top: 15%; right: 5%;
+            width: 320px; height: 60vh;
+            background: var(--dark-bg);
+            border: 1px solid #333;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8);
+            display: flex; flex-direction: column;
+            backdrop-filter: blur(4px);
+            overflow-y: auto;
+        }
+        .panel-section {
+            padding: 15px;
+            border-bottom: 1px solid #222;
+        }
+        .panel-section h3 {
+            color: var(--nvidia-green);
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+        select, .sidebar-btn {
+            width: 100%; padding: 8px; margin-bottom: 10px;
+            background: #111; color: white; border: 1px solid #444;
+            border-radius: 4px; cursor: pointer;
+        }
+        .sidebar-btn:hover { background: #222; border-color: var(--nvidia-green); }
+        .data-box {
+            background: #111; padding: 10px; border-radius: 4px;
+            font-size: 12px; color: #aaa; min-height: 50px;
+            white-space: pre-wrap; word-wrap: break-word;
+        }
+        .badge { display: inline-block; background: #333; color: var(--nvidia-green); padding: 3px 6px; border-radius: 3px; font-size: 11px; margin-bottom: 10px; }
         .loader-spinner {
             border: 4px solid rgba(255, 255, 255, 0.1);
             border-top: 4px solid var(--nvidia-green);
@@ -98,16 +132,24 @@
             display: flex; flex-direction: column;
             backdrop-filter: blur(4px);
         }
+        
         .monitor-header {
             background: #111; padding: 10px; font-size: 12px;
             border-bottom: 1px solid #333; display: flex; justify-content: space-between;
             color: var(--nvidia-green); font-family: monospace;
         }
+        
         #chat-history {
-            flex: 1; padding: 15px; overflow-y: auto; font-size: 14px; line-height: 1.4;
+            flex: 1 1 auto; 
+            height: 0; 
+            padding: 15px; 
+            overflow-y: auto; 
+            font-size: 14px; 
+            line-height: 1.5; 
+            scroll-behavior: smooth;
         }
-        .msg-user { color: #ccc; margin-bottom: 10px; }
-        .msg-jensen { color: white; margin-bottom: 15px; border-left: 3px solid var(--nvidia-green); padding-left: 10px; }
+        .msg-user { color: #ccc; margin-bottom: 15px; word-wrap: break-word; white-space: pre-wrap;}
+        .msg-jensen { color: white; margin-bottom: 20px; border-left: 3px solid var(--nvidia-green); padding-left: 10px; word-wrap: break-word; white-space: pre-wrap; }
 
         /* The Memo Pad input overlay at the bottom */
         #memo-pad {
@@ -159,7 +201,7 @@
 <body>
     <div id="entrance-overlay">
         <div class="entrance-content">
-            <img src="/static/jensen.jpg" alt="Jensen" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid var(--nvidia-green);">
+            <img src="/static/jensen.webp" alt="Jensen" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid var(--nvidia-green);">
             
             <h1>NVIDIA Executive Office</h1>
             <p>SYSTEM READY // AWAITING AUDIO CLEARANCE</p>
@@ -167,14 +209,49 @@
             <button id="btn-enter">Enter Room</button>
         </div>
     </div>
+    
     <div id="chat-monitor">
         <div class="monitor-header">
             <span>NVIDIA_SYS_OS v9.4</span>
             <span id="status-indicator">ONLINE</span>
         </div>
         <div id="chat-history">
-            <!-- <div class="msg-jensen"><strong>Jensen:</strong> Ah, you must be the new intern! Right on time. Drop your bag, and take a seat. Welcome. How are you?</div>
-        </div> -->
+            </div>
+    </div>
+
+    <div id="system-panel">
+        <div class="monitor-header">
+            <span>SYS_CTRL // RAG_DIAGNOSTICS</span>
+        </div>
+        
+        <div class="panel-section">
+            <h3>User & Memory</h3>
+            <input type="text" id="user-id-input" value="default_user" class="sidebar-btn" style="cursor: text;" placeholder="Enter User ID...">
+            
+            <button id="btn-save-session" class="sidebar-btn" style="background: var(--nvidia-green); color: black; font-weight: bold;">Save Session (Extract Facts)</button>
+            
+            <div style="display: flex; gap: 5px;">
+                <button id="btn-load-mem" class="sidebar-btn">Load</button>
+                <button id="btn-clear-mem" class="sidebar-btn" style="color: #ff4444;">Clear</button>
+            </div>
+            <div id="memory-box" class="data-box">Memories uninitialized.</div>
+        </div>
+
+        <div class="panel-section">
+            <h3>Era Filter</h3>
+            <select id="era-select" class="sidebar-btn">
+                <option value="all">All Eras</option>
+                <option value="pre_cuda">Pre-CUDA (<= 2007)</option>
+                <option value="deep_learning">Deep Learning (2012-2021)</option>
+                <option value="llm_era">LLM Era (2022+)</option>
+            </select>
+        </div>
+
+        <div class="panel-section">
+            <h3>Retrieved Context</h3>
+            <div id="chunk-badge" class="badge">0 chunks retrieved</div>
+            <div id="sources-box" class="data-box">No sources yet.</div>
+        </div>
     </div>
 
     <div id="memo-pad">
@@ -203,7 +280,9 @@
     <script>
         // Set Date
         document.getElementById('date-display').innerText = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
-
+        
+        // Element References
+        const userIdInput = document.getElementById('user-id-input');
         const chatHistory = document.getElementById('chat-history');
         const userInput = document.getElementById('user-input');
         const btnSend = document.getElementById('btn-send');
@@ -216,15 +295,64 @@
         const btnEnter = document.getElementById('btn-enter');
         const entranceContent = document.querySelector('.entrance-content');
 
+        const eraSelect = document.getElementById('era-select');
+        const chunkBadge = document.getElementById('chunk-badge');
+        const sourcesBox = document.getElementById('sources-box');
+        const memoryBox = document.getElementById('memory-box');
+
+        // Sidebar - Save Memory
+        document.getElementById('btn-save-session').addEventListener('click', async () => {
+            const userId = userIdInput.value.trim() || "default_user";
+            memoryBox.innerText = "Extracting session facts...";
+            try {
+                const res = await fetch('/api/session/save', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: userId })
+                });
+                const data = await res.json();
+                memoryBox.innerText = data.status;
+            } catch (err) {
+                memoryBox.innerText = "Error saving session.";
+            }
+        });
+
+        // Sidebar - Load Memory
+        document.getElementById('btn-load-mem').addEventListener('click', async () => {
+            const userId = userIdInput.value.trim() || "default_user";
+            memoryBox.innerText = "Loading...";
+            try {
+                const res = await fetch('/api/memory/' + encodeURIComponent(userId));
+                const data = await res.json();
+                memoryBox.innerHTML = data.memories && data.memories.length > 0
+                    ? data.memories.map(m => `[${m.category}] ${m.fact}`).join('<br><br>')
+                    : 'No memories saved yet.';
+            } catch (err) {
+                memoryBox.innerText = "Error loading memories.";
+            }
+        });
+
+        // Sidebar - Clear Memory
+        document.getElementById('btn-clear-mem').addEventListener('click', async () => {
+            const userId = userIdInput.value.trim() || "default_user";
+            if(confirm(`Clear all long-term memories for ${userId}?`)) {
+                try {
+                    await fetch('/api/memory/' + encodeURIComponent(userId), { method: 'DELETE' });
+                    memoryBox.innerText = `Memories cleared for ${userId}.`;
+                } catch (err) {
+                    memoryBox.innerText = "Error clearing memories.";
+                }
+            }
+        });
+
+        // Entrance Overlay Logic
         btnEnter.addEventListener('click', async () => {
-            // 1. Swap the entrance content for an immersive loading screen
             entranceContent.innerHTML = `
                 <div class="loader-spinner"></div>
                 <h2 style="color: var(--nvidia-green); margin-top: 25px; font-size: 20px; letter-spacing: 2px;">SECURITY PROTOCOL</h2>
                 <p id="loading-text" style="color: #888; font-family: monospace; font-size: 14px;">Scanning intern badge...</p>
             `;
 
-            // 2. Cycle through roleplay text every 1.5 seconds to distract the user
             const roleplayTexts = [
                 "Scanning intern badge...",
                 "Clearing security checkpoint...",
@@ -239,21 +367,15 @@
             }, 1500);
             
             try {
-                // 3. Fetch the introductory audio and text in the background
                 const res = await fetch('/api/greet');
                 const data = await res.json();
                 
-                // Stop the text cycle
                 clearInterval(textInterval);
-                
-                // 4. NOW fade out the overlay smoothly because the audio is ready
                 overlay.style.opacity = '0';
                 setTimeout(() => { overlay.style.display = 'none'; }, 500); 
                 
-                // Update UI (no loading dots needed in the chat history anymore!)
                 chatHistory.innerHTML = `<div class="msg-jensen"><strong>Jensen:</strong> ${data.text}</div>`;
                 
-                // Play Audio
                 if (data.audio_file) {
                     lastAudioUrl = `/api/audio/${data.audio_file}?t=${new Date().getTime()}`;
                     btnReplay.style.display = 'flex';
@@ -265,8 +387,11 @@
                 document.getElementById('loading-text').innerText = "CONNECTION FAILED. PLEASE REFRESH.";
                 document.getElementById('loading-text').style.color = "red";
                 chatHistory.innerHTML = `<div class="msg-jensen" style="color:red;"><strong>System:</strong> Failed to load greeting.</div>`;
+                
+            
             }
         });
+
         let currentAudio = null;
         let lastAudioUrl = null;
 
@@ -285,7 +410,7 @@
                 userInput.value += (userInput.value ? " " : "") + transcript;
             };
         } else {
-            btnMic.style.display = 'none'; // Hide if browser doesn't support
+            btnMic.style.display = 'none'; 
         }
 
         btnMic.addEventListener('click', () => {
@@ -309,7 +434,6 @@
             const text = userInput.value.trim();
             if (!text) return;
 
-            // Append User UI
             chatHistory.innerHTML += `<div class="msg-user"><strong>You:</strong> ${text}</div>`;
             userInput.value = '';
             loading.style.display = 'block';
@@ -321,8 +445,8 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         message: text,
-                        user_id: "default_user",
-                        era: "all",
+                        user_id: userIdInput.value.trim() || "default_user",
+                        era: eraSelect.value,
                         voice_enabled: voiceToggle.checked
                     })
                 });
@@ -332,12 +456,17 @@
                 // Append Jensen UI
                 chatHistory.innerHTML += `<div class="msg-jensen"><strong>Jensen Huang:</strong> ${data.answer}</div>`;
                 
+                // Update RAG Diagnostics Sidebar
+                chunkBadge.innerText = `${data.query_type || "unknown"} | ${data.chunks_used || 0} chunks`;
+                sourcesBox.innerHTML = data.sources && data.sources.length > 0 
+                    ? data.sources.map(s => `• ${s}`).join('<br>') 
+                    : 'No sources retrieved.';
+
                 // Handle Audio playback logic
                 if (data.audio_file) {
-                    lastAudioUrl = `/api/audio/${data.audio_file}?t=${new Date().getTime()}`; // Cache bust
-                    btnReplay.style.display = 'flex'; // Show replay button
+                    lastAudioUrl = `/api/audio/${data.audio_file}?t=${new Date().getTime()}`; 
+                    btnReplay.style.display = 'flex'; 
                     
-                    // Auto-play the new response
                     if (currentAudio) currentAudio.pause();
                     currentAudio = new Audio(lastAudioUrl);
                     currentAudio.play();
