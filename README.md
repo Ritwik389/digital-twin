@@ -136,17 +136,16 @@ api_client.py ── gemini_generate() ──► Gemini 2.5 Flash   (the ONE API
    ▼
 app.py (Gradio) ── displays answer + sources + memory
 ```
-
+- Added Jailbreaking via a prompt
 
 ## Future Improvements
-- Adding Jailbreaking
+
 - Using a pipeline to find most common words used in transcripts to generate persona
 - RAG Architecture to be made more complex(for example Pixel RAG)
 - Deploying
 - fall back model like ollama when gemini hits ratelimits
 - proper description of Jensen in the front page
 - a landing page to input the user's name and id
--  add jensen's personal info like age and all
 - fix the time aware context , and allowing users to start a new session while storing the chat log for each user session till they don't reload as otherwise database will need to be created and it will be complicated
 
 

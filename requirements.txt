@@ -23,3 +23,6 @@ sox
 onnxruntime
 sentence-transformers
 requests
+pocket-tts 
+scipy 
+torch
