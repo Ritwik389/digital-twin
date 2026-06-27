@@ -220,6 +220,12 @@
     </div>
 
     <div id="system-panel">
+        <div class="panel-section">
+            <h3>Active Sessions</h3>
+            <button id="btn-new-chat" class="sidebar-btn" style="background: #222; border-color: #555;">➕ New Chat</button>
+            <div id="session-list" style="display: flex; flex-direction: column; gap: 5px; margin-top: 10px;">
+                </div>
+        </div>
         <div class="monitor-header">
             <span>SYS_CTRL // RAG_DIAGNOSTICS</span>
         </div>
@@ -300,6 +306,62 @@
         const sourcesBox = document.getElementById('sources-box');
         const memoryBox = document.getElementById('memory-box');
 
+
+        // --- CLIENT-SIDE SESSION MANAGER ---
+        let chatSessions = {}; 
+        let currentSessionId = "session_" + Date.now();
+        const sessionListEl = document.getElementById('session-list');
+
+        function saveCurrentChatHTML() {
+            // Store the current visual chat history before swapping
+            chatSessions[currentSessionId] = chatHistory.innerHTML;
+        }
+
+        function renderSessionList() {
+            sessionListEl.innerHTML = '';
+            Object.keys(chatSessions).forEach((sId, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'sidebar-btn';
+                btn.style.background = sId === currentSessionId ? 'var(--nvidia-green)' : '#111';
+                btn.style.color = sId === currentSessionId ? 'black' : 'white';
+                btn.style.fontSize = '12px';
+                btn.innerText = `Chat Session ${index + 1}`;
+                
+                btn.onclick = () => {
+                    saveCurrentChatHTML();
+                    currentSessionId = sId;
+                    chatHistory.innerHTML = chatSessions[sId]; // Restore HTML
+                    renderSessionList();
+                    chatHistory.scrollTop = chatHistory.scrollHeight;
+                };
+                sessionListEl.appendChild(btn);
+            });
+        }
+
+        document.getElementById('btn-new-chat').addEventListener('click', async () => {
+            saveCurrentChatHTML(); // Save old chat
+            
+            // Create new session
+            currentSessionId = "session_" + Date.now();
+            chatSessions[currentSessionId] = ""; 
+            
+            // Reset UI
+            chatHistory.innerHTML = `<div class="msg-jensen"><strong>Jensen:</strong> Let's start fresh. What are we discussing?</div>`;
+            renderSessionList();
+            
+            // Tell backend agent to wipe its short-term memory array
+            try {
+                await fetch('/api/session/reset', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: userIdInput.value.trim() || "default_user" })
+                });
+            } catch (e) { console.error("Failed to reset backend memory"); }
+        });
+
+        // Initialize the first session
+        chatSessions[currentSessionId] = "";
+        // -----------------------------------
         // Sidebar - Save Memory
         document.getElementById('btn-save-session').addEventListener('click', async () => {
             const userId = userIdInput.value.trim() || "default_user";

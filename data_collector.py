@@ -138,7 +138,7 @@ def clean_audio(wav_path: Path) -> Path:
     return cleaned_path
 
 
-def extract_reference_clip(wav_path: Path, start_sec: int = 1163, duration: int = 30) -> Path:
+def extract_reference_clip(wav_path: Path, start_sec: int = 2519, duration: int = 10) -> Path:
     ref_path = Path("jensen_ref.wav")
     if ref_path.exists():
         print("[skip] jensen_ref.wav already exists")
@@ -149,6 +149,7 @@ def extract_reference_clip(wav_path: Path, start_sec: int = 1163, duration: int 
         "-ss", str(start_sec),
         "-t", str(duration),
         "-i", str(wav_path),
+        "-af", "loudnorm",
         "-ar", "22050",
         "-ac", "1",
         str(ref_path)

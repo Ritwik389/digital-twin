@@ -7,9 +7,11 @@ Runs blazingly fast on CPUs for easy hosting.
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+import torch
 
 # Ensure environment variables (like HF_TOKEN) are loaded
 load_dotenv(".env.local")
+torch.set_num_threads(os.cpu_count())
 
 REFERENCE_WAV = "jensen_ref.wav"
 OUTPUT_WAV = "response.wav"
@@ -54,7 +56,6 @@ def speak(text: str, output_path: str = OUTPUT_WAV) -> str | None:
     _load_model()
     if _model is None or _voice_state is None:
         return None
-
     if not text.strip():
         return None
 
@@ -62,16 +63,24 @@ def speak(text: str, output_path: str = OUTPUT_WAV) -> str | None:
     try:
         import scipy.io.wavfile
         
+        # Generate the audio tensor
         audio = _model.generate_audio(_voice_state, text)
-        scipy.io.wavfile.write(output_path, _model.sample_rate, audio.numpy())
         
+        # --- VOLUME FIX: Peak Normalization ---
+        # Find the loudest peak in the generated audio
+        max_val = torch.max(torch.abs(audio))
+        if max_val > 0:
+            # Boost the entire audio file so the peak hits 95% max volume
+            audio = (audio / max_val) * 0.95 
+            
+        scipy.io.wavfile.write(output_path, _model.sample_rate, audio.numpy())
         return output_path
         
     except Exception as e:
         _load_error = f"speak failed: {e}"
         print(f"[tts] {_load_error}")
         return None
-
+    
 if __name__ == "__main__":
     if not is_available():
         print(f"[tts] {REFERENCE_WAV} not found")

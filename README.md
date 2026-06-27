@@ -94,7 +94,7 @@ This starts a Gradio 6 app (default at `http://127.0.0.1:7860`) with:
 ## Voice cloning (optional)
 
 `tts.py` clones Jensen's voice from `jensen_ref.wav` (extracted by
-`data_collector.py`) using **Qwen3-TTS** (`Qwen/Qwen3-TTS-12Hz-0.6B-Base`
+`data_collector.py`) using **Pocket-TTS** (`Pocket TTS`
 by default — Apache-2.0, ~0.6B params).
 
 - For the best quality, put a transcript of `jensen_ref.wav` in
@@ -134,7 +134,7 @@ agent.py ── assembles final prompt
 api_client.py ── gemini_generate() ──► Gemini 2.5 Flash   (the ONE API call)
    │
    ▼
-app.py (Gradio) ── displays answer + sources + memory
+app.py (html js css) ── displays answer + sources + memory
 ```
 - Added Jailbreaking via a prompt
 
