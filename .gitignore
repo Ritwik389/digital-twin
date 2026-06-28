@@ -2,8 +2,7 @@ myenv/
 __pycache__/
 .gradio/
 .env.local
-chroma_db/
-jensen_ref.wav
+
 response.wav
-data/
+data/raw
 model_cache/
