@@ -29,7 +29,7 @@ app = FastAPI(title="Jensen Huang - Digital Twin API")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Initialize ChromaDB on startup
-if not os.path.exists("chroma_db"):
+if not os.path.exists("./storage/chroma_db"):
     print("Creating ChromaDB...")
     ingest_all()
 else:
