@@ -18,224 +18,137 @@
             overflow: hidden;
             color: white;
         }
-        #system-panel {
-            position: absolute;
-            top: 15%; right: 5%;
-            width: 320px; height: 60vh;
-            background: var(--dark-bg);
-            border: 1px solid #333;
-            border-radius: 8px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.8);
-            display: flex; flex-direction: column;
-            backdrop-filter: blur(4px);
-            overflow-y: auto;
-        }
-        .panel-section {
-            padding: 15px;
-            border-bottom: 1px solid #222;
-        }
-        .panel-section h3 {
-            color: var(--nvidia-green);
-            margin: 0 0 10px 0;
-            font-size: 14px;
-            text-transform: uppercase;
-        }
-        select, .sidebar-btn {
-            width: 100%; padding: 8px; margin-bottom: 10px;
-            background: #111; color: white; border: 1px solid #444;
-            border-radius: 4px; cursor: pointer;
-        }
-        .sidebar-btn:hover { background: #222; border-color: var(--nvidia-green); }
-        .data-box {
-            background: #111; padding: 10px; border-radius: 4px;
-            font-size: 12px; color: #aaa; min-height: 50px;
-            white-space: pre-wrap; word-wrap: break-word;
-        }
-        .badge { display: inline-block; background: #333; color: var(--nvidia-green); padding: 3px 6px; border-radius: 3px; font-size: 11px; margin-bottom: 10px; }
-        .loader-spinner {
-            border: 4px solid rgba(255, 255, 255, 0.1);
-            border-top: 4px solid var(--nvidia-green);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        /* Full-screen overlay to block interaction until audio is unlocked */
+
+        /* --- Landing Page / Security Overlay --- */
         #entrance-overlay {
-            position: fixed; 
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0, 0, 0, 0.7); /* Dark background */
-            backdrop-filter: blur(15px); /* Premium frosted glass effect */
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            transition: opacity 0.5s ease; /* Smooth fade out */
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(15px);
+            z-index: 9999; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center;
+            transition: opacity 0.5s ease;
         }
-
-        /* The central modal box */
         .entrance-content {
-            background: rgba(15, 15, 15, 0.95);
-            padding: 50px 70px;
-            border-radius: 12px;
-            border: 1px solid #333;
-            box-shadow: 0 0 50px rgba(118, 185, 0, 0.15); /* Subtle NVIDIA green glow */
+            background: rgba(15, 15, 15, 0.95); padding: 50px 60px;
+            border-radius: 12px; border: 1px solid #333;
+            box-shadow: 0 0 50px rgba(118, 185, 0, 0.15);
+            display: flex; flex-direction: column; align-items: center;
+            max-width: 450px;
         }
-
-        .entrance-content h1 {
-            color: white;
-            margin: 15px 0 5px 0;
-            font-size: 28px;
-            font-family: 'Segoe UI', sans-serif;
-            letter-spacing: 1px;
+        .jensen-avatar {
+            width: 110px; height: 110px; border-radius: 50%; object-fit: cover; 
+            border: 3px solid var(--nvidia-green); margin-bottom: 15px;
         }
-
-        .entrance-content p {
-            color: #888;
-            margin-bottom: 35px;
-            font-size: 15px;
-            font-family: monospace;
+        .entrance-content h1 { color: white; margin: 0 0 5px 0; font-size: 32px; letter-spacing: 1px; }
+        .jensen-subtitle { color: var(--nvidia-green); font-size: 13px; margin: 0 0 15px 0; text-transform: uppercase; letter-spacing: 2px; }
+        .jensen-bio { color: #ccc; font-size: 14px; line-height: 1.6; margin-bottom: 25px; max-width: 350px; }
+        
+        .login-form { display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px; width: 100%; max-width: 280px; }
+        .login-input { padding: 12px; background: rgba(0, 0, 0, 0.5); border: 1px solid #444; color: white; border-radius: 4px; text-align: center; outline: none; transition: border-color 0.3s; }
+        .login-input:focus { border-color: var(--nvidia-green); background: rgba(0,0,0,0.8); }
+        
+        #btn-enter { 
+            background: var(--nvidia-green); color: black; padding: 14px 40px; 
+            font-size: 16px; font-weight: bold; border: none; border-radius: 4px; 
+            cursor: pointer; text-transform: uppercase; width: 100%; max-width: 280px; transition: all 0.2s;
         }
+        #btn-enter:hover { background: #88d400; box-shadow: 0 0 20px rgba(118, 185, 0, 0.5); transform: translateY(-2px); }
+        
+        .loader-spinner { border: 4px solid rgba(255, 255, 255, 0.1); border-top: 4px solid var(--nvidia-green); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        #btn-enter {
-            background: var(--nvidia-green);
-            color: black;
-            padding: 16px 45px;
-            font-size: 18px;
-            font-weight: bold;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-        }
-
-        #btn-enter:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 25px rgba(118, 185, 0, 0.5);
-            background: #88d400;
-        }
-
-        /* The Computer Monitor layout on the left */
+        /* --- Left Chat Monitor --- */
         #chat-monitor {
-            position: absolute;
-            top: 15%; left: 5%;
-            width: 350px; height: 60vh;
-            background: var(--dark-bg);
-            border: 2px solid #333;
-            border-radius: 8px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.8);
-            display: flex; flex-direction: column;
-            backdrop-filter: blur(4px);
+            position: absolute; top: 15%; left: 5%; width: 350px; height: 60vh;
+            background: var(--dark-bg); border: 2px solid #333; border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8); display: flex; flex-direction: column; backdrop-filter: blur(4px);
         }
-        
-        .monitor-header {
-            background: #111; padding: 10px; font-size: 12px;
-            border-bottom: 1px solid #333; display: flex; justify-content: space-between;
-            color: var(--nvidia-green); font-family: monospace;
-        }
-        
-        #chat-history {
-            flex: 1 1 auto; 
-            height: 0; 
-            padding: 15px; 
-            overflow-y: auto; 
-            font-size: 14px; 
-            line-height: 1.5; 
-            scroll-behavior: smooth;
-        }
+        .monitor-header { background: #111; padding: 10px; font-size: 12px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; color: var(--nvidia-green); font-family: monospace; }
+        #chat-history { flex: 1 1 auto; height: 0; padding: 15px; overflow-y: auto; font-size: 14px; line-height: 1.5; scroll-behavior: smooth; }
         .msg-user { color: #ccc; margin-bottom: 15px; word-wrap: break-word; white-space: pre-wrap;}
         .msg-jensen { color: white; margin-bottom: 20px; border-left: 3px solid var(--nvidia-green); padding-left: 10px; word-wrap: break-word; white-space: pre-wrap; }
 
-        /* The Memo Pad input overlay at the bottom */
+        /* --- Right System Panel --- */
+        #system-panel {
+            position: absolute; top: 15%; right: 5%; width: 320px; height: 60vh;
+            background: var(--dark-bg); border: 1px solid #333; border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8); display: flex; flex-direction: column; backdrop-filter: blur(4px); overflow-y: auto;
+        }
+        .panel-section { padding: 15px; border-bottom: 1px solid #222; }
+        .panel-section h3 { color: var(--nvidia-green); margin: 0 0 10px 0; font-size: 13px; text-transform: uppercase; }
+        select, .sidebar-btn { width: 100%; padding: 8px; margin-bottom: 8px; background: #111; color: white; border: 1px solid #444; border-radius: 4px; cursor: pointer; font-size: 12px; }
+        .sidebar-btn:hover { background: #222; border-color: var(--nvidia-green); }
+        .data-box { background: #111; padding: 10px; border-radius: 4px; font-size: 11px; color: #aaa; min-height: 40px; white-space: pre-wrap; word-wrap: break-word; }
+        .badge { display: inline-block; background: #333; color: var(--nvidia-green); padding: 3px 6px; border-radius: 3px; font-size: 11px; margin-bottom: 10px; }
+
+        /* --- Bottom Memo Pad --- */
         #memo-pad {
-            position: absolute;
-            bottom: 5%; left: 50%;
-            transform: translateX(-50%);
-            width: 500px;
-            background: #fdfdfd;
-            border-radius: 4px;
-            box-shadow: 0px 10px 30px rgba(0,0,0,0.5);
-            color: #333;
+            position: absolute; bottom: 5%; left: 50%; transform: translateX(-50%); width: 500px;
+            background: #fdfdfd; border-radius: 4px; box-shadow: 0px 10px 30px rgba(0,0,0,0.5); color: #333;
         }
-        .memo-header {
-            border-bottom: 2px solid #cc0000; padding: 10px 15px;
-            display: flex; justify-content: space-between;
-            font-family: 'Courier New', Courier, monospace; font-weight: bold; text-transform: uppercase;
-        }
-        .memo-input-container {
-            padding: 15px;
-            background-image: repeating-linear-gradient(transparent, transparent 29px, #e0e0e0 30px);
-            background-attachment: local;
-        }
-        textarea {
-            width: 100%; border: none; background: transparent; resize: none;
-            outline: none; font-family: 'Georgia', serif; font-size: 16px;
-            line-height: 30px; height: 90px; color: #222;
-        }
-        .memo-controls {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 10px 15px; background: #f0f0f0; border-top: 1px solid #ddd;
-            border-radius: 0 0 4px 4px;
-        }
-        
-        /* Buttons */
-        button {
-            background: none; border: none; cursor: pointer; font-size: 14px;
-            display: flex; align-items: center; gap: 5px; color: #555; transition: 0.2s;
-        }
+        .memo-header { border-bottom: 2px solid #cc0000; padding: 10px 15px; display: flex; justify-content: space-between; font-family: 'Courier New', Courier, monospace; font-weight: bold; text-transform: uppercase; }
+        .memo-input-container { padding: 15px; background-image: repeating-linear-gradient(transparent, transparent 29px, #e0e0e0 30px); background-attachment: local; }
+        textarea { width: 100%; border: none; background: transparent; resize: none; outline: none; font-family: 'Georgia', serif; font-size: 16px; line-height: 30px; height: 90px; color: #222; }
+        .memo-controls { display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; background: #f0f0f0; border-top: 1px solid #ddd; border-radius: 0 0 4px 4px; }
+        button { background: none; border: none; cursor: pointer; font-size: 14px; display: flex; align-items: center; gap: 5px; color: #555; transition: 0.2s; }
         button:hover { color: var(--nvidia-green); }
         .btn-primary { background: var(--nvidia-green); color: black; padding: 6px 12px; border-radius: 4px; font-weight: bold; }
         .btn-primary:hover { background: #88d400; color: black; }
         .recording { color: red !important; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
-
-        /* Loading indicator */
         #loading { display: none; font-style: italic; color: #888; font-size: 12px; }
     </style>
 </head>
 <body>
+
     <div id="entrance-overlay">
         <div class="entrance-content">
-            <img src="/static/jensen.webp" alt="Jensen" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid var(--nvidia-green);">
+            <img src="/static/jensen.png" alt="Jensen" class="jensen-avatar">
+            <h1>Jensen Huang</h1>
+            <h3 class="jensen-subtitle">Father of GPU Computing</h3>
+            <p class="jensen-bio">
+                <strong>M.S.E.E. Stanford University</strong><br><br>
+                Founder and CEO of NVIDIA. The visionary architect driving the modern AI and accelerated computing revolution.
+            </p>
             
-            <h1>NVIDIA Executive Office</h1>
-            <p>SYSTEM READY // AWAITING AUDIO CLEARANCE</p>
-            
-            <button id="btn-enter">Enter Room</button>
+            <div class="login-form">
+                <input type="text" id="landing-name" class="login-input" placeholder="Your Name (e.g. Intern)" required>
+                <input type="text" id="landing-user-id" class="login-input" placeholder="System ID (e.g. user_01)" required>
+            </div>
+            <button id="btn-enter">Enter Office</button>
         </div>
     </div>
-    
+
     <div id="chat-monitor">
         <div class="monitor-header">
             <span>NVIDIA_SYS_OS v9.4</span>
             <span id="status-indicator">ONLINE</span>
         </div>
-        <div id="chat-history">
-            </div>
+        <div id="chat-history"></div>
     </div>
 
     <div id="system-panel">
-        <div class="panel-section">
-            <h3>Active Sessions</h3>
-            <button id="btn-new-chat" class="sidebar-btn" style="background: #222; border-color: #555;">➕ New Chat</button>
-            <div id="session-list" style="display: flex; flex-direction: column; gap: 5px; margin-top: 10px;">
-                </div>
-        </div>
         <div class="monitor-header">
-            <span>SYS_CTRL // RAG_DIAGNOSTICS</span>
+            <span>SYS_CTRL // DASHBOARD</span>
         </div>
         
         <div class="panel-section">
-            <h3>User & Memory</h3>
-            <input type="text" id="user-id-input" value="default_user" class="sidebar-btn" style="cursor: text;" placeholder="Enter User ID...">
-            
-            <button id="btn-save-session" class="sidebar-btn" style="background: var(--nvidia-green); color: black; font-weight: bold;">Save Session (Extract Facts)</button>
-            
+            <h3>API Settings</h3>
+            <input type="password" id="api-key-input" class="sidebar-btn" style="cursor: text; font-family: monospace;" placeholder="Gemini API Key...">
+            <button id="btn-save-settings" class="sidebar-btn" style="background: var(--nvidia-green); color: black; font-weight:bold;">Apply Key</button>
+        </div>
+
+        <div class="panel-section">
+            <h3>Chat Sessions</h3>
+            <button id="btn-new-chat" class="sidebar-btn" style="background: #222; border-color: #555;">➕ New Session</button>
+            <div style="display: flex; gap: 5px;">
+                <button id="btn-delete-chat" class="sidebar-btn" style="color: #ff5555;">🗑️ Delete Current</button>
+                <button id="btn-wipe-all" class="sidebar-btn" style="color: #ff5555;">⚠️ Wipe All</button>
+            </div>
+            <div id="session-list" style="display: flex; flex-direction: column; gap: 5px; margin-top: 10px; max-height: 120px; overflow-y: auto;"></div>
+        </div>
+
+        <div class="panel-section">
+            <h3>Long-Term Memory</h3>
+            <button id="btn-extract-mem" class="sidebar-btn">Save & Extract Facts</button>
             <div style="display: flex; gap: 5px;">
                 <button id="btn-load-mem" class="sidebar-btn">Load</button>
                 <button id="btn-clear-mem" class="sidebar-btn" style="color: #ff4444;">Clear</button>
@@ -244,17 +157,13 @@
         </div>
 
         <div class="panel-section">
-            <h3>Era Filter</h3>
+            <h3>RAG Diagnostics</h3>
             <select id="era-select" class="sidebar-btn">
                 <option value="all">All Eras</option>
                 <option value="pre_cuda">Pre-CUDA (<= 2007)</option>
                 <option value="deep_learning">Deep Learning (2012-2021)</option>
                 <option value="llm_era">LLM Era (2022+)</option>
             </select>
-        </div>
-
-        <div class="panel-section">
-            <h3>Retrieved Context</h3>
             <div id="chunk-badge" class="badge">0 chunks retrieved</div>
             <div id="sources-box" class="data-box">No sources yet.</div>
         </div>
@@ -272,11 +181,12 @@
             <div style="display: flex; gap: 15px;">
                 <button id="btn-mic" title="Voice Input">🎤 Dictate</button>
                 <button id="btn-replay" style="display: none;" title="Replay Last Answer">🔊 Replay Voice</button>
+                <button id="btn-stop" style="display: none; color: #ff4444;" title="Stop Voice Output">⏹️ Stop Voice</button>
             </div>
             <div style="display: flex; align-items: center; gap: 15px;">
                 <span id="loading">Computing...</span>
                 <label style="font-size: 12px; display:flex; align-items: center; gap:4px; color: #555;">
-                    <input type="checkbox" id="voice-toggle" checked> Enable Voice Reply
+                    <input type="checkbox" id="voice-toggle" checked> Enable Voice
                 </label>
                 <button id="btn-send" class="btn-primary">Ask ➔</button>
             </div>
@@ -284,271 +194,261 @@
     </div>
 
     <script>
-        // Set Date
+        // --- 1. Init ---
         document.getElementById('date-display').innerText = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
         
-        // Element References
-        const userIdInput = document.getElementById('user-id-input');
         const chatHistory = document.getElementById('chat-history');
         const userInput = document.getElementById('user-input');
         const btnSend = document.getElementById('btn-send');
         const btnMic = document.getElementById('btn-mic');
         const btnReplay = document.getElementById('btn-replay');
-        const voiceToggle = document.getElementById('voice-toggle');
+        const btnStop = document.getElementById('btn-stop');
         const loading = document.getElementById('loading');
-
-        const overlay = document.getElementById('entrance-overlay');
-        const btnEnter = document.getElementById('btn-enter');
-        const entranceContent = document.querySelector('.entrance-content');
-
-        const eraSelect = document.getElementById('era-select');
-        const chunkBadge = document.getElementById('chunk-badge');
-        const sourcesBox = document.getElementById('sources-box');
-        const memoryBox = document.getElementById('memory-box');
-
-
-        // --- CLIENT-SIDE SESSION MANAGER ---
-        let chatSessions = {}; 
-        let currentSessionId = "session_" + Date.now();
         const sessionListEl = document.getElementById('session-list');
+        const memoryBox = document.getElementById('memory-box');
+        const overlay = document.getElementById('entrance-overlay');
+        const entranceContent = document.querySelector('.entrance-content');
+        
+        let activeUserId = "default_user"; 
+        let activeUserName = "Guest";
 
-        function saveCurrentChatHTML() {
-            // Store the current visual chat history before swapping
-            chatSessions[currentSessionId] = chatHistory.innerHTML;
+        // --- 2. Session Manager ---
+        let sessions = JSON.parse(localStorage.getItem('jensen_sessions')) || {};
+        
+        let currentSessionId = `session_${Date.now()}`;
+        sessions[currentSessionId] = { title: "New Conversation", html: "" };
+        
+        const savedApiKey = localStorage.getItem('jensen_api_key');
+        if (savedApiKey) document.getElementById('api-key-input').value = savedApiKey;
+
+        function saveSessionsToDisk() {
+            sessions[currentSessionId].html = chatHistory.innerHTML;
+            localStorage.setItem('jensen_sessions', JSON.stringify(sessions));
+            localStorage.setItem('jensen_current_session', currentSessionId);
         }
 
         function renderSessionList() {
             sessionListEl.innerHTML = '';
-            Object.keys(chatSessions).forEach((sId, index) => {
+            Object.keys(sessions).reverse().forEach((sId, index) => {
                 const btn = document.createElement('button');
                 btn.className = 'sidebar-btn';
                 btn.style.background = sId === currentSessionId ? 'var(--nvidia-green)' : '#111';
                 btn.style.color = sId === currentSessionId ? 'black' : 'white';
-                btn.style.fontSize = '12px';
-                btn.innerText = `Chat Session ${index + 1}`;
+                btn.style.textAlign = 'left';
+                
+                const d = new Date(parseInt(sId.split('_')[1]));
+                btn.innerText = `💬 ${d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} Session`;
                 
                 btn.onclick = () => {
-                    saveCurrentChatHTML();
+                    saveSessionsToDisk(); 
                     currentSessionId = sId;
-                    chatHistory.innerHTML = chatSessions[sId]; // Restore HTML
+                    chatHistory.innerHTML = sessions[sId].html; 
                     renderSessionList();
                     chatHistory.scrollTop = chatHistory.scrollHeight;
                 };
                 sessionListEl.appendChild(btn);
             });
         }
+        renderSessionList();
 
-        document.getElementById('btn-new-chat').addEventListener('click', async () => {
-            saveCurrentChatHTML(); // Save old chat
-            
-            // Create new session
-            currentSessionId = "session_" + Date.now();
-            chatSessions[currentSessionId] = ""; 
-            
-            // Reset UI
-            chatHistory.innerHTML = `<div class="msg-jensen"><strong>Jensen:</strong> Let's start fresh. What are we discussing?</div>`;
-            renderSessionList();
-            
-            // Tell backend agent to wipe its short-term memory array
+        // --- 3. The Greeting API Call ---
+        async function triggerGreetingAudio() {
             try {
-                await fetch('/api/session/reset', {
+                const res = await fetch('/api/greet', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ user_id: userIdInput.value.trim() || "default_user" })
-                });
-            } catch (e) { console.error("Failed to reset backend memory"); }
-        });
-
-        // Initialize the first session
-        chatSessions[currentSessionId] = "";
-        // -----------------------------------
-        // Sidebar - Save Memory
-        document.getElementById('btn-save-session').addEventListener('click', async () => {
-            const userId = userIdInput.value.trim() || "default_user";
-            memoryBox.innerText = "Extracting session facts...";
-            try {
-                const res = await fetch('/api/session/save', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ user_id: userId })
+                    body: JSON.stringify({ name: activeUserName })
                 });
                 const data = await res.json();
-                memoryBox.innerText = data.status;
-            } catch (err) {
-                memoryBox.innerText = "Error saving session.";
-            }
-        });
-
-        // Sidebar - Load Memory
-        document.getElementById('btn-load-mem').addEventListener('click', async () => {
-            const userId = userIdInput.value.trim() || "default_user";
-            memoryBox.innerText = "Loading...";
-            try {
-                const res = await fetch('/api/memory/' + encodeURIComponent(userId));
-                const data = await res.json();
-                memoryBox.innerHTML = data.memories && data.memories.length > 0
-                    ? data.memories.map(m => `[${m.category}] ${m.fact}`).join('<br><br>')
-                    : 'No memories saved yet.';
-            } catch (err) {
-                memoryBox.innerText = "Error loading memories.";
-            }
-        });
-
-        // Sidebar - Clear Memory
-        document.getElementById('btn-clear-mem').addEventListener('click', async () => {
-            const userId = userIdInput.value.trim() || "default_user";
-            if(confirm(`Clear all long-term memories for ${userId}?`)) {
-                try {
-                    await fetch('/api/memory/' + encodeURIComponent(userId), { method: 'DELETE' });
-                    memoryBox.innerText = `Memories cleared for ${userId}.`;
-                } catch (err) {
-                    memoryBox.innerText = "Error clearing memories.";
-                }
-            }
-        });
-
-        // Entrance Overlay Logic
-        btnEnter.addEventListener('click', async () => {
-            entranceContent.innerHTML = `
-                <div class="loader-spinner"></div>
-                <h2 style="color: var(--nvidia-green); margin-top: 25px; font-size: 20px; letter-spacing: 2px;">SECURITY PROTOCOL</h2>
-                <p id="loading-text" style="color: #888; font-family: monospace; font-size: 14px;">Scanning intern badge...</p>
-            `;
-
-            const roleplayTexts = [
-                "Scanning intern badge...",
-                "Clearing security checkpoint...",
-                "Unlocking executive office doors...",
-                "Checking my files..."
-            ];
-            let textIdx = 0;
-            const textInterval = setInterval(() => {
-                textIdx = Math.min(textIdx + 1, roleplayTexts.length - 1);
-                const txtEl = document.getElementById('loading-text');
-                if (txtEl) txtEl.innerText = roleplayTexts[textIdx];
-            }, 1500);
-            
-            try {
-                const res = await fetch('/api/greet');
-                const data = await res.json();
-                
-                clearInterval(textInterval);
-                overlay.style.opacity = '0';
-                setTimeout(() => { overlay.style.display = 'none'; }, 500); 
                 
                 chatHistory.innerHTML = `<div class="msg-jensen"><strong>Jensen:</strong> ${data.text}</div>`;
                 
                 if (data.audio_file) {
                     lastAudioUrl = `/api/audio/${data.audio_file}?t=${new Date().getTime()}`;
                     btnReplay.style.display = 'flex';
+                    btnStop.style.display = 'flex';
+                    if(currentAudio) currentAudio.pause();
                     currentAudio = new Audio(lastAudioUrl);
                     currentAudio.play();
+                    currentAudio.onended = () => { btnStop.style.display = 'none'; };
                 }
             } catch (err) {
-                clearInterval(textInterval);
-                document.getElementById('loading-text').innerText = "CONNECTION FAILED. PLEASE REFRESH.";
-                document.getElementById('loading-text').style.color = "red";
-                chatHistory.innerHTML = `<div class="msg-jensen" style="color:red;"><strong>System:</strong> Failed to load greeting.</div>`;
-                
+                console.error(err);
+                chatHistory.innerHTML = `<div class="msg-jensen" style="color:red;"><strong>System:</strong> Connection error.</div>`;
+            }
+            saveSessionsToDisk();
+        }
+
+        // --- 4. Entrance Overlay ---
+        document.getElementById('btn-enter').addEventListener('click', async () => {
+            activeUserName = document.getElementById('landing-name').value.trim() || 'Guest';
+            activeUserId = document.getElementById('landing-user-id').value.trim() || 'default_user';
             
+            entranceContent.innerHTML = `
+                <div class="loader-spinner"></div>
+                <h2 style="color: var(--nvidia-green); margin-top: 25px; font-size: 20px; letter-spacing: 2px;">SECURITY PROTOCOL</h2>
+                <p id="loading-text" style="color: #888; font-family: monospace; font-size: 14px;">Scanning badge for ${activeUserName}...</p>
+            `;
+
+            setTimeout(async () => {
+                overlay.style.opacity = '0';
+                setTimeout(() => { overlay.style.display = 'none'; }, 500); 
+                await triggerGreetingAudio();
+                try { await fetch('/api/session/reset', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user_id: activeUserId }) }); } catch(e){}
+            }, 2000);
+        });
+
+        // --- 5. Sidebar Controls ---
+        document.getElementById('btn-new-chat').addEventListener('click', async () => {
+            saveSessionsToDisk(); 
+            if (currentAudio) { currentAudio.pause(); btnStop.style.display = 'none'; }
+            
+            currentSessionId = `session_${Date.now()}`;
+            sessions[currentSessionId] = { title: "New Conversation", html: `<div class="msg-jensen"><strong>Jensen:</strong> <span class="loader-spinner" style="display:inline-block; width:15px; height:15px;"></span> Loading...</div>` };
+            chatHistory.innerHTML = sessions[currentSessionId].html;
+            renderSessionList();
+            
+            try { await fetch('/api/session/reset', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user_id: activeUserId }) }); } catch(e){}
+            await triggerGreetingAudio();
+        });
+
+        document.getElementById('btn-delete-chat').addEventListener('click', async () => {
+            if (Object.keys(sessions).length <= 1) {
+                alert("Cannot delete the only session. Start a new one instead."); return;
+            }
+            if (confirm("Delete this specific chat session?")) {
+                if (currentAudio) { currentAudio.pause(); btnStop.style.display = 'none'; }
+                delete sessions[currentSessionId];
+                currentSessionId = Object.keys(sessions)[0];
+                localStorage.setItem('jensen_sessions', JSON.stringify(sessions));
+                localStorage.setItem('jensen_current_session', currentSessionId);
+                
+                chatHistory.innerHTML = sessions[currentSessionId].html;
+                renderSessionList();
+                try { await fetch('/api/session/reset', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user_id: activeUserId }) }); } catch(e){}
             }
         });
 
+        document.getElementById('btn-wipe-all').addEventListener('click', async () => {
+            if (confirm("WARNING: Permanently delete ALL saved chat sessions?")) {
+                if (currentAudio) { currentAudio.pause(); btnStop.style.display = 'none'; }
+                localStorage.removeItem('jensen_sessions');
+                localStorage.removeItem('jensen_current_session');
+                sessions = {};
+                
+                currentSessionId = `session_${Date.now()}`;
+                sessions[currentSessionId] = { title: "New Conversation", html: "" };
+                
+                chatHistory.innerHTML = "";
+                renderSessionList();
+                try { await fetch('/api/session/reset', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user_id: activeUserId }) }); } catch(e){}
+                await triggerGreetingAudio();
+            }
+        });
+
+        document.getElementById('btn-save-settings').addEventListener('click', () => { localStorage.setItem('jensen_api_key', document.getElementById('api-key-input').value.trim()); alert("Key saved."); });
+        
+        document.getElementById('btn-extract-mem').addEventListener('click', async () => {
+            memoryBox.innerText = "Extracting facts...";
+            try {
+                const res = await fetch('/api/session/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user_id: activeUserId }) });
+                const data = await res.json(); memoryBox.innerText = data.status;
+            } catch (err) { memoryBox.innerText = "Error extracting."; }
+        });
+
+        document.getElementById('btn-load-mem').addEventListener('click', async () => {
+            memoryBox.innerText = "Loading...";
+            try {
+                const res = await fetch('/api/memory/' + encodeURIComponent(activeUserId));
+                const data = await res.json();
+                memoryBox.innerHTML = data.memories && data.memories.length > 0 ? data.memories.map(m => `[${m.category}] ${m.fact}`).join('<br><br>') : 'No memories saved yet.';
+            } catch (err) { memoryBox.innerText = "Error loading."; }
+        });
+
+        document.getElementById('btn-clear-mem').addEventListener('click', async () => {
+            if(confirm(`Clear memories for ${activeUserId}?`)) {
+                try { await fetch('/api/memory/' + encodeURIComponent(activeUserId), { method: 'DELETE' }); memoryBox.innerText = "Cleared."; } catch (err) {}
+            }
+        });
+
+        // --- 6. Main Chat Logic & Voice Rules ---
         let currentAudio = null;
         let lastAudioUrl = null;
-
-        // --- Web Speech API (Input) ---
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         let recognition = null;
         if (SpeechRecognition) {
-            recognition = new SpeechRecognition();
-            recognition.continuous = false;
-            recognition.interimResults = false;
-
+            recognition = new SpeechRecognition(); recognition.continuous = false; recognition.interimResults = false;
             recognition.onstart = () => { btnMic.classList.add('recording'); btnMic.innerText = "Listening..."; };
             recognition.onend = () => { btnMic.classList.remove('recording'); btnMic.innerText = "🎤 Dictate"; };
-            recognition.onresult = (event) => {
-                const transcript = event.results[0][0].transcript;
-                userInput.value += (userInput.value ? " " : "") + transcript;
-            };
-        } else {
-            btnMic.style.display = 'none'; 
-        }
+            recognition.onresult = (e) => { userInput.value += (userInput.value ? " " : "") + e.results[0][0].transcript; };
+        } else { btnMic.style.display = 'none'; }
+        btnMic.addEventListener('click', () => { if (recognition) recognition.start(); });
 
-        btnMic.addEventListener('click', () => {
-            if (recognition) recognition.start();
-        });
-
-        // --- Audio Replay Logic ---
+        // Replay Button Action
         btnReplay.addEventListener('click', () => {
             if (lastAudioUrl) {
-                if (currentAudio) {
-                    currentAudio.pause();
-                    currentAudio.currentTime = 0;
-                }
-                currentAudio = new Audio(lastAudioUrl);
+                if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
+                btnStop.style.display = 'flex';
+                currentAudio = new Audio(lastAudioUrl); 
                 currentAudio.play();
+                currentAudio.onended = () => { btnStop.style.display = 'none'; };
             }
         });
 
-        // --- Chat API Logic ---
+        // Stop Button Action (Instantly kills playback)
+        btnStop.addEventListener('click', () => {
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+            }
+            btnStop.style.display = 'none';
+        });
+
         async function sendMessage() {
             const text = userInput.value.trim();
             if (!text) return;
 
+            // If a query is submitted while old speech runs, terminate the old speech instantly
+            if (currentAudio) { currentAudio.pause(); btnStop.style.display = 'none'; }
+
             chatHistory.innerHTML += `<div class="msg-user"><strong>You:</strong> ${text}</div>`;
-            userInput.value = '';
-            loading.style.display = 'block';
-            chatHistory.scrollTop = chatHistory.scrollHeight;
+            userInput.value = ''; loading.style.display = 'block'; chatHistory.scrollTop = chatHistory.scrollHeight;
 
             try {
                 const res = await fetch('/api/chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        message: text,
-                        user_id: userIdInput.value.trim() || "default_user",
-                        era: eraSelect.value,
-                        voice_enabled: voiceToggle.checked
+                        message: text, user_id: activeUserId,
+                        era: document.getElementById('era-select').value,
+                        voice_enabled: document.getElementById('voice-toggle').checked,
+                        api_key: document.getElementById('api-key-input').value.trim()
                     })
                 });
 
                 const data = await res.json();
-                
-                // Append Jensen UI
                 chatHistory.innerHTML += `<div class="msg-jensen"><strong>Jensen Huang:</strong> ${data.answer}</div>`;
                 
-                // Update RAG Diagnostics Sidebar
-                chunkBadge.innerText = `${data.query_type || "unknown"} | ${data.chunks_used || 0} chunks`;
-                sourcesBox.innerHTML = data.sources && data.sources.length > 0 
-                    ? data.sources.map(s => `• ${s}`).join('<br>') 
-                    : 'No sources retrieved.';
+                document.getElementById('chunk-badge').innerText = `${data.query_type || "unknown"} | ${data.chunks_used || 0} chunks`;
+                document.getElementById('sources-box').innerHTML = data.sources && data.sources.length > 0 ? data.sources.map(s => `• ${s}`).join('<br>') : 'No sources retrieved.';
 
-                // Handle Audio playback logic
                 if (data.audio_file) {
                     lastAudioUrl = `/api/audio/${data.audio_file}?t=${new Date().getTime()}`; 
                     btnReplay.style.display = 'flex'; 
-                    
-                    if (currentAudio) currentAudio.pause();
-                    currentAudio = new Audio(lastAudioUrl);
+                    btnStop.style.display = 'flex';
+                    currentAudio = new Audio(lastAudioUrl); 
                     currentAudio.play();
+                    currentAudio.onended = () => { btnStop.style.display = 'none'; };
                 }
-
             } catch (error) {
-                chatHistory.innerHTML += `<div class="msg-jensen" style="color:red;"><strong>System:</strong> Connection error.</div>`;
-            } finally {
-                loading.style.display = 'none';
-                chatHistory.scrollTop = chatHistory.scrollHeight;
+                chatHistory.innerHTML += `<div class="msg-jensen" style="color:red;"><strong>System:</strong> Error.</div>`;
+            } align: {
+                loading.style.display = 'none'; chatHistory.scrollTop = chatHistory.scrollHeight;
+                saveSessionsToDisk();
             }
         }
 
         btnSend.addEventListener('click', sendMessage);
-        userInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
-            }
-        });
+        userInput.addEventListener('keypress', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
     </script>
 </body>
 </html>

@@ -50,9 +50,15 @@ class ChatRequest(BaseModel):
     user_id: str = "default_user"
     era: str = "all"
     voice_enabled: bool = False
+    api_key: str = "" 
 
 class SessionRequest(BaseModel):
     user_id: str = "default_user"
+
+# ADD THIS NEW MODEL FOR THE GREETING
+class GreetRequest(BaseModel):
+    name: str = "Guest"
+
 
 # --- Endpoints ---
 @app.get("/", response_class=HTMLResponse)
@@ -63,6 +69,8 @@ async def serve_frontend():
 async def chat_endpoint(req: ChatRequest):
     if not req.message or not req.message.strip():
         raise HTTPException(status_code=400, detail="Message is required")
+    if req.api_key:
+        os.environ["GEMINI_API_KEY"] = req.api_key
 
     agent = get_agent(req.user_id)
     agent.set_era(req.era)
@@ -103,13 +111,12 @@ async def get_audio(filename: str):
         return FileResponse(file_path, media_type="audio/wav")
     raise HTTPException(status_code=404, detail="Audio file not found")
 
-@app.get("/api/greet")
-async def get_greeting():
-    # The new intern scenario line
-    greeting_text = "Ah, you must be the new intern! Right on time. Drop your bag, and take a seat. Welcome. How are you?"
+@app.post("/api/greet")
+async def get_greeting(req: GreetRequest):
+    # Uses the name from the landing page!
+    greeting_text = f"Ah, {req.name}, right on time. Drop your bag, and take a seat. Welcome. How are you?"
     
     audio_filename = None
-    # Generate the TTS file using your existing module
     if tts_module.is_available():
         audio_path = tts_module.speak(greeting_text)
         if audio_path:

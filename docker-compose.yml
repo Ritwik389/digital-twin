@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  jensen-twin:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      # This maps your host folders to the container folders
+      - ./chroma_db:/app/chroma_db
+      - ./data:/app/data
+      - ./audio_cache:/app/audio_cache
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - GROQ_API_KEY=${GROQ_API_KEY}
