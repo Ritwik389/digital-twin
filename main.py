@@ -13,8 +13,6 @@ from memory import get_all_memories, delete_all_memories
 import tts as tts_module
 from ingest import ingest_all
 
-# os.environ["HF_HOME"] = "./model_cache"
-# os.environ["TORCH_HOME"] = "./model_cache"
 
 os.environ["OPENAI_API_BASE"] = "https://api.groq.com/openai/v1"
 os.environ["OPENAI_API_KEY"] = os.environ.get("GROQ_API_KEY", "your-key-if-not-in-env")

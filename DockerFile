@@ -22,7 +22,7 @@ COPY . .
 RUN mkdir -p /app/chroma_db /app/data /app/audio_cache
 
 # Expose the FastAPI port
-EXPOSE 8000
+EXPOSE 7680
 
 # Run the application
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "7860"]
