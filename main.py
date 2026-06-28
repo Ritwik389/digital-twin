@@ -40,6 +40,11 @@ agent_instances = {}
 
 def get_agent(user_id: str) -> JensenAgent:
     user_id = user_id.strip() or "default_user"
+    
+    if len(agent_instances) > 10:
+        oldest_key = next(iter(agent_instances))
+        del agent_instances[oldest_key]
+        
     if user_id not in agent_instances:
         agent_instances[user_id] = JensenAgent(user_id=user_id)
     return agent_instances[user_id]

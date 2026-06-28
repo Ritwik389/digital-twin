@@ -280,10 +280,16 @@
         }
 
         // --- 4. Entrance Overlay ---
-        document.getElementById('btn-enter').addEventListener('click', async () => {
-            activeUserName = document.getElementById('landing-name').value.trim() || 'Guest';
-            activeUserId = document.getElementById('landing-user-id').value.trim() || 'default_user';
-            
+            let currentAudio = new Audio(); 
+            let lastAudioUrl = null;
+
+            document.getElementById('btn-enter').addEventListener('click', async () => {
+                // 2. Play a silent sound immediately on click to unlock the browser's audio engine
+                currentAudio.src = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA"; // 1ms silent wav
+                currentAudio.play().catch(()=>{}); 
+
+                activeUserName = document.getElementById('landing-name').value.trim() || 'Guest';
+                activeUserId = document.getElementById('landing-user-id').value.trim() || 'default_user'; 
             entranceContent.innerHTML = `
                 <div class="loader-spinner"></div>
                 <h2 style="color: var(--nvidia-green); margin-top: 25px; font-size: 20px; letter-spacing: 2px;">SECURITY PROTOCOL</h2>
@@ -372,8 +378,6 @@
         });
 
         // --- 6. Main Chat Logic & Voice Rules ---
-        let currentAudio = null;
-        let lastAudioUrl = null;
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         let recognition = null;
         if (SpeechRecognition) {
@@ -389,7 +393,7 @@
             if (lastAudioUrl) {
                 if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
                 btnStop.style.display = 'flex';
-                currentAudio = new Audio(lastAudioUrl); 
+                currentAudio.src = lastAudioUrl; 
                 currentAudio.play();
                 currentAudio.onended = () => { btnStop.style.display = 'none'; };
             }
@@ -441,7 +445,7 @@
                 }
             } catch (error) {
                 chatHistory.innerHTML += `<div class="msg-jensen" style="color:red;"><strong>System:</strong> Error.</div>`;
-            } align: {
+            } finally {
                 loading.style.display = 'none'; chatHistory.scrollTop = chatHistory.scrollHeight;
                 saveSessionsToDisk();
             }

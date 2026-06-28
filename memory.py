@@ -7,7 +7,7 @@ from pathlib import Path
 
 from api_client import gemini_generate
 
-DB_PATH = Path("./data/memory.db")
+DB_PATH = Path("./storage/memory.db")
 DB_PATH.parent.mkdir(parents=True, exist_ok=True)
 
 MAX_HISTORY = 16  # 8 turns x 2 (user + assistant)

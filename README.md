@@ -144,6 +144,7 @@ app.py (html js css) ── displays answer + sources + memory
 - RAG Architecture to be made more complex(for example Pixel RAG)
 - Deploying
 - proper description of Jensen in the front page
+- instead of response.wav generate a ujnique wav for every user and delete it when session finishes
 
 
 

@@ -15,7 +15,7 @@ function, which is required for similarity search to work correctly.
 import chromadb
 from chromadb.utils import embedding_functions
 
-CHROMA_PATH = "./chroma_db"
+CHROMA_PATH = "./storage/chroma_db"
 COLLECTION_NAME = "jensen_rag_corpus"
 
 _embedding_function = None

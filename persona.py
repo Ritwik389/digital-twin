@@ -7,7 +7,7 @@ import json
 import re
 from pathlib import Path
 
-ANALOGIES_PATH = Path("data/analogies.json")
+ANALOGIES_PATH = Path("storage/analogies.json")
 
 
 JENSEN_SYSTEM_PROMPT = """\

@@ -12,6 +12,7 @@ WORKDIR /app
 
 # Copy and install dependencies first (better caching)
 COPY requirements.txt .
+RUN pip install --no-cache-dir torch torchaudio --index-url https://download.pytorch.org/whl/cpu
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the application
