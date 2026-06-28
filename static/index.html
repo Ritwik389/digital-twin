@@ -268,7 +268,7 @@
                     btnReplay.style.display = 'flex';
                     btnStop.style.display = 'flex';
                     if(currentAudio) currentAudio.pause();
-                    currentAudio = new Audio(lastAudioUrl);
+                    currentAudio.src = lastAudioUrl;
                     currentAudio.play();
                     currentAudio.onended = () => { btnStop.style.display = 'none'; };
                 }
@@ -439,7 +439,7 @@
                     lastAudioUrl = `/api/audio/${data.audio_file}?t=${new Date().getTime()}`; 
                     btnReplay.style.display = 'flex'; 
                     btnStop.style.display = 'flex';
-                    currentAudio = new Audio(lastAudioUrl); 
+                    currentAudio.src = lastAudioUrl; 
                     currentAudio.play();
                     currentAudio.onended = () => { btnStop.style.display = 'none'; };
                 }
