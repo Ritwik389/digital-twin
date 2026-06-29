@@ -61,9 +61,24 @@ class SessionRequest(BaseModel):
 # ADD THIS NEW MODEL FOR THE GREETING
 class GreetRequest(BaseModel):
     name: str = "Guest"
-
-
+# Add this model near the top where your other classes are (ChatRequest, GreetRequest)
+class SpeakRequest(BaseModel):
+    text: str
 # --- Endpoints ---
+# Add this new endpoint right below your /api/greet endpoint
+@app.post("/api/speak")
+async def generate_speech(req: SpeakRequest):
+    if not tts_module.is_available():
+        raise HTTPException(status_code=503, detail="TTS not available")
+    
+    # This generates the audio on the fly, overwriting the default output file
+    audio_path = tts_module.speak(req.text)
+    if not audio_path:
+        raise HTTPException(status_code=500, detail="Audio generation failed")
+        
+    return {"audio_file": os.path.basename(audio_path)}
+
+
 @app.get("/", response_class=HTMLResponse)
 async def serve_frontend():
     with open("static/index.html", "r", encoding="utf-8") as f:

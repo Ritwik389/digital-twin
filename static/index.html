@@ -57,6 +57,20 @@
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         /* --- Left Chat Monitor --- */
+        .typing-indicator {
+            display: inline-flex; align-items: center; gap: 4px; 
+            padding-left: 5px; height: 14px;
+        }
+        .typing-dot {
+            width: 6px; height: 6px; background-color: var(--nvidia-green);
+            border-radius: 50%; animation: typingBounce 1.4s infinite ease-in-out both;
+        }
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes typingBounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
         #chat-monitor {
             position: absolute; top: 15%; left: 5%; width: 350px; height: 60vh;
             background: var(--dark-bg); border: 2px solid #333; border-radius: 8px;
@@ -66,6 +80,14 @@
         #chat-history { flex: 1 1 auto; height: 0; padding: 15px; overflow-y: auto; font-size: 14px; line-height: 1.5; scroll-behavior: smooth; }
         .msg-user { color: #ccc; margin-bottom: 15px; word-wrap: break-word; white-space: pre-wrap;}
         .msg-jensen { color: white; margin-bottom: 20px; border-left: 3px solid var(--nvidia-green); padding-left: 10px; word-wrap: break-word; white-space: pre-wrap; }
+
+        /* Inline Play Button */
+        .inline-play-btn {
+            background: none; border: 1px solid var(--nvidia-green); color: var(--nvidia-green);
+            padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; margin-top: 8px; 
+            display: inline-flex; align-items: center; gap: 4px; transition: 0.2s;
+        }
+        .inline-play-btn:hover { background: var(--nvidia-green); color: black; }
 
         /* --- Right System Panel --- */
         #system-panel {
@@ -180,11 +202,15 @@
         <div class="memo-controls">
             <div style="display: flex; gap: 15px;">
                 <button id="btn-mic" title="Voice Input">🎤 Dictate</button>
-                <button id="btn-replay" style="display: none;" title="Replay Last Answer">🔊 Replay Voice</button>
+                <button id="btn-replay" style="display: none;" title="Replay Last Answer">🔊 Replay Last</button>
                 <button id="btn-stop" style="display: none; color: #ff4444;" title="Stop Voice Output">⏹️ Stop Voice</button>
             </div>
             <div style="display: flex; align-items: center; gap: 15px;">
-                <span id="loading">Computing...</span>
+                <span id="loading" style="display: none;">
+                    <div class="typing-indicator" style="margin-right: 10px;">
+                        <div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>
+                    </div>
+                </span>
                 <label style="font-size: 12px; display:flex; align-items: center; gap:4px; color: #555;">
                     <input type="checkbox" id="voice-toggle" checked> Enable Voice
                 </label>
@@ -194,7 +220,7 @@
     </div>
 
     <script>
-        // --- 1. Init ---
+        // --- 1. Init & Global Variables ---
         document.getElementById('date-display').innerText = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
         
         const chatHistory = document.getElementById('chat-history');
@@ -211,25 +237,67 @@
         
         let activeUserId = "default_user"; 
         let activeUserName = "Guest";
+        
+        let currentAudio = new Audio(); 
+        let lastAudioUrl = null;
 
-        // --- 2. Session Manager ---
+        // --- 2. Session Manager (MESSAGES ARRAY UPDATE) ---
         let sessions = JSON.parse(localStorage.getItem('jensen_sessions')) || {};
         
-        let currentSessionId = `session_${Date.now()}`;
-        sessions[currentSessionId] = { title: "New Conversation", html: "" };
+        // Data Migration: Clean up old HTML-based sessions to prevent errors
+        for (const key in sessions) {
+            if (!sessions[key].messages) {
+                sessions[key].messages = []; 
+            }
+        }
+
+        let currentSessionId = localStorage.getItem('jensen_current_session');
+        if (!currentSessionId || !sessions[currentSessionId]) {
+            currentSessionId = `session_${Date.now()}`;
+            sessions[currentSessionId] = { title: "New Conversation", messages: [] };
+        }
         
         const savedApiKey = localStorage.getItem('jensen_api_key');
         if (savedApiKey) document.getElementById('api-key-input').value = savedApiKey;
 
         function saveSessionsToDisk() {
-            sessions[currentSessionId].html = chatHistory.innerHTML;
             localStorage.setItem('jensen_sessions', JSON.stringify(sessions));
             localStorage.setItem('jensen_current_session', currentSessionId);
         }
 
+        function renderChat() {
+            chatHistory.innerHTML = '';
+            
+            // --- HIDE THE GLOBAL REPLAY BUTTON ON SESSION LOAD ---
+            btnReplay.style.display = 'none'; 
+            
+            const messages = sessions[currentSessionId].messages || [];
+            
+            messages.forEach((msg) => {
+                const div = document.createElement('div');
+                div.className = msg.role === 'user' ? 'msg-user' : 'msg-jensen';
+                div.innerHTML = `<strong>${msg.role === 'user' ? 'You' : 'Jensen'}:</strong> ${msg.text}`;
+                
+                // Add inline play button for ALL Jensen messages
+                if (msg.role === 'jensen') {
+                    const playBtn = document.createElement('button');
+                    playBtn.className = 'inline-play-btn';
+                    playBtn.innerHTML = "🔊 Play";
+                    
+                    // Call the on-demand generation function when clicked
+                    playBtn.onclick = () => generateAndPlayAudio(msg.text, playBtn);
+                    
+                    div.appendChild(document.createElement('br'));
+                    div.appendChild(playBtn);
+                }
+                chatHistory.appendChild(div);
+            });
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+
         function renderSessionList() {
             sessionListEl.innerHTML = '';
-            Object.keys(sessions).reverse().forEach((sId, index) => {
+            Object.keys(sessions).reverse().forEach((sId) => {
                 const btn = document.createElement('button');
                 btn.className = 'sidebar-btn';
                 btn.style.background = sId === currentSessionId ? 'var(--nvidia-green)' : '#111';
@@ -240,20 +308,82 @@
                 btn.innerText = `💬 ${d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} Session`;
                 
                 btn.onclick = () => {
-                    saveSessionsToDisk(); 
+                    if (currentAudio) { currentAudio.pause(); btnStop.style.display = 'none'; }
                     currentSessionId = sId;
-                    chatHistory.innerHTML = sessions[sId].html; 
+                    saveSessionsToDisk(); 
                     renderSessionList();
-                    chatHistory.scrollTop = chatHistory.scrollHeight;
+                    renderChat();
                 };
                 sessionListEl.appendChild(btn);
             });
         }
+        
+        // Initial render
         renderSessionList();
+        renderChat();
 
-        // --- 3. The Greeting API Call ---
+        // --- 3. Audio Controller ---
+        function playAudio(url) {
+            if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
+            
+            // Ensure the Global Replay button is visible for the newly played track
+            btnReplay.style.display = 'flex'; 
+            btnStop.style.display = 'flex';
+            
+            currentAudio.src = url;
+            currentAudio.play();
+            currentAudio.onended = () => { btnStop.style.display = 'none'; };
+        }
+
+        // The New On-Demand TTS function
+        async function generateAndPlayAudio(text, btnElement) {
+            if (currentAudio) { currentAudio.pause(); btnStop.style.display = 'none'; }
+            
+            // Show a loading state on the button itself!
+            let originalText = "🔊 Play";
+            if (btnElement) {
+                originalText = btnElement.innerHTML;
+                btnElement.innerHTML = "⏳ Generating...";
+                btnElement.disabled = true;
+            }
+
+            try {
+                const res = await fetch('/api/speak', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: text })
+                });
+                const data = await res.json();
+                
+                if (data.audio_file) {
+                    currentAudio.src = `/api/audio/${data.audio_file}?t=${new Date().getTime()}`;
+                    
+                    // Reveal the global Replay & Stop buttons for this newly generated track
+                    btnReplay.style.display = 'flex';
+                    btnStop.style.display = 'flex';
+                    
+                    currentAudio.play();
+                    currentAudio.onended = () => { btnStop.style.display = 'none'; };
+                }
+            } catch (e) {
+                console.error("Audio generation error:", e);
+                alert("Failed to generate audio.");
+            } finally {
+                // Restore the inline button text when done
+                if (btnElement) {
+                    btnElement.innerHTML = originalText;
+                    btnElement.disabled = false;
+                }
+            }
+        }
+
+        // --- 4. The Greeting API Call ---
         async function triggerGreetingAudio() {
             try {
+                // Show the typing bubble in the chat log immediately
+                chatHistory.insertAdjacentHTML('beforeend', `<div class="msg-jensen"><strong>Jensen:</strong> <div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>`);
+                chatHistory.scrollTop = chatHistory.scrollHeight;
+
                 const res = await fetch('/api/greet', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -261,35 +391,35 @@
                 });
                 const data = await res.json();
                 
-                chatHistory.innerHTML = `<div class="msg-jensen"><strong>Jensen:</strong> ${data.text}</div>`;
-                
+                let generatedAudioUrl = null;
                 if (data.audio_file) {
-                    lastAudioUrl = `/api/audio/${data.audio_file}?t=${new Date().getTime()}`;
-                    btnReplay.style.display = 'flex';
-                    btnStop.style.display = 'flex';
-                    if(currentAudio) currentAudio.pause();
-                    currentAudio.src = lastAudioUrl;
-                    currentAudio.play();
-                    currentAudio.onended = () => { btnStop.style.display = 'none'; };
+                    generatedAudioUrl = `/api/audio/${data.audio_file}?t=${new Date().getTime()}`;
+                }
+                
+                // Add to array (renderChat will automatically erase the typing bubble)
+                sessions[currentSessionId].messages.push({ role: 'jensen', text: data.text, audioUrl: generatedAudioUrl });
+                renderChat();
+                saveSessionsToDisk();
+
+                if (generatedAudioUrl) {
+                    playAudio(generatedAudioUrl);
                 }
             } catch (err) {
                 console.error(err);
-                chatHistory.innerHTML = `<div class="msg-jensen" style="color:red;"><strong>System:</strong> Connection error.</div>`;
+                sessions[currentSessionId].messages.push({ role: 'jensen', text: "Connection error.", audioUrl: null });
+                renderChat();
             }
-            saveSessionsToDisk();
         }
 
-        // --- 4. Entrance Overlay ---
-            let currentAudio = new Audio(); 
-            let lastAudioUrl = null;
+        // --- 5. Entrance Overlay ---
+        document.getElementById('btn-enter').addEventListener('click', async () => {
+            // Unlock Audio Engine
+            currentAudio.src = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA"; 
+            currentAudio.play().catch(()=>{}); 
 
-            document.getElementById('btn-enter').addEventListener('click', async () => {
-                // 2. Play a silent sound immediately on click to unlock the browser's audio engine
-                currentAudio.src = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA"; // 1ms silent wav
-                currentAudio.play().catch(()=>{}); 
-
-                activeUserName = document.getElementById('landing-name').value.trim() || 'Guest';
-                activeUserId = document.getElementById('landing-user-id').value.trim() || 'default_user'; 
+            activeUserName = document.getElementById('landing-name').value.trim() || 'Guest';
+            activeUserId = document.getElementById('landing-user-id').value.trim() || 'default_user'; 
+            
             entranceContent.innerHTML = `
                 <div class="loader-spinner"></div>
                 <h2 style="color: var(--nvidia-green); margin-top: 25px; font-size: 20px; letter-spacing: 2px;">SECURITY PROTOCOL</h2>
@@ -299,20 +429,31 @@
             setTimeout(async () => {
                 overlay.style.opacity = '0';
                 setTimeout(() => { overlay.style.display = 'none'; }, 500); 
+                
+                // --- Start a fresh session if the current one isn't empty ---
+                if (sessions[currentSessionId].messages.length > 0) {
+                    currentSessionId = `session_${Date.now()}`;
+                    sessions[currentSessionId] = { title: "New Conversation", messages: [] };
+                    saveSessionsToDisk();
+                    renderSessionList();
+                    renderChat();
+                }
+
                 await triggerGreetingAudio();
                 try { await fetch('/api/session/reset', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user_id: activeUserId }) }); } catch(e){}
             }, 2000);
         });
 
-        // --- 5. Sidebar Controls ---
+        // --- 6. Sidebar Controls ---
         document.getElementById('btn-new-chat').addEventListener('click', async () => {
-            saveSessionsToDisk(); 
             if (currentAudio) { currentAudio.pause(); btnStop.style.display = 'none'; }
             
             currentSessionId = `session_${Date.now()}`;
-            sessions[currentSessionId] = { title: "New Conversation", html: `<div class="msg-jensen"><strong>Jensen:</strong> <span class="loader-spinner" style="display:inline-block; width:15px; height:15px;"></span> Loading...</div>` };
-            chatHistory.innerHTML = sessions[currentSessionId].html;
+            sessions[currentSessionId] = { title: "New Conversation", messages: [] };
+            
+            saveSessionsToDisk();
             renderSessionList();
+            renderChat();
             
             try { await fetch('/api/session/reset', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user_id: activeUserId }) }); } catch(e){}
             await triggerGreetingAudio();
@@ -326,11 +467,9 @@
                 if (currentAudio) { currentAudio.pause(); btnStop.style.display = 'none'; }
                 delete sessions[currentSessionId];
                 currentSessionId = Object.keys(sessions)[0];
-                localStorage.setItem('jensen_sessions', JSON.stringify(sessions));
-                localStorage.setItem('jensen_current_session', currentSessionId);
-                
-                chatHistory.innerHTML = sessions[currentSessionId].html;
+                saveSessionsToDisk();
                 renderSessionList();
+                renderChat();
                 try { await fetch('/api/session/reset', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user_id: activeUserId }) }); } catch(e){}
             }
         });
@@ -343,10 +482,11 @@
                 sessions = {};
                 
                 currentSessionId = `session_${Date.now()}`;
-                sessions[currentSessionId] = { title: "New Conversation", html: "" };
+                sessions[currentSessionId] = { title: "New Conversation", messages: [] };
                 
-                chatHistory.innerHTML = "";
+                saveSessionsToDisk();
                 renderSessionList();
+                renderChat();
                 try { await fetch('/api/session/reset', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user_id: activeUserId }) }); } catch(e){}
                 await triggerGreetingAudio();
             }
@@ -377,7 +517,7 @@
             }
         });
 
-        // --- 6. Main Chat Logic & Voice Rules ---
+        // --- 7. Main Chat Logic & Voice Rules ---
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         let recognition = null;
         if (SpeechRecognition) {
@@ -388,23 +528,20 @@
         } else { btnMic.style.display = 'none'; }
         btnMic.addEventListener('click', () => { if (recognition) recognition.start(); });
 
-        // Replay Button Action
+        // --- UPDATED: Global Replay Button Action ---
         btnReplay.addEventListener('click', () => {
-            if (lastAudioUrl) {
-                if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
-                btnStop.style.display = 'flex';
-                currentAudio.src = lastAudioUrl; 
+            if (currentAudio && currentAudio.src) {
+                // Instantly replay the track that is already loaded in the browser's memory
+                currentAudio.currentTime = 0;
                 currentAudio.play();
+                btnStop.style.display = 'flex';
                 currentAudio.onended = () => { btnStop.style.display = 'none'; };
             }
         });
 
-        // Stop Button Action (Instantly kills playback)
+        // Stop Button Action
         btnStop.addEventListener('click', () => {
-            if (currentAudio) {
-                currentAudio.pause();
-                currentAudio.currentTime = 0;
-            }
+            if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
             btnStop.style.display = 'none';
         });
 
@@ -412,11 +549,17 @@
             const text = userInput.value.trim();
             if (!text) return;
 
-            // If a query is submitted while old speech runs, terminate the old speech instantly
             if (currentAudio) { currentAudio.pause(); btnStop.style.display = 'none'; }
 
-            chatHistory.innerHTML += `<div class="msg-user"><strong>You:</strong> ${text}</div>`;
-            userInput.value = ''; loading.style.display = 'block'; chatHistory.scrollTop = chatHistory.scrollHeight;
+            // 1. Add user message
+            sessions[currentSessionId].messages.push({ role: 'user', text: text, audioUrl: null });
+            renderChat();
+            
+            userInput.value = ''; loading.style.display = 'block'; 
+            
+            // Show the typing bubble in the chat log
+            chatHistory.insertAdjacentHTML('beforeend', `<div class="msg-jensen"><strong>Jensen:</strong> <div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>`);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
 
             try {
                 const res = await fetch('/api/chat', {
@@ -430,23 +573,28 @@
                 });
 
                 const data = await res.json();
-                chatHistory.innerHTML += `<div class="msg-jensen"><strong>Jensen Huang:</strong> ${data.answer}</div>`;
                 
                 document.getElementById('chunk-badge').innerText = `${data.query_type || "unknown"} | ${data.chunks_used || 0} chunks`;
                 document.getElementById('sources-box').innerHTML = data.sources && data.sources.length > 0 ? data.sources.map(s => `• ${s}`).join('<br>') : 'No sources retrieved.';
 
+                let generatedAudioUrl = null;
                 if (data.audio_file) {
-                    lastAudioUrl = `/api/audio/${data.audio_file}?t=${new Date().getTime()}`; 
-                    btnReplay.style.display = 'flex'; 
-                    btnStop.style.display = 'flex';
-                    currentAudio.src = lastAudioUrl; 
-                    currentAudio.play();
-                    currentAudio.onended = () => { btnStop.style.display = 'none'; };
+                    generatedAudioUrl = `/api/audio/${data.audio_file}?t=${new Date().getTime()}`; 
                 }
+
+                // 2. Add Jensen message
+                sessions[currentSessionId].messages.push({ role: 'jensen', text: data.answer, audioUrl: generatedAudioUrl });
+                renderChat();
+
+                if (generatedAudioUrl) {
+                    playAudio(generatedAudioUrl);
+                }
+
             } catch (error) {
-                chatHistory.innerHTML += `<div class="msg-jensen" style="color:red;"><strong>System:</strong> Error.</div>`;
+                sessions[currentSessionId].messages.push({ role: 'jensen', text: "System Error: Failed to generate response.", audioUrl: null });
+                renderChat();
             } finally {
-                loading.style.display = 'none'; chatHistory.scrollTop = chatHistory.scrollHeight;
+                loading.style.display = 'none'; 
                 saveSessionsToDisk();
             }
         }

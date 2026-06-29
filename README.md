@@ -1,14 +1,10 @@
 ---
-title: Digital Twin
+title: Jensen Digital Twin
 emoji: 🚀
-colorFrom: pink
-colorTo: yellow
-sdk: gradio
-sdk_version: 6.17.3
-python_version: '3.11'
-app_file: app.py
-pinned: false
-
+colorFrom: green
+colorTo: gray
+sdk: docker
+app_port: 7860
 ---
 
 # Jensen Huang Digital Twin — Basic Edition
@@ -146,5 +142,6 @@ app.py (html js css) ── displays answer + sources + memory
 - proper description of Jensen in the front page
 - instead of response.wav generate a ujnique wav for every user and delete it when session finishes
 
+IMPLEMENTED DOCKER FOR HOSTING
 
 
