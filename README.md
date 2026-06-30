@@ -26,7 +26,7 @@ A RAG + persona-driven conversational AI that responds as Jensen Huang, built on
 ├── main.py                # FastAPI app & API routes
 ├── agent.py                # Orchestrator: RAG + memory + persona + generation
 ├── persona.py               # System prompt + keyword-based analogy engine
-├── rag.py                   # Query-time retrieval logic
+├── rag.py                   # Query-time retrieval logic (Bi Encoder + Cross Encoder)
 ├── chroma_utils.py          # Shared ChromaDB collection/embedding helper
 ├── semantic_chunker.py      # Embedding-based semantic chunking
 ├── ingest.py                 # Chunk + embed cleaned transcripts into ChromaDB
@@ -63,7 +63,7 @@ cd <your-repo-name>
 ## 2. Create a virtual environment
 
 ```bash
-python -m venv venv
+python3.11 -m venv venv
 source venv/bin/activate        # macOS/Linux
 venv\Scripts\activate           # Windows
 ```
@@ -158,20 +158,11 @@ docker run -p 8000:8000 --env-file .env.local jensen-digital-twin
 
 ---
 
-## Known Issues / Bugs
 
-See the full bug report below — fix these before treating this as production-ready.
-
----
-
-## License
-
-Add your license here.
-
----
 
 ## Improvements
 
 - Try to implement colBERT Mechanism for rag
 - Using a pipeline to find most common words used in transcripts to generate persona
 - RAG Architecture to be made more complex(for example Pixel RAG)
+- implement multimodal input for Jensen
