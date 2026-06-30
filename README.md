@@ -2,7 +2,7 @@
 
 A RAG + persona-driven conversational AI that responds as Jensen Huang, built on FastAPI, ChromaDB, Gemini 2.5 Flash, and (optionally) local TTS voice cloning.
 
-**🔗 Live Demo:** _[add your deployed link here]_
+**🔗 Live Demo:** https://rj8307-digital-twin-2.hf.space
 
 ---
 
