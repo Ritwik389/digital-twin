@@ -152,11 +152,6 @@
             <span>SYS_CTRL // DASHBOARD</span>
         </div>
         
-        <div class="panel-section">
-            <h3>API Settings</h3>
-            <input type="password" id="api-key-input" class="sidebar-btn" style="cursor: text; font-family: monospace;" placeholder="Gemini API Key...">
-            <button id="btn-save-settings" class="sidebar-btn" style="background: var(--nvidia-green); color: black; font-weight:bold;">Apply Key</button>
-        </div>
 
         <div class="panel-section">
             <h3>Chat Sessions</h3>
@@ -256,9 +251,7 @@
             currentSessionId = `session_${Date.now()}`;
             sessions[currentSessionId] = { title: "New Conversation", messages: [] };
         }
-        
-        const savedApiKey = localStorage.getItem('jensen_api_key');
-        if (savedApiKey) document.getElementById('api-key-input').value = savedApiKey;
+
 
         function saveSessionsToDisk() {
             localStorage.setItem('jensen_sessions', JSON.stringify(sessions));
@@ -492,7 +485,6 @@
             }
         });
 
-        document.getElementById('btn-save-settings').addEventListener('click', () => { localStorage.setItem('jensen_api_key', document.getElementById('api-key-input').value.trim()); alert("Key saved."); });
         
         document.getElementById('btn-extract-mem').addEventListener('click', async () => {
             memoryBox.innerText = "Extracting facts...";
@@ -568,7 +560,6 @@
                         message: text, user_id: activeUserId,
                         era: document.getElementById('era-select').value,
                         voice_enabled: document.getElementById('voice-toggle').checked,
-                        api_key: document.getElementById('api-key-input').value.trim()
                     })
                 });
 

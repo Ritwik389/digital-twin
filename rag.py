@@ -13,8 +13,11 @@ Basic RAG retrieval.
 import re
 
 from chroma_utils import get_chroma_collection
-
-TOP_K = 5
+from sentence_transformers import CrossEncoder
+TOP_K = 15
+TOP_K_FINAL = 5
+INITIAL_FETCH = 15
+reranker = CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2')
 
 # Short greetings / pleasantries — skip retrieval entirely
 NO_RETRIEVAL_PATTERNS = [
@@ -31,25 +34,30 @@ def _is_no_retrieval(query: str) -> bool:
 
 def retrieve_chunks(
     query: str,
-    year_filter: int | None = None,
+    year_min: int | None = None,
+    year_max: int | None = None,
     domain_filter: str | None = None,
-    top_k: int = TOP_K,
+    top_k: int = INITIAL_FETCH,
 ) -> list[dict]:
     """Return the top-k most relevant chunks for `query` from ChromaDB."""
     collection = get_chroma_collection()
     if collection.count() == 0:
         return []
+    
+    where_conditions = []
+    if year_min is not None:
+        where_conditions.append({"year": {"$gte": year_min}})
+    if year_max is not None:
+        where_conditions.append({"year": {"$lte": year_max}})
+    if domain_filter is not None:
+        where_conditions.append({"domain": {"$eq": domain_filter}})
+    if len(where_conditions) == 1:
+        where_clause = where_conditions[0]
+    elif len(where_conditions) > 1:
+        where_clause = {"$and": where_conditions}
+    else:
+        where_clause = None
 
-    where_clause = None
-    if year_filter and domain_filter:
-        where_clause = {"$and": [
-            {"year": {"$gte": year_filter}},
-            {"domain": {"$eq": domain_filter}},
-        ]}
-    elif year_filter:
-        where_clause = {"year": {"$gte": year_filter}}
-    elif domain_filter:
-        where_clause = {"domain": {"$eq": domain_filter}}
 
     kwargs = {
         "query_texts": [query],
@@ -96,7 +104,8 @@ def build_context(chunks: list[dict]) -> str:
 
 def retrieve(
     query: str,
-    year_filter: int | None = None,
+    year_min: int | None = None,
+    year_max: int | None = None,
     domain_filter: str | None = None,
     conversation_history: str = "",
 ) -> dict:
@@ -114,7 +123,23 @@ def retrieve(
             "needs_retrieval": False,
         }
 
-    chunks = retrieve_chunks(query, year_filter=year_filter, domain_filter=domain_filter)
+    chunks = retrieve_chunks(query, year_min=year_min, year_max=year_max, domain_filter=domain_filter)
+    if chunks:
+        # Create pairs of [query, document_text]
+        pairs = [[query, c["text"]] for c in chunks]
+        
+        # Score the pairs using the local cross-encoder
+        scores = reranker.predict(pairs)
+        
+        # Attach the scores to our chunk dictionaries
+        for chunk, score in zip(chunks, scores):
+            chunk["cross_score"] = float(score)
+            
+        # Sort chunks by the new cross-encoder score (highest to lowest)
+        chunks.sort(key=lambda x: x["cross_score"], reverse=True)
+        
+        # Slice to keep only the absolute best matches
+        chunks = chunks[:TOP_K_FINAL]
     context = build_context(chunks)
 
     return {

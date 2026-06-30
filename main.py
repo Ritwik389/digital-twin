@@ -53,7 +53,6 @@ class ChatRequest(BaseModel):
     user_id: str = "default_user"
     era: str = "all"
     voice_enabled: bool = False
-    api_key: str = "" 
 
 class SessionRequest(BaseModel):
     user_id: str = "default_user"
@@ -87,9 +86,7 @@ async def serve_frontend():
 async def chat_endpoint(req: ChatRequest):
     if not req.message or not req.message.strip():
         raise HTTPException(status_code=400, detail="Message is required")
-    if req.api_key:
-        os.environ["GEMINI_API_KEY"] = req.api_key
-
+    
     agent = get_agent(req.user_id)
     agent.set_era(req.era)
 

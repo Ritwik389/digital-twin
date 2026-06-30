@@ -18,11 +18,13 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the rest of the application
 COPY . .
 
-# Ensure the database directories exist
-RUN mkdir -p /app/chroma_db /app/data /app/audio_cache
+# Ensure the new storage and data directories exist
+RUN mkdir -p /app/storage /app/data/cleaned /app/audio_cache
 
-# Expose the FastAPI port
-EXPOSE 7680
+RUN chmod -R 777 /app
+
+# Expose the Hugging Face port
+EXPOSE 7860
 
 # Run the application
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "7860"]

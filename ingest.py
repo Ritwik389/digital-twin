@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from chroma_utils import get_chroma_collection
-
+from semantic_chunker import SemanticChunker
 
 CLEAN_DIR = Path("data/cleaned")
 
@@ -32,26 +32,17 @@ def already_ingested(collection, filename: str) -> bool:
 
 
 
-def ingest_file(filepath: Path, collection):
+def ingest_file(filepath: Path, collection, chunker):
     if already_ingested(collection, filepath.name):
         print(f"[skip] {filepath.name} already in ChromaDB")
         return
 
     content = filepath.read_text(encoding="utf-8")
     meta, body = parse_metadata_header(content)
-    from semantic_chunker import SemanticChunker
-
-
-
 
     if not body:
         print(f"[skip] {filepath.name} — empty body after header parse")
         return
-    chunker = SemanticChunker(
-        similarity_threshold=0.2,  
-        min_chunk_size=2000,
-        max_chunk_size=6000
-    )
 
     chunks = chunker.chunk(body)
 
@@ -95,9 +86,15 @@ def ingest_all():
         print("[warn] No cleaned .txt files found in data/cleaned/")
         print("       Run cleaner.py first, or manually add .txt files with metadata headers.")
         return
+    print("[ingest] Loading SemanticChunker model...")
+    chunker = SemanticChunker(
+        similarity_threshold=0.2,  
+        min_chunk_size=2000,
+        max_chunk_size=6000
+    )
 
     for f in txt_files:
-        ingest_file(f, collection)
+        ingest_file(f, collection, chunker)
 
     print(f"\n[done] Total chunks in ChromaDB: {collection.count()}")
 

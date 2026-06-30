@@ -19,7 +19,7 @@ from memory import ShortTermMemory, get_relevant_memories, save_session_memories
 from persona import build_system_prompt, get_analogy_for_concept
 from api_client import gemini_generate
 import requests
-
+import os
 
 ERA_YEAR_RANGES = {
     "all": (None, None),
@@ -40,13 +40,14 @@ class JensenAgent:
             self.era_filter = era
 
     def chat(self, query: str) -> dict:
-        year_min, _ = ERA_YEAR_RANGES[self.era_filter]
+        year_min, year_max = ERA_YEAR_RANGES[self.era_filter]
         conversation_history = self.short_term.format_for_prompt()
 
         # 1. Basic RAG (local, offline embeddings — no API call)
         rag_result = retrieve(
             query=query,
-            year_filter=year_min,
+            year_min=year_min,
+            year_max = year_max,
             domain_filter=None,
             conversation_history=conversation_history,
         )
