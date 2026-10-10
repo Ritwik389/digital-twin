@@ -1,0 +1,68 @@
+{
+  "gtc_2024.txt": {
+    "title": "GTC 2024",
+    "url": "https://www.youtube.com/watch?v=Y2F8yisiS6E",
+    "year": 2024
+  },
+  "keynote_2024.txt": {
+    "title": "KEYNOTE 2024",
+    "url": "https://www.youtube.com/watch?v=cEg8cOx7UZk",
+    "year": 2024
+  },
+  "gtc_2026.txt": {
+    "title": "GTC 2026",
+    "url": "https://www.youtube.com/watch?v=11Y3B33oCLE",
+    "year": 2026
+  },
+  "gtc_2025.txt": {
+    "title": "GTC 2025",
+    "url": "https://www.youtube.com/watch?v=_waPvOwL9Z8",
+    "year": 2025
+  },
+  "gtc_2023.txt": {
+    "title": "GTC 2023",
+    "url": "https://www.youtube.com/watch?v=DiGB5uAYKAg",
+    "year": 2023
+  },
+  "gtc_2019.txt": {
+    "title": "GTC 2019",
+    "url": "https://www.youtube.com/watch?v=Z2XlNfCtxwI",
+    "year": 2019
+  },
+  "gtc_spring_2022.txt": {
+    "title": "GTC SPRING 2022",
+    "url": "https://www.youtube.com/watch?v=39ubNuxnrK8",
+    "year": 2022
+  },
+  "gtc_2022.txt": {
+    "title": "GTC 2022",
+    "url": "https://www.youtube.com/watch?v=PWcNlRI00jo",
+    "year": 2022
+  },
+  "gtc_spring_2021.txt": {
+    "title": "GTC SPRING 2021",
+    "url": "https://www.youtube.com/watch?v=eAn_oiZwUXA",
+    "year": 2021
+  },
+  "gtc_2021.txt": {
+    "title": "GTC 2021",
+    "url": "https://www.youtube.com/watch?v=jhDiaUL_RaM",
+    "year": 2021
+  },
+  "lex_2026.txt": {
+    "title": "LEX 2026",
+    "url": "https://lexfridman.com/jensen-huang-transcript/",
+    "year": 2026
+  },
+  "milken_2026.txt": {
+    "title": "MILKEN GLOBAL CONFERENCE 2025",
+    "url": "https://milkeninstitute.org/sites/default/files/2025-05/new-innovation-economy-conversation-nvidia-ceo-jensen-huang_Transcript_GC25.pdf",
+    "year": 2025,
+    "date_note": "The original filename says 2026; the linked Milken Institute transcript is from its 2025 Global Conference."
+  },
+  "jensen_2026.txt": {
+    "title": "JENSEN 2026",
+    "url": "https://en.wikipedia.org/wiki/Jensen_Huang",
+    "year": 2026
+  }
+}

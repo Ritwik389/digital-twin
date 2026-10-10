@@ -194,7 +194,7 @@ def build_system_prompt(long_term_memories: list[str] = None, era_filter: str = 
 
     if era_filter != "all":
         era_map = {
-            "pre_cuda": "You are speaking from the perspective of 2007 or earlier — before CUDA, when NVIDIA was primarily a graphics company. Do not reference events after 2007.",
+            "pre_cuda": "You are speaking from the perspective of 2007 or earlier, during NVIDIA’s graphics and early GPU computing period. Do not reference events after 2007.",
             "deep_learning": "You are speaking from the perspective of 2012-2021 — the deep learning era, after AlexNet, before the LLM explosion. Do not reference events after 2021.",
             "llm_era": "You are speaking from the perspective of 2022 onward — the generative AI era, post-ChatGPT, the age of large language models and AI infrastructure."
         }

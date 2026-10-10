@@ -1,7 +1,8 @@
 from pathlib import Path
 
 from chroma_utils import get_chroma_collection
-from semantic_chunker import SemanticChunker
+import hashlib
+from source_utils import provenance,effective_year
 
 CLEAN_DIR = Path("data/cleaned")
 
@@ -33,48 +34,31 @@ def already_ingested(collection, filename: str) -> bool:
 
 
 def ingest_file(filepath: Path, collection, chunker):
-    if already_ingested(collection, filepath.name):
-        print(f"[skip] {filepath.name} already in ChromaDB")
-        return
-
-    content = filepath.read_text(encoding="utf-8")
-    meta, body = parse_metadata_header(content)
-
+    content=filepath.read_text(encoding='utf-8')
+    meta,body=parse_metadata_header(content)
     if not body:
-        print(f"[skip] {filepath.name} — empty body after header parse")
+        print(f'[skip] {filepath.name}: empty source body; previous chunks retained')
         return
-
-    chunks = chunker.chunk(body)
-
-    print(f"Document split into {len(chunks)} semantic chunks:\n")
-    for i, chunk in enumerate(chunks, 1):
-        print(f"--- Chunk {i} ({len(chunk)} chars) ---")
-        print(chunk[:200] + "..." if len(chunk) > 200 else chunk)
-        print()
-
-    print(f"[ingest] {filepath.name} -> {len(chunks)} semantic chunks")
-
-    ids = [f"{filepath.stem}-{i}" for i in range(len(chunks))]
-    metadatas = [
-        {
-            "source": meta.get("source", filepath.stem),
-            "year": meta.get("year", 0),
-            "domain": meta.get("domain", "general"),
-            "chunk_index": i,
-            "filename": filepath.name,
-        }
-        for i in range(len(chunks))
-    ]
-
-    # documents=chunks -> ChromaDB embeds them locally with the
-    # collection's embedding function (offline ONNX model, no API calls).
-    collection.add(
-        ids=ids,
-        documents=chunks,
-        metadatas=metadatas,
-    )
-
-    print(f"[done] {filepath.name} - {len(chunks)} chunks stored")
+    version=hashlib.sha256(('semantic-v2\0'+content).encode()).hexdigest()
+    previous=collection.get(where={'filename':filepath.name},include=['metadatas'])
+    if previous['ids'] and all(item.get('corpus_version')==version for item in previous['metadatas']):
+        print(f'[skip] {filepath.name}: content version unchanged')
+        return
+    chunks=chunker.chunk(body)
+    if not chunks:
+        print(f'[skip] {filepath.name}: no chunks produced; previous chunks retained')
+        return
+    ids=[f'{filepath.stem}-{version[:16]}-{i}' for i in range(len(chunks))]
+    source=provenance(meta | {'filename':filepath.name})
+    metadata={'source':meta.get('source',filepath.stem),'year':effective_year(meta | {'filename':filepath.name}),
+              'domain':meta.get('domain','general'),'filename':filepath.name,'corpus_version':version}
+    if source['url']:metadata['url']=source['url']
+    # File-level headers do not locate individual transcript chunks in a video.
+    metadatas=[metadata | {'chunk_index':i} for i in range(len(chunks))]
+    collection.upsert(ids=ids,documents=chunks,metadatas=metadatas)
+    obsolete=[key for key in previous['ids'] if key not in ids]
+    if obsolete:collection.delete(ids=obsolete)
+    print(f'[done] {filepath.name}: {len(chunks)} current chunks; {len(obsolete)} outdated chunks removed')
 
 
 def ingest_all():
@@ -87,6 +71,7 @@ def ingest_all():
         print("       Run cleaner.py first, or manually add .txt files with metadata headers.")
         return
     print("[ingest] Loading SemanticChunker model...")
+    from semantic_chunker import SemanticChunker
     chunker = SemanticChunker(
         similarity_threshold=0.2,  
         min_chunk_size=2000,

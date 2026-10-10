@@ -1,114 +1,209 @@
-"""
-api_client.py
-Centralized Gemini API client with round-robin key rotation.
-Reads GOOGLE_API_KEY_1, GOOGLE_API_KEY_2, GOOGLE_API_KEY_3 from .env.local.
-Falls back to a single GOOGLE_API_KEY if numbered keys are absent.
-On 429 / ResourceExhausted, automatically rotates to the next key and retries.
-
-This is the ONLY place the Gemini API is called in the whole project —
-embeddings are computed locally and offline (see chroma_utils.py), so
-gemini_generate() is invoked exactly once per chat turn, for the final
-answer.
-"""
-
+"""Bounded provider retries and a current Groq fallback, shared by chat and memory."""
+import json
+import logging
 import os
 import re
-import json
-import time
 import threading
+import time
+
+import requests
 from dotenv import load_dotenv
-from google import genai
 
-load_dotenv(".env.local")
-
-
-def _collect_keys() -> list[str]:
-    """Gather all available API keys from environment."""
-    keys = []
-    for i in range(1, 4):
-        k = os.environ.get(f"GOOGLE_API_KEY_{i}", "").strip()
-        if k:
-            keys.append(k)
-    if not keys:
-        fallback = os.environ.get("GOOGLE_API_KEY", "").strip()
-        if fallback:
-            keys.append(fallback)
-    if not keys:
-        raise RuntimeError(
-            "No API keys found. Set GOOGLE_API_KEY or GOOGLE_API_KEY_1/2/3 in .env.local"
-        )
-    return keys
-
-
-API_KEYS = _collect_keys()
+load_dotenv('.env.local')
+logger = logging.getLogger(__name__)
+MODEL = os.getenv('GEMINI_MODEL', 'gemini-2.5-flash')
 _lock = threading.Lock()
 _current_index = 0
-_clients: dict[str, genai.Client] = {}
-
-MODEL = "models/gemini-2.5-flash"
-MAX_RETRIES = len(API_KEYS)  # try each key once
+RETRYABLE = {408, 429, 500, 502, 503, 504}
 
 
-def _get_client(key: str) -> genai.Client:
-    """Cache one genai.Client per key."""
-    if key not in _clients:
-        _clients[key] = genai.Client(api_key=key)
-    return _clients[key]
+class GenerationError(RuntimeError):
+    """Safe, user-visible error that never includes credentials or request URLs."""
 
 
-def _next_key() -> tuple[str, genai.Client]:
-    """Round-robin: return (key, client) and advance the pointer."""
-    global _current_index
-    with _lock:
-        key = API_KEYS[_current_index % len(API_KEYS)]
-        _current_index += 1
-    return key, _get_client(key)
+def _collect_keys():
+    keys = [os.getenv(f'GOOGLE_API_KEY_{i}', '').strip() for i in range(1, 4)]
+    keys += [os.getenv(name, '').strip() for name in ('GOOGLE_API_KEY', 'GEMINI_API_KEY')]
+    return list(dict.fromkeys(key for key in keys if key))
 
 
-def _is_quota_error(exc: Exception) -> bool:
-    """Check if an exception is a rate-limit / quota-exhausted error."""
-    msg = str(exc).lower()
-    return any(tok in msg for tok in [
-        "429", "resource exhausted", "quota", "rate limit",
-        "too many requests", "resourceexhausted",
-    ])
-
-
-# ── Public helpers ────────────────────────────────────────────────────────────
-
-def gemini_generate(prompt: str, model: str = MODEL) -> str:
-    """
-    Generate text with Gemini. Rotates API keys on quota errors.
-    Returns the stripped text response.
-    """
-    last_exc = None
-    for attempt in range(MAX_RETRIES):
-        key, client = _next_key()
+def _request(url, *, headers, payload, attempts=2):
+    for attempt in range(attempts):
         try:
-            response = client.models.generate_content(
-                model=model,
-                contents=prompt,
+            response = requests.post(url, headers=headers, json=payload, timeout=(5, 25))
+        except requests.RequestException:
+            if attempt + 1 == attempts:
+                raise GenerationError('Generation service timed out. Please try again.') from None
+        else:
+            if response.ok:
+                try:
+                    return response.json()
+                except ValueError:
+                    raise GenerationError('Generation service returned an invalid response.') from None
+            if response.status_code not in RETRYABLE or attempt + 1 == attempts:
+                raise GenerationError(f'Generation service returned HTTP {response.status_code}.')
+        time.sleep(0.5 * (2 ** attempt))
+
+
+def gemini_generate(prompt, model=None):
+    global _current_index
+    keys = _collect_keys()
+    if not keys:
+        raise GenerationError('Gemini is not configured.')
+    with _lock:
+        start = _current_index % len(keys)
+        _current_index += 1
+    last_error = None
+    # Rotate configured keys, and retry transient failures even with only one key.
+    for offset in range(len(keys)):
+        try:
+            data = _request(
+                f'https://generativelanguage.googleapis.com/v1beta/models/{(model or MODEL).removeprefix("models/")}:generateContent',
+                headers={'x-goog-api-key': keys[(start + offset) % len(keys)]},
+                payload={'contents': [{'role': 'user', 'parts': [{'text': prompt}]}]},
             )
-            return response.text.strip()
-        except Exception as e:
-            last_exc = e
-            if _is_quota_error(e):
-                print(f"[api] key ...{key[-6:]} quota hit, rotating (attempt {attempt + 1}/{MAX_RETRIES})")
-                time.sleep(1)
-                continue
-            raise
-    raise RuntimeError(f"All {MAX_RETRIES} API keys exhausted: {last_exc}")
+            parts = data.get('candidates', [{}])[0].get('content', {}).get('parts', [])
+            text = ''.join(p.get('text', '') for p in parts if not p.get('thought')).strip()
+            if not text:
+                raise GenerationError('Gemini returned no answer.')
+            return text
+        except (GenerationError, IndexError, TypeError) as exc:
+            last_error = exc
+    raise GenerationError(str(last_error))
 
 
-def parse_json(text: str) -> dict | list | None:
-    """Strip markdown fences and parse JSON."""
-    text = re.sub(r"```json|```", "", text).strip()
+def groq_generate(prompt):
+    key = os.getenv('GROQ_API_KEY', '').strip()
+    if not key:
+        raise GenerationError('Groq is not configured.')
+    data = _request(
+        'https://api.groq.com/openai/v1/chat/completions',
+        headers={'Authorization': f'Bearer {key}', 'Content-Type': 'application/json'},
+        payload={
+            'model': os.getenv('GROQ_MODEL', 'openai/gpt-oss-120b'),
+            'messages': [{'role': 'user', 'content': prompt}],
+            'temperature': 0.7,
+            'max_completion_tokens': 2048,
+        },
+    )
+    try:
+        text = data['choices'][0]['message']['content'].strip()
+    except (KeyError, IndexError, TypeError, AttributeError):
+        raise GenerationError('Groq returned no answer.') from None
+    if not text:
+        raise GenerationError('Groq returned no answer.')
+    return text
+
+
+def generate_text(prompt):
+    if not _collect_keys() and not os.getenv('GROQ_API_KEY', '').strip():
+        raise GenerationError('Set GOOGLE_API_KEY (or GOOGLE_API_KEY_1) or GROQ_API_KEY in Space secrets.')
+    if _collect_keys():
+        try:
+            return gemini_generate(prompt)
+        except GenerationError as exc:
+            logger.warning('Gemini unavailable: %s; trying Groq', exc)
+    try:
+        return groq_generate(prompt)
+    except GenerationError:
+        raise GenerationError('Chat service is temporarily unavailable. Please try again in a moment.') from None
+
+
+def parse_json(text):
+    text = re.sub(r'^```(?:json)?\s*|\s*```$', '', text.strip())
     try:
         return json.loads(text)
-    except json.JSONDecodeError:
+    except (ValueError, TypeError):
         return None
 
 
-def get_key_count() -> int:
-    """Return how many API keys are loaded."""
-    return len(API_KEYS)
+def get_key_count():
+    return len(_collect_keys())
+
+
+class GenerationCancelled(Exception):
+    pass
+
+
+def _sse_stream(url, headers, payload, provider, cancel):
+    """Retry only before the first token. Never mix providers after partial output."""
+    started = False
+    for attempt in range(2):
+        response = None
+        retry_delay = .5
+        try:
+            if cancel.is_set(): raise GenerationCancelled()
+            response = requests.post(url, headers=headers, json=payload, stream=True, timeout=(5, 25))
+            if not response.ok:
+                logger.warning('%s stream returned HTTP %s', provider, response.status_code)
+                if response.status_code == 429:
+                    try: retry_delay = max(.5, min(60, float(getattr(response, 'headers', {}).get('retry-after', '.5'))))
+                    except (TypeError, ValueError): pass
+                raise GenerationError(f'Generation service returned HTTP {response.status_code}.')
+            response.encoding = 'utf-8'
+            completed = False
+            for line in response.iter_lines(decode_unicode=True, chunk_size=256):
+                if cancel.is_set(): raise GenerationCancelled()
+                if not line or not line.startswith('data:'): continue
+                raw = line[5:].strip()
+                if raw == '[DONE]': completed = True; break
+                item = json.loads(raw)
+                if item.get('error'): raise GenerationError('Generation stream failed.')
+                if provider == 'gemini':
+                    candidate = (item.get('candidates') or [{}])[0]
+                    text = ''.join(p.get('text', '') for p in candidate.get('content', {}).get('parts', []) if not p.get('thought'))
+                    if candidate.get('finishReason') == 'STOP': completed = True
+                    elif candidate.get('finishReason'): raise GenerationError('Generation did not complete.')
+                else:
+                    choice = (item.get('choices') or [{}])[0]
+                    text = choice.get('delta', {}).get('content') or ''
+                    if choice.get('finish_reason') == 'stop': completed = True
+                    elif choice.get('finish_reason'): raise GenerationError('Generation did not complete.')
+                if text: started = True; yield text
+            if not started or not completed: raise GenerationError('Generation stream ended before the answer completed.')
+            return
+        except GenerationCancelled: raise
+        except (requests.RequestException, ValueError, TypeError, GenerationError) as exc:
+            if started:
+                raise GenerationError('Response interrupted. Please retry.') from None
+            if attempt == 1:
+                if isinstance(exc, GenerationError) and 'HTTP 429' in str(exc):
+                    raise GenerationError('The chat provider is busy. Please try again shortly.') from None
+                raise GenerationError('The chat provider could not start a response. Please retry.') from None
+            if isinstance(exc, GenerationError) and 'HTTP' in str(exc):
+                match = re.search(r'HTTP (\d+)', str(exc))
+                if match and int(match[1]) not in RETRYABLE: raise
+            if response is not None: response.close()
+            if cancel.wait(retry_delay): raise GenerationCancelled()
+        finally:
+            if response is not None: response.close()
+
+
+def generate_text_stream(prompt, cancel=None):
+    cancel = cancel or threading.Event()
+    keys = _collect_keys()
+    config = {'maxOutputTokens': 4096}
+    if MODEL.removeprefix('models/').startswith('gemini-2.5-flash'):
+        config['thinkingConfig'] = {'thinkingBudget': 256}
+    started = False
+    global _current_index
+    if keys:
+        with _lock:
+            start = _current_index % len(keys); _current_index += 1
+        for offset in range(len(keys)):
+            try:
+                for piece in _sse_stream(
+                    f'https://generativelanguage.googleapis.com/v1beta/models/{MODEL.removeprefix("models/")}:streamGenerateContent?alt=sse',
+                    {'x-goog-api-key': keys[(start + offset) % len(keys)]},
+                    {'contents': [{'role': 'user', 'parts': [{'text': prompt}]}], 'generationConfig': config}, 'gemini', cancel):
+                    started = True; yield piece
+                return
+            except GenerationError:
+                if started: raise
+                logger.warning('Gemini stream unavailable; trying the next configured provider')
+    key = os.getenv('GROQ_API_KEY', '').strip()
+    if not key: raise GenerationError('Chat service is temporarily unavailable. Please try again.')
+    yield from _sse_stream('https://api.groq.com/openai/v1/chat/completions',
+        {'Authorization': f'Bearer {key}', 'Content-Type': 'application/json'},
+        {'model': os.getenv('GROQ_MODEL', 'openai/gpt-oss-120b'), 'messages': [{'role': 'user', 'content': prompt}],
+         'temperature': .6, 'max_completion_tokens': 1800, 'stream': True}, 'groq', cancel)

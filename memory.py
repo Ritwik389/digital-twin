@@ -3,11 +3,12 @@
 import re
 import json
 import sqlite3
+import os
 from pathlib import Path
 
-from api_client import gemini_generate
+from api_client import generate_text
 
-DB_PATH = Path("./storage/memory.db")
+DB_PATH = Path(os.getenv("MEMORY_DB_PATH", "./storage/memory.db"))
 DB_PATH.parent.mkdir(parents=True, exist_ok=True)
 
 MAX_HISTORY = 16  # 8 turns x 2 (user + assistant)
@@ -91,11 +92,16 @@ class LongTermMemory:
     def save_facts(self, facts: list[dict]):
         if not facts:
             return
+        blocked = suppressed_facts(self.user_id)
         conn = self._open()
         try:
             for f in facts:
-                fact_text = f.get("fact", "").strip()
-                if not fact_text:
+                if not isinstance(f, dict) or not isinstance(f.get("fact"), str):
+                    continue
+                fact_text = f["fact"].strip()[:1000]
+                if not fact_text or fact_text in blocked:
+                    continue
+                if conn.execute("SELECT 1 FROM long_term_memory WHERE user_id=? AND fact=?", (self.user_id, fact_text)).fetchone():
                     continue
                 conn.execute(
                     "INSERT INTO long_term_memory (user_id, fact, category, importance) VALUES (?,?,?,?)",
@@ -190,7 +196,7 @@ def extract_memories(conversation: list[dict]) -> list[dict]:
     prompt = EXTRACTION_PROMPT.format(conversation=conv_text)
 
     try:
-        raw = gemini_generate(prompt)
+        raw = generate_text(prompt)
         raw = re.sub(r"```json|```", "", raw).strip()
         facts = json.loads(raw)
         if isinstance(facts, list):
@@ -251,3 +257,21 @@ if __name__ == "__main__":
     print("\nRelevant to 'GPU architecture':")
     for f in ltm.load_relevant("GPU architecture"):
         print(f" - {f['fact']}")
+
+
+def suppressed_facts(user_id):
+    with sqlite3.connect(str(DB_PATH), timeout=15) as conn:
+        conn.execute('CREATE TABLE IF NOT EXISTS forgotten_facts (user_id TEXT NOT NULL, fact TEXT NOT NULL, PRIMARY KEY(user_id,fact))')
+        return {r[0] for r in conn.execute('SELECT fact FROM forgotten_facts WHERE user_id=?', (user_id,))}
+
+
+def suppress_fact(user_id, fact):
+    with sqlite3.connect(str(DB_PATH), timeout=15) as conn:
+        conn.execute('CREATE TABLE IF NOT EXISTS forgotten_facts (user_id TEXT NOT NULL, fact TEXT NOT NULL, PRIMARY KEY(user_id,fact))')
+        conn.execute('INSERT OR IGNORE INTO forgotten_facts(user_id,fact) VALUES (?,?)', (user_id,fact))
+
+
+def unsuppress_fact(user_id, fact):
+    suppressed_facts(user_id)
+    with sqlite3.connect(str(DB_PATH), timeout=15) as conn:
+        conn.execute('DELETE FROM forgotten_facts WHERE user_id=? AND fact=?', (user_id,fact))

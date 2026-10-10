@@ -1,169 +1,338 @@
-import os
-from fastapi import FastAPI, HTTPException
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse, HTMLResponse
-from pydantic import BaseModel
-import uvicorn
+"""FastAPI chat, isolated audio, and Neo4j memory routes."""
+from collections import OrderedDict
+import asyncio
+from contextlib import asynccontextmanager
+import logging
+import re
+import threading
+from typing import Literal
 
 from dotenv import load_dotenv
-load_dotenv(".env.local")
-# Import existing core modules
+load_dotenv('.env.local')
+
+from fastapi import BackgroundTasks, FastAPI, HTTPException
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse, HTMLResponse
+from pydantic import BaseModel, Field
+import uvicorn
+
 from agent import JensenAgent
-from memory import get_all_memories, delete_all_memories
+from api_client import GenerationError, GenerationCancelled, _collect_keys
+from knowledge_graph import graph, UPDATE_EVERY
+from knowledge_map import knowledge_map
+from memory import get_all_memories
 import tts as tts_module
-from ingest import ingest_all
+from streaming import event_response
+from source_utils import in_era
+
+logger = logging.getLogger(__name__)
 
 
-os.environ["OPENAI_API_BASE"] = "https://api.groq.com/openai/v1"
-os.environ["OPENAI_API_KEY"] = os.environ.get("GROQ_API_KEY", "your-key-if-not-in-env")
+@asynccontextmanager
+async def lifespan(app):
+    def prepare_map():
+        knowledge_map.initialize()
+        if _collect_keys() or __import__('os').getenv('GROQ_API_KEY'): knowledge_map.enrich()
+    task = asyncio.create_task(asyncio.to_thread(prepare_map))
+    try:
+        yield
+    finally:
+        await task
+        graph.close()
 
 
+app = FastAPI(title='Jensen Huang - Digital Twin API', lifespan=lifespan)
+app.mount('/static', StaticFiles(directory='static'), name='static')
+agent_instances = OrderedDict()
+_agents_lock = threading.RLock()
 
-app = FastAPI(title="Jensen Huang - Digital Twin API")
 
+def get_agent(user_id, session_id='default'):
+    key = (user_id, session_id)
+    with _agents_lock:
+        if key not in agent_instances:
+            agent_instances[key] = JensenAgent(user_id=user_id, session_id=session_id)
+        agent_instances.move_to_end(key)
+        while len(agent_instances) > 100:
+            agent_instances.popitem(last=False)
+        return agent_instances[key]
 
-
-# Mount the static directory for HTML, CSS, JS, and Images
-app.mount("/static", StaticFiles(directory="static"), name="static")
-
-# Initialize ChromaDB on startup
-if not os.path.exists("./storage/chroma_db"):
-    print("Creating ChromaDB...")
-    ingest_all()
-else:
-    print("ChromaDB already exists. Skipping.")
-
-# State management for agents (similar to Gradio's state)
-agent_instances = {}
-
-def get_agent(user_id: str) -> JensenAgent:
-    user_id = user_id.strip() or "default_user"
-    
-    if len(agent_instances) > 10:
-        oldest_key = next(iter(agent_instances))
-        del agent_instances[oldest_key]
-        
-    if user_id not in agent_instances:
-        agent_instances[user_id] = JensenAgent(user_id=user_id)
-    return agent_instances[user_id]
-
-# --- API Models ---
-class ChatRequest(BaseModel):
-    message: str
-    user_id: str = "default_user"
-    era: str = "all"
-    voice_enabled: bool = False
 
 class SessionRequest(BaseModel):
-    user_id: str = "default_user"
+    user_id: str = Field(min_length=1, max_length=128)
+    session_id: str = Field(default='default', min_length=1, max_length=128)
 
-# ADD THIS NEW MODEL FOR THE GREETING
+
+class ChatRequest(SessionRequest):
+    message: str = Field(min_length=1, max_length=8000)
+    era: Literal['all', 'pre_cuda', 'deep_learning', 'llm_era'] = 'all'
+    voice_enabled: bool = False
+    knowledge_node_id: str | None = Field(default=None, max_length=80)
+    mode: Literal['conversation','beginner','pitch','architecture','compare'] = 'conversation'
+    compare_years: list[int] | None = Field(default=None, min_length=2, max_length=2)
+    use_graph: bool = True
+
+
+def validate_comparison(req):
+    if req.compare_years and (len(set(req.compare_years)) != 2 or any(y < 1900 or y > 2100 or not in_era(y,req.era) for y in req.compare_years)):
+        raise HTTPException(400,'Choose two different source years within the selected era, or select All Eras.')
+
+
 class GreetRequest(BaseModel):
-    name: str = "Guest"
-# Add this model near the top where your other classes are (ChatRequest, GreetRequest)
+    name: str = Field(default='Guest', max_length=80)
+    voice_enabled: bool = False
+
+
 class SpeakRequest(BaseModel):
-    text: str
-# --- Endpoints ---
-# Add this new endpoint right below your /api/greet endpoint
-@app.post("/api/speak")
-async def generate_speech(req: SpeakRequest):
-    if not tts_module.is_available():
-        raise HTTPException(status_code=503, detail="TTS not available")
-    
-    # This generates the audio on the fly, overwriting the default output file
+    text: str = Field(min_length=1, max_length=6000)
+
+
+@app.get('/', response_class=HTMLResponse)
+def serve_frontend():
+    with open('static/index.html', encoding='utf-8') as f:
+        return f.read()
+
+
+@app.get('/api/health')
+def health():
+    import os
+    return {'status': 'ok', 'chat_configured': bool(_collect_keys() or os.getenv('GROQ_API_KEY')),
+            'tts_backend': 'pocket', 'tts_voice': 'jensen_reference', 'tts_loaded': tts_module.is_loaded(),
+            'neo4j_configured': graph.configured(), 'memory_update_turns': UPDATE_EVERY}
+
+
+@app.post('/api/chat')
+def chat_endpoint(req: ChatRequest, background_tasks: BackgroundTasks):
+    if not req.message.strip():
+        raise HTTPException(400, 'Message is required')
+    validate_comparison(req)
+    agent = get_agent(req.user_id, req.session_id)
+    knowledge_node = None
+    if req.knowledge_node_id:
+        knowledge_node = knowledge_map.node(req.knowledge_node_id)
+        if knowledge_node is None:
+            raise HTTPException(404, 'This source topic is unavailable. Refresh the Jensen map.')
+    try:
+        with agent.lock:
+            agent.set_era(req.era)
+            result = agent.chat(req.message.strip(), knowledge_node=knowledge_node, mode=req.mode, compare_years=req.compare_years, use_graph=req.use_graph)
+    except GenerationError as exc:
+        raise HTTPException(503, str(exc)) from None
+    except Exception:
+        logger.exception('Chat request failed')
+        raise HTTPException(500, 'Could not generate a reply. Please try again.') from None
+    background_tasks.add_task(graph.update, req.user_id)
+    # Voice is generated separately by the browser so it cannot delay a text answer.
+    return result | {'audio_file': None, 'tts_status': 'pending' if req.voice_enabled else 'disabled',
+                     'memory': graph.status(req.user_id)}
+
+
+@app.post('/api/chat/stream')
+def chat_stream(req: ChatRequest):
+    if not req.message.strip(): raise HTTPException(400,'Message is required')
+    node = knowledge_map.node(req.knowledge_node_id) if req.knowledge_node_id else None
+    if req.knowledge_node_id and node is None: raise HTTPException(404,'Source topic unavailable')
+    validate_comparison(req)
+    agent = get_agent(req.user_id,req.session_id)
+    def worker(emit,cancel):
+        acquired=False
+        try:
+            while not cancel.is_set():
+                if agent.lock.acquire(timeout=.2): acquired=True;break
+            if not acquired:return
+            agent.set_era(req.era)
+            for event in agent.stream(req.message.strip(),node,req.mode,req.compare_years,cancel,req.use_graph): emit(event)
+            if not cancel.is_set(): threading.Thread(target=graph.update,args=(req.user_id,),daemon=True).start()
+        except GenerationCancelled: pass
+        except GenerationError as exc: emit({'type':'error','error':str(exc)})
+        except Exception:
+            logger.exception('Chat stream failed');emit({'type':'error','error':'Could not complete the reply. Please retry.'})
+        finally:
+            if acquired:agent.lock.release()
+    return event_response(worker)
+
+
+class StreamSpeakRequest(SpeakRequest):
+    request_id: str = Field(pattern=r'^[a-f0-9-]{36}$')
+
+class CancelSpeakRequest(BaseModel):
+    request_id: str = Field(pattern=r'^[a-f0-9-]{36}$')
+
+_voice_jobs={}
+_voice_jobs_lock=threading.Lock()
+
+@app.post('/api/speak/stream')
+def stream_speech(req: StreamSpeakRequest):
+    if not req.text.strip():raise HTTPException(400,'Text is required')
+    cancel=threading.Event()
+    with _voice_jobs_lock:
+        if req.request_id in _voice_jobs:raise HTTPException(409,'Voice request is already active')
+        if len(_voice_jobs)>=8:raise HTTPException(429,'Voice queue is full. Retry shortly.')
+        _voice_jobs[req.request_id]=cancel
+    def worker(emit,stop):
+        try:
+            for event in tts_module.speak_stream(req.text,stop):emit(event)
+        except tts_module.VoiceSetupError as exc:emit({'type':'error','error':str(exc)})
+        except Exception:
+            logger.exception('Voice stream failed');emit({'type':'error','error':'Voice could not finish. Please retry Play.'})
+        finally:
+            with _voice_jobs_lock:_voice_jobs.pop(req.request_id,None)
+    return event_response(worker,cancel)
+
+@app.post('/api/speak/cancel')
+def cancel_speech(req: CancelSpeakRequest):
+    with _voice_jobs_lock:
+        job=_voice_jobs.get(req.request_id)
+        if job:job.set()
+    return {'status':'stopped'}
+
+
+@app.post('/api/speak')
+def generate_speech(req: SpeakRequest):
+    if not req.text.strip():
+        raise HTTPException(400, 'Text is required')
     audio_path = tts_module.speak(req.text)
     if not audio_path:
-        raise HTTPException(status_code=500, detail="Audio generation failed")
-        
-    return {"audio_file": os.path.basename(audio_path)}
+        raise HTTPException(503, tts_module.get_error() or 'Voice is temporarily unavailable.')
+    from pathlib import Path
+    return {'audio_file': Path(audio_path).name, 'tts_backend': 'pocket', 'tts_voice': 'jensen_reference'}
 
 
-@app.get("/", response_class=HTMLResponse)
-async def serve_frontend():
-    with open("static/index.html", "r", encoding="utf-8") as f:
-        return f.read()
-@app.post("/api/chat")
-async def chat_endpoint(req: ChatRequest):
-    if not req.message or not req.message.strip():
-        raise HTTPException(status_code=400, detail="Message is required")
-    
-    agent = get_agent(req.user_id)
-    agent.set_era(req.era)
-
-    # Directly query the agent (The prompt guardrail handles the filtering natively)
-    result = agent.chat(req.message)
-    
-    answer = result["answer"]
-    sources = result["sources"]
-    query_type = result.get("query_type", "unknown")
-    chunks_used = result.get("chunks_used", 0)
-    
-    # Audio Generation
-    audio_filename = None
-    tts_status = "disabled"
-    if req.voice_enabled and tts_module.is_available():
-        audio_path = tts_module.speak(answer)
-        if audio_path:
-            audio_filename = os.path.basename(audio_path)
-            tts_status = "success"
-        else:
-            tts_status = f"error: {tts_module.get_error()}"
-
-    return {
-        "answer": answer,
-        "sources": sources,
-        "query_type": query_type,
-        "chunks_used": chunks_used,
-        "audio_file": audio_filename,
-        "tts_status": tts_status
-    }
-@app.get("/api/audio/{filename}")
-async def get_audio(filename: str):
-    """Serves the generated TTS audio files."""
-    # Assuming tts.py saves audio in the root directory. Update path if needed.
-    file_path = os.path.join(".", filename) 
-    if os.path.exists(file_path):
-        return FileResponse(file_path, media_type="audio/wav")
-    raise HTTPException(status_code=404, detail="Audio file not found")
-
-@app.post("/api/greet")
-async def get_greeting(req: GreetRequest):
-    # Uses the name from the landing page!
-    greeting_text = f"Ah, {req.name}, right on time. Drop your bag, and take a seat. Welcome. How are you?"
-    
-    audio_filename = None
-    if tts_module.is_available():
-        audio_path = tts_module.speak(greeting_text)
-        if audio_path:
-            audio_filename = os.path.basename(audio_path)
-            
-    return {
-        "text": greeting_text,
-        "audio_file": audio_filename
-    }
+@app.get('/api/audio/{filename}')
+def get_audio(filename: str):
+    if not re.fullmatch(r'[a-f0-9]{32}\.wav', filename):
+        raise HTTPException(404, 'Audio file not found')
+    path = tts_module.AUDIO_DIR / filename
+    if not path.is_file():
+        raise HTTPException(404, 'Audio expired. Click Play to regenerate it.')
+    return FileResponse(path, media_type='audio/wav', headers={'Cache-Control': 'private, max-age=3600'})
 
 
-@app.post("/api/session/save")
-async def save_session(req: SessionRequest):
-    agent = get_agent(req.user_id)
-    agent.end_session()
-    return {"status": "Session saved — facts extracted into long-term memory."}
+@app.post('/api/greet')
+def get_greeting(req: GreetRequest):
+    return {'text': f'Ah, {req.name or "Guest"}, right on time. Drop your bag, and take a seat. Welcome. How are you?',
+            'audio_file': None, 'tts_status': 'pending' if req.voice_enabled else 'disabled'}
 
-@app.post("/api/session/reset")
-async def reset_session(req: SessionRequest):
-    agent = get_agent(req.user_id)
-    agent.reset_conversation()
-    return {"status": "Chat reset."}
 
-@app.get("/api/memory/{user_id}")
-async def fetch_memories(user_id: str):
-    facts = get_all_memories(user_id.strip() or "default_user")
-    return {"memories": facts}
+@app.post('/api/session/save')
+def save_session(req: SessionRequest):
+    agent = get_agent(req.user_id, req.session_id)
+    with agent.lock:
+        state = agent.end_session()
+    if state.get('state') == 'error':
+        raise HTTPException(503, state.get('error'))
+    return {'status': 'Memory saved.', 'memory': state}
 
-@app.delete("/api/memory/{user_id}")
-async def clear_memories(user_id: str):
-    delete_all_memories(user_id.strip() or "default_user")
-    return {"status": "Memories cleared."}
 
-if __name__ == "__main__":
-    uvicorn.run(app, port=8000)
+@app.post('/api/session/reset')
+def reset_session(req: SessionRequest):
+    agent = get_agent(req.user_id, req.session_id)
+    with agent.lock:
+        agent.reset_conversation()
+    return {'status': 'Chat reset.'}
+
+
+@app.get('/api/memory/{user_id}')
+def fetch_memories(user_id: str):
+    return {'memories': graph.facts(user_id)}
+
+
+@app.get('/api/graph/{user_id}')
+def fetch_graph(user_id: str):
+    return graph.fetch(user_id)
+
+
+@app.post('/api/graph/update')
+def update_graph(req: SessionRequest):
+    return graph.update(req.user_id, force=True)
+
+
+@app.get('/api/knowledge-map')
+def fetch_knowledge_map(background_tasks: BackgroundTasks):
+    data = knowledge_map.snapshot()
+    if data.get('state') != 'ready' or not data.get('neo4j_synced'):
+        background_tasks.add_task(knowledge_map.initialize)
+    return data
+
+
+@app.get('/api/knowledge-map/node/{node_id}')
+def fetch_knowledge_node(node_id: str):
+    node = knowledge_map.node(node_id)
+    if node is None:
+        raise HTTPException(404, 'Source topic not found')
+    return node
+
+
+class FactEditRequest(BaseModel):
+    user_id: str = Field(min_length=1,max_length=128)
+    old_fact: str = Field(min_length=1,max_length=1000)
+    fact: str = Field(min_length=1,max_length=1000)
+    category: Literal['background','interest','expertise','project','preference','general'] = 'preference'
+    importance: int = Field(default=2,ge=1,le=3)
+
+class FactDeleteRequest(BaseModel):
+    user_id: str = Field(min_length=1,max_length=128)
+    fact: str = Field(min_length=1,max_length=1000)
+
+@app.patch('/api/memory/fact')
+def edit_memory(req: FactEditRequest):
+    if not req.fact.strip():raise HTTPException(400,'A remembered fact cannot be blank')
+    try:return {'memories':graph.edit_fact(req.user_id,req.old_fact,req.fact.strip(),req.category,req.importance)}
+    except Exception:
+        logger.exception('Memory correction failed');raise HTTPException(503,'Could not correct this memory. Retry shortly.') from None
+
+@app.delete('/api/memory/fact')
+def forget_memory(req: FactDeleteRequest):
+    try:return {'memories':graph.edit_fact(req.user_id,req.fact)}
+    except Exception:
+        logger.exception('Memory deletion failed');raise HTTPException(503,'Could not forget this memory. Retry shortly.') from None
+
+class RetrievalRequest(BaseModel):
+    query: str = Field(min_length=1,max_length=2000)
+    era: Literal['all','pre_cuda','deep_learning','llm_era'] = 'all'
+
+@app.post('/api/retrieval/inspect')
+def inspect_retrieval(req: RetrievalRequest):
+    import time
+    from rag import retrieve
+    from source_utils import ERA_YEAR_RANGES,citations_for
+    start=time.perf_counter();low,high=ERA_YEAR_RANGES[req.era]
+    result=retrieve(req.query,year_min=low,year_max=high)
+    return {'query_type':result['query_type'],'citations':citations_for(result['chunks'],req.era),
+            'retrieval_ms':round((time.perf_counter()-start)*1000,1)}
+
+@app.get('/api/corpus/status')
+def corpus_status():
+    data=knowledge_map.snapshot()
+    return {key:data.get(key) for key in ('state','fingerprint','document_count','source_count','quality','relation_state','semantic_relation_count')}
+
+@app.get('/api/timeline')
+def timeline():return {'years':knowledge_map.timeline()}
+
+@app.get('/showcase',response_class=HTMLResponse)
+def showcase():return FileResponse('static/showcase.html')
+
+@app.get('/api/benchmark')
+def benchmark_results():
+    import json
+    from pathlib import Path
+    path=Path('reports/benchmark.json')
+    return json.loads(path.read_text()) if path.exists() else {'state':'not_run','message':'Benchmark results will appear after the evaluation run.'}
+
+
+@app.delete('/api/memory/{user_id}')
+def clear_memories(user_id: str):
+    try:
+        graph.clear(user_id)
+    except Exception:
+        logger.exception('Memory deletion failed')
+        raise HTTPException(503, 'Memory could not be cleared. Please try again.') from None
+    with _agents_lock:
+        for key in list(agent_instances):
+            if key[0] == user_id:
+                del agent_instances[key]
+    return {'status': 'Memories and knowledge graph cleared.'}
+
+
+if __name__ == '__main__':
+    uvicorn.run(app, host='0.0.0.0', port=7860)

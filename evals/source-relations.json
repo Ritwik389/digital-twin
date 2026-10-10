@@ -1,0 +1,166 @@
+{
+  "corpus_fingerprint": "f1b9ff96b59bb3fb20c27473e204da64058ace484068315b959353231f7bb382",
+  "method": "Public source relationships captured from the original extraction and validated again against exact current corpus passages at startup. Only this exact corpus fingerprint can use the cache.",
+  "relations": [
+    {
+      "source": "map_099af21d9327a73a8cc2fc9f",
+      "target": "map_a8615530f14ef6a809a40239",
+      "label": "USES",
+      "weight": 1,
+      "evidence": [
+        {
+          "filename": "gtc_2022.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2022",
+          "year": 2022,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=PWcNlRI00jo",
+          "start_seconds": null,
+          "chunk_id": "gtc_2022-0",
+          "quote": "simulation, built with NVIDIA Omniverse"
+        }
+      ],
+      "support": "exact_source_excerpt"
+    },
+    {
+      "source": "map_3b181e8478073b2d35647fae",
+      "target": "map_c991d26852deb99c5d450067",
+      "label": "USES",
+      "weight": 1,
+      "evidence": [
+        {
+          "filename": "gtc_2019.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2019",
+          "year": 2019,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=Z2XlNfCtxwI",
+          "start_seconds": null,
+          "chunk_id": "gtc_2019-1",
+          "quote": "CUDA runs on top of all of our GPUs."
+        }
+      ],
+      "support": "exact_source_excerpt"
+    },
+    {
+      "source": "map_ed880ff4e29ed8efa0baa933",
+      "target": "map_68bf6c2704147a31fb2295a1",
+      "label": "ENABLES",
+      "weight": 1,
+      "evidence": [
+        {
+          "filename": "gtc_2021.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2021",
+          "year": 2021,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=jhDiaUL_RaM",
+          "start_seconds": null,
+          "chunk_id": "gtc_2021-1",
+          "quote": "NEMO Megatron trains large language models."
+        }
+      ],
+      "support": "exact_source_excerpt"
+    },
+    {
+      "source": "map_0020b0a9ee6eb7659d6cb3a2",
+      "target": "map_c0764ca56f26e26a6765da9e",
+      "label": "INTRODUCED",
+      "weight": 1,
+      "evidence": [
+        {
+          "filename": "gtc_2023.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2023",
+          "year": 2023,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=DiGB5uAYKAg",
+          "start_seconds": null,
+          "chunk_id": "gtc_2023-1",
+          "quote": "Nvidia invented accelerated computing."
+        }
+      ],
+      "support": "exact_source_excerpt"
+    },
+    {
+      "source": "map_0020b0a9ee6eb7659d6cb3a2",
+      "target": "map_a8615530f14ef6a809a40239",
+      "label": "USES",
+      "weight": 1,
+      "evidence": [
+        {
+          "filename": "gtc_2022.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2022",
+          "year": 2022,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=PWcNlRI00jo",
+          "start_seconds": null,
+          "chunk_id": "gtc_2022-2",
+          "quote": "Nvidia LightSpeed Studios used Omniverse to remaster one of the most celebrated games in history."
+        }
+      ],
+      "support": "exact_source_excerpt"
+    },
+    {
+      "source": "map_f7d73aa46cab9d6229232f1a",
+      "target": "map_75aa9a371f7841bfa0e4afc2",
+      "label": "USES",
+      "weight": 1,
+      "evidence": [
+        {
+          "filename": "gtc_2022.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2022",
+          "year": 2022,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=PWcNlRI00jo",
+          "start_seconds": null,
+          "chunk_id": "gtc_2022-2",
+          "quote": "RTX Neural rendering algorithms run on programmable shaders, RTX cores and Tensor cores to create amazing images."
+        }
+      ],
+      "support": "exact_source_excerpt"
+    },
+    {
+      "source": "map_18a7132bb3048b0fe8b34d40",
+      "target": "map_4faf22dc997001aeb26bb52d",
+      "label": "ENABLES",
+      "weight": 1,
+      "evidence": [
+        {
+          "filename": "gtc_2025.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2025",
+          "year": 2025,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=_waPvOwL9Z8",
+          "start_seconds": null,
+          "chunk_id": "gtc_2025-2",
+          "quote": "Robotics, which has been enabled by physical AI."
+        }
+      ],
+      "support": "exact_source_excerpt"
+    },
+    {
+      "source": "map_a3336d388f8f152e6acde574",
+      "target": "map_7453e8d21fc6118b6d3a7374",
+      "label": "ENABLES",
+      "weight": 1,
+      "evidence": [
+        {
+          "filename": "gtc_spring_2021.txt",
+          "source": "gtc_keynote",
+          "title": "GTC SPRING 2021",
+          "year": 2021,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=eAn_oiZwUXA",
+          "start_seconds": null,
+          "chunk_id": "gtc_spring_2021-2",
+          "quote": "With just a GeForce, every student can have a supercomputer."
+        }
+      ],
+      "support": "exact_source_excerpt"
+    }
+  ]
+}

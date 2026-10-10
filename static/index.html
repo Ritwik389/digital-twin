@@ -62,15 +62,22 @@
             padding-left: 5px; height: 14px;
         }
         .typing-dot {
-            width: 6px; height: 6px; background-color: var(--nvidia-green);
-            border-radius: 50%; animation: typingBounce 1.4s infinite ease-in-out both;
+            width: 8px; height: 8px; background-color: var(--nvidia-green);
+            border-radius: 50%; animation: typingBounce 1.15s infinite ease-in-out both;
         }
         .typing-dot:nth-child(1) { animation-delay: -0.32s; }
         .typing-dot:nth-child(2) { animation-delay: -0.16s; }
         @keyframes typingBounce {
-            0%, 80%, 100% { transform: scale(0); }
-            40% { transform: scale(1); }
+            0%, 70%, 100% { transform: translateY(0); opacity: .45; }
+            35% { transform: translateY(-7px); opacity: 1; }
         }
+        .pending-reply { display: flex; align-items: center; gap: 12px; padding-top: 8px; padding-bottom: 8px; color: #b6c3ae; font-size: 13px; }
+        .pending-reply .typing-indicator { height: 24px; }
+        .ambience-controls { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 8px 15px; border-top: 1px solid #eee; font-size: 11px; background: #fafafa; }
+        .ambience-controls button { font-size: 12px; white-space: nowrap; }
+        .ambience-controls label { display: flex; align-items: center; gap: 8px; color: #777; }
+        #music-volume { width: 95px; accent-color: var(--nvidia-green); }
+        @media (prefers-reduced-motion: reduce) { .typing-dot { animation: none; opacity: .8; } }
         #chat-monitor {
             position: absolute; top: 15%; left: 5%; width: 350px; height: 60vh;
             background: var(--dark-bg); border: 2px solid #333; border-radius: 8px;
@@ -117,6 +124,85 @@
         .btn-primary:hover { background: #88d400; color: black; }
         .recording { color: red !important; animation: pulse 1.5s infinite; }
         #loading { display: none; font-style: italic; color: #888; font-size: 12px; }
+        button:disabled { opacity: .55; cursor: wait; }
+        #app-status { position: fixed; top: 12px; left: 50%; transform: translateX(-50%); background: #111; color: #ddd; border-radius: 6px; padding: 10px 16px; z-index: 100; font-size: 13px; display: none; max-width: 80vw; }
+        #graph-dialog { width: min(1080px, 92vw); max-width: 92vw; padding: 22px; color: #eee; background: #101510; border: 1px solid #42641a; border-radius: 14px; box-shadow: 0 20px 100px #000; }
+        #graph-dialog::backdrop { background: #000b; backdrop-filter: blur(5px); }
+        .graph-header { display: flex; justify-content: space-between; align-items: start; }
+        .graph-header h2 { color: var(--nvidia-green); margin: 0; font-size: 24px; }
+        .graph-header p, #graph-status { font-size: 13px; color: #a8b5a1; }
+        #btn-close-graph { color: white; font-size: 22px; padding: 0 8px; }
+        .graph-toolbar { display: flex; gap: 10px; }
+        .graph-toolbar button { width: auto; }
+        .graph-body { display: grid; grid-template-columns: 1fr 220px; gap: 15px; }
+        #memory-graph { width: 100%; height: min(58vh, 550px); background: #080d08; border: 1px solid #243024; border-radius: 8px; touch-action: none; }
+        #graph-detail { font-size: 13px; line-height: 1.6; white-space: pre-wrap; overflow-wrap: anywhere; padding: 14px; background: #182018; border-radius: 8px; max-height: 520px; overflow-y: auto; }
+        #map-dialog { width: min(1320px, 94vw); max-width: 94vw; max-height: 90vh; padding: 22px; color: #e8eee5; background: #0b120d; border: 1px solid #42641a; border-radius: 14px; box-shadow: 0 20px 100px #000; }
+        #map-dialog::backdrop { background: #000c; backdrop-filter: blur(5px); }
+        .map-controls { display: flex; gap: 10px; flex-wrap: wrap; margin: 8px 0; }
+        .map-controls input, .map-controls select { padding: 9px 12px; background: #131d15; border: 1px solid #3d5140; border-radius: 6px; color: #e8eee5; font: inherit; font-size: 13px; }
+        #map-search { flex: 1; min-width: 140px; }
+        #map-category { width: auto; margin: 0; }
+        .map-controls button { color: #d6e6cf; border: 1px solid #3d5140; border-radius: 6px; padding: 7px 10px; font-size: 13px; }
+        #btn-close-map { color: white; font-size: 22px; }
+        .map-body { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 16px; }
+        #jensen-map { width: 100%; height: min(62vh, 650px); border: 1px solid #263d2b; border-radius: 9px; background: radial-gradient(ellipse at center, #17261b, #080e0a); touch-action: none; }
+        #map-detail { padding: 16px; background: #152018; border-radius: 9px; max-height: min(58vh, 620px); overflow-y: auto; font-size: 13px; line-height: 1.6; }
+        #map-detail h3 { margin: 0 0 5px; font-size: 20px; color: #c7ed97; }
+        #map-detail h4 { color: #d6e5d1; margin: 18px 0 8px; }
+        .map-meta, #map-status, .map-footnote { font-size: 12px; color: #a4b6a6; }
+        .map-node circle { transition: fill .2s; }
+        .map-node:hover circle, .map-node:focus circle { fill: #345138; stroke: white; }
+        .map-node:focus { outline: none; }
+        .map-reply { white-space: pre-wrap; padding: 12px; background: #0c160e; border-left: 3px solid #76b900; border-radius: 4px; }
+        #map-detail blockquote { margin: 10px 0 3px; padding-left: 10px; border-left: 2px solid #425d46; color: #c8d4c7; }
+        .map-action { padding: 7px 10px; border: 1px solid #76b900; border-radius: 5px; color: #c7ed97; margin-top: 9px; font-size: 12px; }
+        .map-related { display: flex; flex-wrap: wrap; gap: 5px; }
+        .map-related button { border: 1px solid #3b5140; border-radius: 15px; color: #c8d4c7; padding: 4px 9px; font-size: 11px; }
+        .map-footnote { line-height: 1.5; margin-bottom: 0; }
+        @media (max-width: 760px) {
+            body, html { overflow: auto; }
+            #chat-monitor { position: relative; top: auto; left: auto; width: calc(100% - 24px); height: 48vh; margin: 52px 10px 12px; }
+            #system-panel { position: relative; top: auto; right: auto; width: calc(100% - 24px); height: 35vh; margin: 10px; }
+            #memo-pad { position: relative; bottom: auto; left: auto; transform: none; width: calc(100% - 20px); margin: 10px; }
+            .memo-controls { flex-wrap: wrap; gap: 12px; }
+            .entrance-content { padding: 30px 22px; max-width: 80vw; }
+            .graph-body { grid-template-columns: 1fr; }
+            #graph-detail { max-height: 120px; }
+            #graph-dialog { padding: 12px; }
+            .map-body { grid-template-columns: 1fr; }
+            #map-dialog { padding: 12px; }
+            #jensen-map { height: 44vh; }
+            #map-detail { max-height: 27vh; }
+        }
+        [hidden] { display: none !important; }
+        .mode-controls {padding:8px 15px;display:flex;align-items:center;gap:12px;background:#f4f5f0;font-size:12px;}
+        .mode-controls select {width:auto;flex:1;margin:0;background:white;color:#333;border-color:#ccc;}
+        #voice-state {font-size:11px;color:#555;padding:0 15px;background:#fafafa;}
+        .memo-controls {flex-wrap:wrap;gap:8px;}
+        .memo-controls > div {flex-wrap:wrap;gap:8px !important;}
+        .citation-button {display:inline;color:#bce389;font-size:inherit;border-bottom:1px dotted #76b900;padding:0 3px;}
+        .msg-jensen details {white-space:normal;margin-top:8px;font-size:11px;color:#abc39e;}
+        .msg-jensen details p {margin:6px 0;}
+        .msg-jensen details .citation-button {display:block;text-align:left;margin:5px 0;}
+        .msg-jensen small {display:block;color:#b3bbae;font-size:11px;margin-top:8px;}
+        .work-dialog {width:min(760px,90vw);max-height:85vh;box-sizing:border-box;padding:24px;background:#0d160f;color:#e2ecdd;border:1px solid #4a6d2e;border-radius:14px;}
+        .work-dialog::backdrop {background:#000b;backdrop-filter:blur(4px);}
+        .work-dialog h2 {color:#b4e178;font-size:22px;}
+        .work-dialog button {color:#d4e8c7;}
+        .work-dialog a,.showcase-link {color:#b4e178;font-size:12px;}
+        #citation-quote {white-space:pre-wrap;line-height:1.6;border-left:3px solid #76b900;margin:15px 0;padding:0 16px;}
+        .fact-row {padding:16px 0;border-bottom:1px solid #344430;display:flex;flex-wrap:wrap;gap:10px;}
+        .fact-row textarea {box-sizing:border-box;width:100%;height:85px;background:#152218;color:#e2ecdd;border:1px solid #3d5436;border-radius:6px;padding:8px;font:14px/1.5 inherit;}
+        .fact-row select {width:auto;margin:8px 0 0;}
+        #timeline-years {display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:20px 0;}
+        .year-card {display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:14px;border:1px solid #3d5436;border-radius:8px;text-align:left;background:#152218;}
+        .year-card strong {font-size:25px;color:#b4e178;}
+        .year-card span,.year-card small {font-size:11px;line-height:1.4;}
+        .compare-controls {display:flex;flex-wrap:wrap;gap:12px;align-items:end;}
+        .compare-controls label {display:flex;flex-direction:column;gap:6px;font-size:12px;}
+        .compare-controls select {margin:0;min-width:90px;}
+        .compare-controls input {background:#152218;color:#e2ecdd;border:1px solid #3d5436;padding:9px;border-radius:4px;}
     </style>
 </head>
 <body>
@@ -133,7 +219,7 @@
             
             <div class="login-form">
                 <input type="text" id="landing-name" class="login-input" placeholder="Your Name (e.g. Intern)" required>
-                <input type="text" id="landing-user-id" class="login-input" placeholder="System ID (e.g. user_01)" required>
+                <p style="font-size:12px;color:#aaa;margin:0">Your chat memory stays separate from other visitors.</p>
             </div>
             <button id="btn-enter">Enter Office</button>
         </div>
@@ -164,20 +250,29 @@
         </div>
 
         <div class="panel-section">
-            <h3>Long-Term Memory</h3>
+            <h3>Jensen’s World</h3>
+            <button id="btn-jensen-map" class="sidebar-btn">◉ Explore Jensen’s Map</button>
+            <button id="btn-timeline" class="sidebar-btn">◷ Source timeline & comparisons</button><a class="showcase-link" href="/showcase" target="_blank" rel="noopener">Project showcase ↗</a>
+            <p style="font-size:11px;color:#aaa;margin:8px 0 0;line-height:1.5">A map built from the source collection. Click a topic to follow its evidence and ask Jensen about it.</p>
+        </div>
+        <div class="panel-section">
+            <h3>Jensen’s Memory</h3>
+            <button id="btn-memory-graph" class="sidebar-btn">◉ View Knowledge Graph</button>
+            <div id="memory-status" class="data-box" role="status">Updates every 5 completed chat turns.</div>
             <button id="btn-extract-mem" class="sidebar-btn">Save & Extract Facts</button>
             <div style="display: flex; gap: 5px;">
+                <button id="btn-manage-memory" class="sidebar-btn">Inspect & edit facts</button>
                 <button id="btn-load-mem" class="sidebar-btn">Load</button>
                 <button id="btn-clear-mem" class="sidebar-btn" style="color: #ff4444;">Clear</button>
             </div>
-            <div id="memory-box" class="data-box">Memories uninitialized.</div>
+            <div id="memory-box" class="data-box">No memories loaded yet.</div>
         </div>
 
         <div class="panel-section">
             <h3>RAG Diagnostics</h3>
             <select id="era-select" class="sidebar-btn">
                 <option value="all">All Eras</option>
-                <option value="pre_cuda">Pre-CUDA (<= 2007)</option>
+                <option value="pre_cuda">Early GPU era (through 2007)</option>
                 <option value="deep_learning">Deep Learning (2012-2021)</option>
                 <option value="llm_era">LLM Era (2022+)</option>
             </select>
@@ -186,13 +281,46 @@
         </div>
     </div>
 
+    <dialog id="graph-dialog" aria-labelledby="graph-title">
+        <div class="graph-header"><div><h2 id="graph-title">Jensen’s Memory</h2>
+        <p>People, projects, and ideas from your conversations.</p></div>
+        <button id="btn-close-graph" aria-label="Close knowledge graph">✕</button></div>
+        <div class="graph-toolbar"><button id="btn-refresh-graph" class="sidebar-btn">Refresh</button>
+        <button id="btn-update-graph" class="sidebar-btn">Update from chat now</button>
+        <button id="btn-fit-graph" class="sidebar-btn">Reset view</button></div>
+        <p id="graph-status" role="status">Loading memory…</p>
+        <div class="graph-body"><svg id="memory-graph" viewBox="0 0 1200 850" role="img" aria-label="Your conversation knowledge graph"></svg>
+        <aside id="graph-detail">Click a node or connection to see its details. Scroll to zoom; drag the background to pan.</aside></div>
+    </dialog>
+    <dialog id="map-dialog" aria-labelledby="map-title">
+        <div class="graph-header"><div><h2 id="map-title">Jensen’s World</h2>
+        <p>Explore the ideas, technology, and people in the source collection.</p></div>
+        <button id="btn-close-map" aria-label="Close Jensen map">✕</button></div>
+        <div class="map-controls">
+            <input id="map-search" type="search" aria-label="Search Jensen map" placeholder="Find CUDA, Blackwell, digital twins…">
+            <select id="map-category" aria-label="Map category"><option value="">Overview · all categories</option></select>
+            <label class="map-meta"><input type="checkbox" id="map-semantic"> Relationships only</label><button id="btn-map-reset">Reset view</button><button id="btn-map-refresh">Refresh</button>
+        </div>
+        <p id="map-status" role="status">Loading the source map…</p>
+        <div class="map-body">
+            <svg id="jensen-map" viewBox="0 0 1200 900" role="img" aria-label="Interactive Jensen knowledge map"></svg>
+            <aside id="map-detail" aria-live="polite">Click a topic to ask Jensen about it. Choose a category or search to see more of the map.</aside>
+        </div>
+        <p class="map-footnote">Green connections show co-mentions. Gold connections show extracted relationships with exact source excerpts. Click a connection to inspect its evidence. Scroll to zoom; drag to pan.</p>
+    </dialog>
+    <div id="app-status" role="status" aria-live="polite"></div>
     <div id="memo-pad">
         <div class="memo-header">
             <span>NVIDIA Memo Pad</span>
             <span id="date-display"></span>
         </div>
+        <div class="mode-controls"><label for="mode-select">Conversation mode</label><select id="mode-select"><option value="conversation">Conversation</option><option value="beginner">Explain to a beginner</option><option value="pitch">Review my startup pitch</option><option value="architecture">Review my architecture</option></select></div>
         <div class="memo-input-container">
             <textarea id="user-input" placeholder="Type your question for Jensen..."></textarea>
+        </div>
+        <div id="voice-state" role="status"></div><div class="ambience-controls">
+            <button id="btn-music" aria-pressed="true">♫ Music on</button>
+            <label>Background volume <input id="music-volume" aria-label="Background music volume" type="range" min="0" max="30" value="10"></label>
         </div>
         <div class="memo-controls">
             <div style="display: flex; gap: 15px;">
@@ -207,391 +335,32 @@
                     </div>
                 </span>
                 <label style="font-size: 12px; display:flex; align-items: center; gap:4px; color: #555;">
-                    <input type="checkbox" id="voice-toggle" checked> Enable Voice
+                    <input type="checkbox" id="voice-toggle" checked> Jensen voice (AI)
                 </label>
-                <button id="btn-send" class="btn-primary">Ask ➔</button>
+                <button id="btn-cancel-reply" hidden type="button">Stop reply</button><button id="btn-send" class="btn-primary">Ask ➔</button>
             </div>
         </div>
     </div>
 
-    <script>
-        // --- 1. Init & Global Variables ---
-        document.getElementById('date-display').innerText = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
-        
-        const chatHistory = document.getElementById('chat-history');
-        const userInput = document.getElementById('user-input');
-        const btnSend = document.getElementById('btn-send');
-        const btnMic = document.getElementById('btn-mic');
-        const btnReplay = document.getElementById('btn-replay');
-        const btnStop = document.getElementById('btn-stop');
-        const loading = document.getElementById('loading');
-        const sessionListEl = document.getElementById('session-list');
-        const memoryBox = document.getElementById('memory-box');
-        const overlay = document.getElementById('entrance-overlay');
-        const entranceContent = document.querySelector('.entrance-content');
-        
-        let activeUserId = "default_user"; 
-        let activeUserName = "Guest";
-        
-        let currentAudio = new Audio(); 
-        let lastAudioUrl = null;
-
-        // --- 2. Session Manager (MESSAGES ARRAY UPDATE) ---
-        let sessions = JSON.parse(localStorage.getItem('jensen_sessions')) || {};
-        
-        // Data Migration: Clean up old HTML-based sessions to prevent errors
-        for (const key in sessions) {
-            if (!sessions[key].messages) {
-                sessions[key].messages = []; 
-            }
-        }
-
-        let currentSessionId = localStorage.getItem('jensen_current_session');
-        if (!currentSessionId || !sessions[currentSessionId]) {
-            currentSessionId = `session_${Date.now()}`;
-            sessions[currentSessionId] = { title: "New Conversation", messages: [] };
-        }
-
-
-        function saveSessionsToDisk() {
-            localStorage.setItem('jensen_sessions', JSON.stringify(sessions));
-            localStorage.setItem('jensen_current_session', currentSessionId);
-        }
-
-        function renderChat() {
-            chatHistory.innerHTML = '';
-            
-            // --- HIDE THE GLOBAL REPLAY BUTTON ON SESSION LOAD ---
-            btnReplay.style.display = 'none'; 
-            
-            const messages = sessions[currentSessionId].messages || [];
-            
-            messages.forEach((msg) => {
-                const div = document.createElement('div');
-                div.className = msg.role === 'user' ? 'msg-user' : 'msg-jensen';
-                div.innerHTML = `<strong>${msg.role === 'user' ? 'You' : 'Jensen'}:</strong> ${msg.text}`;
-                
-                // Add inline play button for ALL Jensen messages
-                if (msg.role === 'jensen') {
-                    const playBtn = document.createElement('button');
-                    playBtn.className = 'inline-play-btn';
-                    playBtn.innerHTML = "🔊 Play";
-                    
-                    // Call the on-demand generation function when clicked
-                    playBtn.onclick = () => generateAndPlayAudio(msg.text, playBtn);
-                    
-                    div.appendChild(document.createElement('br'));
-                    div.appendChild(playBtn);
-                }
-                chatHistory.appendChild(div);
-            });
-            chatHistory.scrollTop = chatHistory.scrollHeight;
-        }
-
-        function renderSessionList() {
-            sessionListEl.innerHTML = '';
-            Object.keys(sessions).reverse().forEach((sId) => {
-                const btn = document.createElement('button');
-                btn.className = 'sidebar-btn';
-                btn.style.background = sId === currentSessionId ? 'var(--nvidia-green)' : '#111';
-                btn.style.color = sId === currentSessionId ? 'black' : 'white';
-                btn.style.textAlign = 'left';
-                
-                const d = new Date(parseInt(sId.split('_')[1]));
-                btn.innerText = `💬 ${d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} Session`;
-                
-                btn.onclick = () => {
-                    if (currentAudio) { currentAudio.pause(); btnStop.style.display = 'none'; }
-                    currentSessionId = sId;
-                    saveSessionsToDisk(); 
-                    renderSessionList();
-                    renderChat();
-                };
-                sessionListEl.appendChild(btn);
-            });
-        }
-        
-        // Initial render
-        renderSessionList();
-        renderChat();
-
-        // --- 3. Audio Controller ---
-        function playAudio(url) {
-            if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
-            
-            // Ensure the Global Replay button is visible for the newly played track
-            btnReplay.style.display = 'flex'; 
-            btnStop.style.display = 'flex';
-            
-            currentAudio.src = url;
-            currentAudio.play();
-            currentAudio.onended = () => { btnStop.style.display = 'none'; };
-        }
-
-        // The New On-Demand TTS function
-        async function generateAndPlayAudio(text, btnElement) {
-            if (currentAudio) { currentAudio.pause(); btnStop.style.display = 'none'; }
-            
-            // Show a loading state on the button itself!
-            let originalText = "🔊 Play";
-            if (btnElement) {
-                originalText = btnElement.innerHTML;
-                btnElement.innerHTML = "⏳ Generating...";
-                btnElement.disabled = true;
-            }
-
-            try {
-                const res = await fetch('/api/speak', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ text: text })
-                });
-                const data = await res.json();
-                
-                if (data.audio_file) {
-                    currentAudio.src = `/api/audio/${data.audio_file}?t=${new Date().getTime()}`;
-                    
-                    // Reveal the global Replay & Stop buttons for this newly generated track
-                    btnReplay.style.display = 'flex';
-                    btnStop.style.display = 'flex';
-                    
-                    currentAudio.play();
-                    currentAudio.onended = () => { btnStop.style.display = 'none'; };
-                }
-            } catch (e) {
-                console.error("Audio generation error:", e);
-                alert("Failed to generate audio.");
-            } finally {
-                // Restore the inline button text when done
-                if (btnElement) {
-                    btnElement.innerHTML = originalText;
-                    btnElement.disabled = false;
-                }
-            }
-        }
-
-        // --- 4. The Greeting API Call ---
-        async function triggerGreetingAudio() {
-            try {
-                // Show the typing bubble in the chat log immediately
-                chatHistory.insertAdjacentHTML('beforeend', `<div class="msg-jensen"><strong>Jensen:</strong> <div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>`);
-                chatHistory.scrollTop = chatHistory.scrollHeight;
-
-                const res = await fetch('/api/greet', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name: activeUserName })
-                });
-                const data = await res.json();
-                
-                let generatedAudioUrl = null;
-                if (data.audio_file) {
-                    generatedAudioUrl = `/api/audio/${data.audio_file}?t=${new Date().getTime()}`;
-                }
-                
-                // Add to array (renderChat will automatically erase the typing bubble)
-                sessions[currentSessionId].messages.push({ role: 'jensen', text: data.text, audioUrl: generatedAudioUrl });
-                renderChat();
-                saveSessionsToDisk();
-
-                if (generatedAudioUrl) {
-                    playAudio(generatedAudioUrl);
-                }
-            } catch (err) {
-                console.error(err);
-                sessions[currentSessionId].messages.push({ role: 'jensen', text: "Connection error.", audioUrl: null });
-                renderChat();
-            }
-        }
-
-        // --- 5. Entrance Overlay ---
-        document.getElementById('btn-enter').addEventListener('click', async () => {
-            // Unlock Audio Engine
-            currentAudio.src = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA"; 
-            currentAudio.play().catch(()=>{}); 
-
-            activeUserName = document.getElementById('landing-name').value.trim() || 'Guest';
-            activeUserId = document.getElementById('landing-user-id').value.trim() || 'default_user'; 
-            
-            entranceContent.innerHTML = `
-                <div class="loader-spinner"></div>
-                <h2 style="color: var(--nvidia-green); margin-top: 25px; font-size: 20px; letter-spacing: 2px;">SECURITY PROTOCOL</h2>
-                <p id="loading-text" style="color: #888; font-family: monospace; font-size: 14px;">Scanning badge for ${activeUserName}...</p>
-            `;
-
-            setTimeout(async () => {
-                overlay.style.opacity = '0';
-                setTimeout(() => { overlay.style.display = 'none'; }, 500); 
-                
-                // --- Start a fresh session if the current one isn't empty ---
-                if (sessions[currentSessionId].messages.length > 0) {
-                    currentSessionId = `session_${Date.now()}`;
-                    sessions[currentSessionId] = { title: "New Conversation", messages: [] };
-                    saveSessionsToDisk();
-                    renderSessionList();
-                    renderChat();
-                }
-
-                await triggerGreetingAudio();
-                try { await fetch('/api/session/reset', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user_id: activeUserId }) }); } catch(e){}
-            }, 2000);
-        });
-
-        // --- 6. Sidebar Controls ---
-        document.getElementById('btn-new-chat').addEventListener('click', async () => {
-            if (currentAudio) { currentAudio.pause(); btnStop.style.display = 'none'; }
-            
-            currentSessionId = `session_${Date.now()}`;
-            sessions[currentSessionId] = { title: "New Conversation", messages: [] };
-            
-            saveSessionsToDisk();
-            renderSessionList();
-            renderChat();
-            
-            try { await fetch('/api/session/reset', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user_id: activeUserId }) }); } catch(e){}
-            await triggerGreetingAudio();
-        });
-
-        document.getElementById('btn-delete-chat').addEventListener('click', async () => {
-            if (Object.keys(sessions).length <= 1) {
-                alert("Cannot delete the only session. Start a new one instead."); return;
-            }
-            if (confirm("Delete this specific chat session?")) {
-                if (currentAudio) { currentAudio.pause(); btnStop.style.display = 'none'; }
-                delete sessions[currentSessionId];
-                currentSessionId = Object.keys(sessions)[0];
-                saveSessionsToDisk();
-                renderSessionList();
-                renderChat();
-                try { await fetch('/api/session/reset', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user_id: activeUserId }) }); } catch(e){}
-            }
-        });
-
-        document.getElementById('btn-wipe-all').addEventListener('click', async () => {
-            if (confirm("WARNING: Permanently delete ALL saved chat sessions?")) {
-                if (currentAudio) { currentAudio.pause(); btnStop.style.display = 'none'; }
-                localStorage.removeItem('jensen_sessions');
-                localStorage.removeItem('jensen_current_session');
-                sessions = {};
-                
-                currentSessionId = `session_${Date.now()}`;
-                sessions[currentSessionId] = { title: "New Conversation", messages: [] };
-                
-                saveSessionsToDisk();
-                renderSessionList();
-                renderChat();
-                try { await fetch('/api/session/reset', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user_id: activeUserId }) }); } catch(e){}
-                await triggerGreetingAudio();
-            }
-        });
-
-        
-        document.getElementById('btn-extract-mem').addEventListener('click', async () => {
-            memoryBox.innerText = "Extracting facts...";
-            try {
-                const res = await fetch('/api/session/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user_id: activeUserId }) });
-                const data = await res.json(); memoryBox.innerText = data.status;
-            } catch (err) { memoryBox.innerText = "Error extracting."; }
-        });
-
-        document.getElementById('btn-load-mem').addEventListener('click', async () => {
-            memoryBox.innerText = "Loading...";
-            try {
-                const res = await fetch('/api/memory/' + encodeURIComponent(activeUserId));
-                const data = await res.json();
-                memoryBox.innerHTML = data.memories && data.memories.length > 0 ? data.memories.map(m => `[${m.category}] ${m.fact}`).join('<br><br>') : 'No memories saved yet.';
-            } catch (err) { memoryBox.innerText = "Error loading."; }
-        });
-
-        document.getElementById('btn-clear-mem').addEventListener('click', async () => {
-            if(confirm(`Clear memories for ${activeUserId}?`)) {
-                try { await fetch('/api/memory/' + encodeURIComponent(activeUserId), { method: 'DELETE' }); memoryBox.innerText = "Cleared."; } catch (err) {}
-            }
-        });
-
-        // --- 7. Main Chat Logic & Voice Rules ---
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        let recognition = null;
-        if (SpeechRecognition) {
-            recognition = new SpeechRecognition(); recognition.continuous = false; recognition.interimResults = false;
-            recognition.onstart = () => { btnMic.classList.add('recording'); btnMic.innerText = "Listening..."; };
-            recognition.onend = () => { btnMic.classList.remove('recording'); btnMic.innerText = "🎤 Dictate"; };
-            recognition.onresult = (e) => { userInput.value += (userInput.value ? " " : "") + e.results[0][0].transcript; };
-        } else { btnMic.style.display = 'none'; }
-        btnMic.addEventListener('click', () => { if (recognition) recognition.start(); });
-
-        // --- UPDATED: Global Replay Button Action ---
-        btnReplay.addEventListener('click', () => {
-            if (currentAudio && currentAudio.src) {
-                // Instantly replay the track that is already loaded in the browser's memory
-                currentAudio.currentTime = 0;
-                currentAudio.play();
-                btnStop.style.display = 'flex';
-                currentAudio.onended = () => { btnStop.style.display = 'none'; };
-            }
-        });
-
-        // Stop Button Action
-        btnStop.addEventListener('click', () => {
-            if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
-            btnStop.style.display = 'none';
-        });
-
-        async function sendMessage() {
-            const text = userInput.value.trim();
-            if (!text) return;
-
-            if (currentAudio) { currentAudio.pause(); btnStop.style.display = 'none'; }
-
-            // 1. Add user message
-            sessions[currentSessionId].messages.push({ role: 'user', text: text, audioUrl: null });
-            renderChat();
-            
-            userInput.value = ''; loading.style.display = 'block'; 
-            
-            // Show the typing bubble in the chat log
-            chatHistory.insertAdjacentHTML('beforeend', `<div class="msg-jensen"><strong>Jensen:</strong> <div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>`);
-            chatHistory.scrollTop = chatHistory.scrollHeight;
-
-            try {
-                const res = await fetch('/api/chat', {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        message: text, user_id: activeUserId,
-                        era: document.getElementById('era-select').value,
-                        voice_enabled: document.getElementById('voice-toggle').checked,
-                    })
-                });
-
-                const data = await res.json();
-                
-                document.getElementById('chunk-badge').innerText = `${data.query_type || "unknown"} | ${data.chunks_used || 0} chunks`;
-                document.getElementById('sources-box').innerHTML = data.sources && data.sources.length > 0 ? data.sources.map(s => `• ${s}`).join('<br>') : 'No sources retrieved.';
-
-                let generatedAudioUrl = null;
-                if (data.audio_file) {
-                    generatedAudioUrl = `/api/audio/${data.audio_file}?t=${new Date().getTime()}`; 
-                }
-
-                // 2. Add Jensen message
-                sessions[currentSessionId].messages.push({ role: 'jensen', text: data.answer, audioUrl: generatedAudioUrl });
-                renderChat();
-
-                if (generatedAudioUrl) {
-                    playAudio(generatedAudioUrl);
-                }
-
-            } catch (error) {
-                sessions[currentSessionId].messages.push({ role: 'jensen', text: "System Error: Failed to generate response.", audioUrl: null });
-                renderChat();
-            } finally {
-                loading.style.display = 'none'; 
-                saveSessionsToDisk();
-            }
-        }
-
-        btnSend.addEventListener('click', sendMessage);
-        userInput.addEventListener('keypress', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
-    </script>
+    <dialog id="citation-dialog" class="work-dialog" aria-labelledby="citation-title">
+        <div class="graph-header"><h2 id="citation-title">Source evidence</h2><button id="btn-close-citation" aria-label="Close source">✕</button></div>
+        <p id="citation-meta" class="map-meta"></p><blockquote id="citation-quote"></blockquote><p id="citation-note" class="map-meta"></p>
+        <a id="citation-link" target="_blank" rel="noopener noreferrer">Open original source ↗</a>
+    </dialog>
+    <dialog id="facts-dialog" class="work-dialog" aria-labelledby="facts-title">
+        <div class="graph-header"><h2 id="facts-title">What Jensen remembers</h2><button id="btn-close-facts" aria-label="Close memories">✕</button></div>
+        <p id="facts-status" role="status"></p><div id="memory-facts"></div>
+    </dialog>
+    <dialog id="timeline-dialog" class="work-dialog timeline-dialog" aria-labelledby="timeline-title">
+        <div class="graph-header"><h2 id="timeline-title">Jensen through the source years</h2><button id="btn-close-timeline" aria-label="Close timeline">✕</button></div>
+        <p id="timeline-status" role="status"></p><div id="timeline-years"></div>
+        <div class="compare-controls"><label>From<select id="compare-from"></select></label><label>To<select id="compare-to"></select></label>
+        <label>Topic<input id="compare-topic" value="accelerated computing" maxlength="300"></label><button id="btn-compare-years" class="map-action">Compare these years →</button></div>
+    </dialog>
+    <script src="/static/stream.js?v=20261010-evidence" defer></script>
+    <script src="/static/workbench.js?v=20261010-evidence" defer></script>
+    <script src="/static/ambience.js?v=20261010-evidence" defer></script>
+    <script src="/static/app.js?v=20261010-evidence" defer></script>
+    <script src="/static/explorer.js?v=20261010-edges" defer></script>
 </body>
 </html>

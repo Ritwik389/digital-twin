@@ -1,168 +1,141 @@
+---
+title: Jensen Digital Twin
+emoji: 🚀
+colorFrom: green
+colorTo: gray
+sdk: docker
+app_port: 7860
+---
+
 # Jensen Huang Digital Twin
 
-A RAG + persona-driven conversational AI that responds as Jensen Huang, built on FastAPI, ChromaDB, Gemini 2.5 Flash, and (optionally) local TTS voice cloning.
+[Live office](https://rj8307-digital-twin-2.hf.space) · [Project showcase](https://rj8307-digital-twin-2.hf.space/showcase) · [Space source](https://huggingface.co/spaces/RJ8307/digital-twin-2/tree/main)
 
-**🔗 Live Demo:** https://rj8307-digital-twin-2.hf.space
+Chat grounded in the included Jensen source collection, with Chroma retrieval and reranking, Neo4j source paths, conversational memory, streamed text, and Pocket TTS using the original Jensen reference recording.
 
----
+## Explore the project
 
-## Features
+- Text arrives incrementally. Three bouncing dots remain visible during generation, and Stop reply cancels an unfinished answer without recording it as a completed server turn.
+- Speech begins sentence by sentence while text is arriving. PCM audio streams from Pocket TTS; the bounded voice queue shows its state. Stop Voice cancels the active synthesis, clears queued sentences, and stops buffered sound.
+- Ambient music starts on Enter Office, with a toggle and volume slider, and softens during speech.
+- Numbered citations open exact source excerpts. Original links come from the source registry. Video timestamps are included only when the corpus provides them; chunk numbers never become invented timestamps.
+- Jensen’s World is available before chatting. Topic clicks ask a real question in the current session. Inspect co-mentions or extracted relationships, their direction, and supporting quotes.
+- The source timeline shows dated coverage. Compare two years and a topic using only passages from those years; unknown or missing coverage is reported.
+- Conversation, beginner, startup pitch, and architecture review modes provide different response structures. Comparisons have a dedicated timeline workflow.
+- Inspect and correct individual remembered facts, forget them, and see which facts were included in each answer. Forgotten wording is suppressed from later extraction of old chat. Paraphrases are not semantic deletion guarantees.
+- The showcase includes three guided demos, an architecture diagram, corpus quality checks, a corpus fingerprint, and published evaluation results.
 
-- **Persona-locked LLM responses** — strict system prompt enforcing Jensen Huang's voice, length, and tone (`persona.py`)
-- **Local, offline RAG retrieval** — ChromaDB + ONNX MiniLM embeddings, zero API calls for retrieval. Implemented Cross Encoder + BiEncoder for more retrieval quality. (`rag.py`, `chroma_utils.py`)
-- **Semantic chunking pipeline** — embedding-based chunking instead of naive fixed-size splitting (`semantic_chunker.py`)
-- **Long-term memory** — SQLite-backed fact extraction and recall across sessions (`memory.py`)
-- **Era filtering** — talk to "2007 Jensen", "2015 Jensen", or present-day Jensen
-- **Optional voice cloning** — CPU-friendly TTS via Pocket TTS (`tts.py`)
-- **Data pipeline** — YouTube/Whisper transcription + web scraping + cleaning + ingestion (`data_collector.py`, `cleaner.py`, `ingest.py`)
-- **Gemini key rotation** — round-robins across multiple API keys on quota errors (`api_client.py`)
+## Source graph and GraphRAG
 
----
+Startup reads all existing Chroma passages without re-embedding. A topic/alias catalog identifies entities that are actually present; it builds a full co-mention map. A separate bounded model job extracts `INTRODUCED`, `BUILT_ON`, `ENABLES`, `USES`, `DISCUSSED_AT`, and `PARTNERED_WITH` relationships. Each accepted link must use existing entity IDs, an allowed predicate with compatible entity types, and an exact contiguous quote mentioning both entities and explicit relationship wording in the same clause. Active/passive direction is checked. Those checks establish provenance, not independent human verification of the interpretation. Co-mentions never imply causation or partnership.
 
-## Project Structure
+`MAP_RELATION_BATCHES` defaults to 8, with six passages per batch. Round-robin sampling covers different source files. The complete topic map uses the full corpus; semantic extraction initially samples up to 48 passages. Increase the batch limit (maximum 60) and restart with a new corpus version for broader extraction. Results are cached by corpus fingerprint in Neo4j to avoid repeat provider calls on restart.
 
+Normal chat uses up to two hops in Neo4j’s public source graph to retrieve related excerpts alongside Chroma results. If Neo4j is unavailable, the same bounded traversal runs over the corpus graph. Every path’s evidence is filtered by era, and year comparisons remove other years. Response metadata includes paths, the retrieval backend, citations, and timing.
+
+Public source data uses `DTKnowledgeMap`, `DTKnowledgeEntity`, and `DT_KNOWLEDGE_LINK`. Visitor facts use the existing separate `MemoryEntity`, `MemoryBatch`, and `MEMORY_LINK` namespace. Source fingerprint changes retire obsolete public entries and retain the prior map payload; they never delete visitor memory.
+
+## Corpus versions and quality
+
+`ingest.py` hashes file content, upserts a changed source under versioned chunk IDs, and removes obsolete chunks only after the new write succeeds. Unchanged sources are skipped. Run the optional data pipeline manually, then restart the Space to build the new map.
+
+Quality checks flag exact duplicate passages, undated material, missing original URLs, and likely transcription problems. They preserve original quotes for review. The shipped `jensen_personal.txt` is tagged 2007 but contains 2025/2026 events: its publication date is treated as unverified and it is excluded from era-limited answers. The original `milken_2026.txt` links to the [Milken Institute’s 2025 Global Conference transcript](https://milkeninstitute.org/sites/default/files/2025-05/new-innovation-economy-conversation-nvidia-ceo-jensen-huang_Transcript_GC25.pdf); its effective year is corrected to 2025 while retaining the original declared year. See the [official conference description](https://milkeninstitute.org/content-hub/newsletters/fintech-focus/fintech-focus-may-27-2025).
+
+## Configuration
+
+Keep keys in **Hugging Face Settings → Secrets**, never Git:
+
+| Secret | Purpose |
+| --- | --- |
+| `GOOGLE_API_KEY_1`, `GOOGLE_API_KEY`, or `GEMINI_API_KEY` | Gemini generation; numbered keys 1–3 supported |
+| `GROQ_API_KEY` | Groq fallback; Groq-only deployment supported |
+| `HF_TOKEN` | Read token from an account approved for `kyutai/pocket-tts` cloning weights |
+| `NEO4J_URI` | Aura URI such as `neo4j+s://your-instance.databases.neo4j.io` |
+| `NEO4J_USERNAME` | Your database username |
+| `NEO4J_PASSWORD` | Your database password |
+
+Leave `NEO4J_DATABASE` unset to use the database user’s home database. `MEMORY_UPDATE_TURNS=5` counts completed user/assistant pairs. `.env.example` lists optional variables. The original `jensen_ref.wav` is encoded once per successful model initialization; inaccessible weights produce a useful error and a retry cooldown.
+
+Gemini transient failures get bounded retries, then Groq fallback. Streaming never switches providers after partial text has been emitted. Interrupted or truncated replies are not persisted as completed turns. Pocket’s CPU model is serialized because concurrent generation on one model is not supported.
+
+## Existing memory and storage design
+
+Visitor IDs and browser sessions retain the existing implementation. Server chat turns and pending extraction remain in the existing local SQLite database; this update does not migrate them to durable storage. Neo4j facts remain in the external database. The default Space filesystem remains ephemeral across rebuilds.
+
+Memory extraction runs after five completed turns, with manual flush available. Failed extraction retains pending turns for retry. Fact edits and deletions are scoped to the current visitor. Browser chat deletion only removes its local display; saved memory is managed separately. This remains an anonymous demo with the existing visitor-ID access scheme.
+
+## Architecture
+
+```mermaid
+flowchart LR
+    UI[Browser: chat, map, timeline] --> API[FastAPI]
+    API --> RAG[Chroma + local reranker]
+    API --> SG[Neo4j source paths]
+    API --> MEM[Existing visitor memory]
+    RAG --> PROMPT[Era-filtered numbered evidence]
+    SG --> PROMPT
+    MEM --> PROMPT
+    PROMPT --> LLM[Gemini with Groq fallback]
+    LLM --> TEXT[Streamed text]
+    TEXT --> TTS[Pocket TTS sentence queue]
+    TTS --> PCM[Streamed PCM + cached WAV]
+    TEXT --> UI
+    PCM --> UI
 ```
-.
-├── main.py                # FastAPI app & API routes
-├── agent.py                # Orchestrator: RAG + memory + persona + generation
-├── persona.py               # System prompt + keyword-based analogy engine
-├── rag.py                   # Query-time retrieval logic (Bi Encoder + Cross Encoder)
-├── chroma_utils.py          # Shared ChromaDB collection/embedding helper
-├── semantic_chunker.py      # Embedding-based semantic chunking
-├── ingest.py                 # Chunk + embed cleaned transcripts into ChromaDB
-├── cleaner.py                 # Strip non-Jensen speech, attach metadata
-├── data_collector.py        # Download/transcribe YouTube + scrape web sources
-├── memory.py                 # Short-term + long-term (SQLite) memory
-├── api_client.py             # Gemini client with key rotation
-├── tts.py                     # Optional voice cloning (Pocket TTS)
-├── static/
-│   └── index.html             # Frontend UI
-├── DockerFile
-└── requirements.txt
-```
 
----
+## Local development and evaluation
 
-## Prerequisites
-
-- Python 3.10+ (3.12 recommended — matches Docker base image)
-- `ffmpeg` installed on your system (required for audio extraction, only needed if you run the data pipeline or TTS)
-- A Google Gemini API key ([Google AI Studio](https://aistudio.google.com/))
-- (Optional) A Groq API key for fallback generation
-- (Optional) A Hugging Face token if Pocket TTS requires a gated model download
-
----
-
-## 1. Clone the repository
-
-```bash
-git clone <your-repo-url>
-cd <your-repo-name>
-```
-
-## 2. Create a virtual environment
-
-```bash
-python3.11 -m venv venv
-source venv/bin/activate        # macOS/Linux
-venv\Scripts\activate           # Windows
-```
-
-## 3. Install dependencies
-
-```bash
-pip install torch torchaudio --index-url https://download.pytorch.org/whl/cpu
+```sh
+python3.12 -m venv .venv
+source .venv/bin/activate
+pip install torch --index-url https://download.pytorch.org/whl/cpu
 pip install -r requirements.txt
+cp .env.example .env.local
+# Add your own credentials to the ignored .env.local file.
+git lfs pull
+uvicorn main:app --host 0.0.0.0 --port 7860
 ```
 
-> If you don't have a `requirements.txt` yet, you'll need at minimum: `fastapi`, `uvicorn`, `pydantic`, `python-dotenv`, `chromadb`, `sentence-transformers`, `google-genai`, `requests`, `beautifulsoup4`, `pypdf`, `whisper` (openai-whisper), `yt-dlp`, `noisereduce`, `soundfile`, `numpy`, `scipy`.
+Install libsndfile locally; Docker installs it and ffmpeg. `git lfs pull` retrieves the actual corpus, images, and reference WAV. For data collection/cleaning, install `requirements-ingest.txt` separately.
 
-## 4. Configure environment variables
-
-Create a `.env.local` file in the project root:
-
-```bash
-# Gemini keys — at least one of the two patterns below
-GOOGLE_API_KEY_1=your_key_here
-GOOGLE_API_KEY_2=your_second_key_here   # optional, enables rotation
-GOOGLE_API_KEY_3=your_third_key_here    # optional
-# OR, single-key fallback:
-# GOOGLE_API_KEY=your_key_here
-
-# Optional fallback model if Gemini is rate-limited
-GROQ_API_KEY=your_groq_key_here
-
-# Optional, only needed for Pocket TTS gated model downloads
-HF_TOKEN=your_huggingface_token_here
+```sh
+pip install pytest httpx
+python -m pytest -q tests
+node --check static/app.js
+node --check static/stream.js
+node --check static/explorer.js
+node --check static/workbench.js
+python benchmark.py --base http://127.0.0.1:7860
 ```
 
-## 5. Build the knowledge base (optional but recommended)
+The benchmark uses 50 fixed retrieval questions and eight generated replies. It reports expected-topic matches, era-filter checks, citation resolution, completion, and observed streaming latency. Topic hits and valid citation IDs are not overall answer accuracy. The report records its corpus fingerprint and limitations; `/showcase` displays the published `reports/benchmark.json`. Evaluation uses only its own disposable visitor IDs and cleans them up afterward.
 
-The repo ships with a data pipeline to scrape and embed Jensen Huang's actual public talks. This step is **only needed once** — the resulting ChromaDB store is reused on every subsequent run.
+## API
 
-```bash
-# 1. Collect raw transcripts (downloads audio, transcribes with Whisper, scrapes web sources)
-python data_collector.py
+| Route | Purpose |
+| --- | --- |
+| `GET /api/health` | Configuration and voice readiness without secret values |
+| `POST /api/chat` | Complete reply with citations, graph paths, and timing |
+| `POST /api/chat/stream` | NDJSON `meta`, `delta`, `done`, or `error` events |
+| `POST /api/speak/stream` | `{text,request_id}` → queued status, PCM chunks, cached WAV |
+| `POST /api/speak/cancel` | Cancel that voice job |
+| `POST /api/speak` | Legacy complete WAV generation |
+| `GET /api/audio/{filename}` | Generated WAV only |
+| `GET /api/knowledge-map` | Public source map and relationship state |
+| `GET /api/knowledge-map/node/{node_id}` | Topic and exact evidence |
+| `GET /api/timeline` | Dated corpus coverage |
+| `GET /api/corpus/status` | Fingerprint and source-quality checks |
+| `POST /api/retrieval/inspect` | Public source retrieval diagnostics |
+| `GET /api/benchmark` | Published evaluation JSON |
+| `GET /api/memory/{user_id}` | Remembered facts |
+| `PATCH /api/memory/fact` | `{user_id,old_fact,fact,category,importance}` |
+| `DELETE /api/memory/fact` | `{user_id,fact}` |
+| `GET /api/graph/{user_id}` | Visitor conversation graph |
+| `POST /api/graph/update` | Flush pending visitor memory |
+| `POST /api/session/save` | Save memory from `{user_id,session_id}` |
+| `POST /api/session/reset` | Reset short-term prompt history |
+| `DELETE /api/memory/{user_id}` | Clear that visitor’s memory |
 
-# 2. Clean transcripts and attach metadata
-python cleaner.py
+Chat accepts `message`, `user_id`, `session_id`, `era`, `mode`, optional `knowledge_node_id`, and optional two-element `compare_years`. `use_graph=false` allows a retrieval-only comparison. No arbitrary Cypher from the browser is executed.
 
-# 3. Chunk + embed into ChromaDB
-python ingest.py
-```
-
-> Skip this step if you already have a populated `storage/chroma_db/` directory, or if you just want to chat with the persona using general knowledge (no retrieval).
-
-## 6. (Optional) Set up voice cloning
-
-Place a short reference clip named `jensen_ref.wav` in the project root (the data pipeline can auto-generate one — see `extract_reference_clip` in `data_collector.py`). Without this file, TTS is silently disabled and the app still works text-only.
-
-## 7. Run the app
-
-```bash
-python main.py
-```
-
-Or directly with uvicorn:
-
-```bash
-uvicorn main:app --reload --port 8000
-```
-
-Visit **http://localhost:8000** in your browser.
-
-## 8. Running with Docker
-
-```bash
-docker build -t jensen-digital-twin -f DockerFile .
-docker run -p 8000:8000 --env-file .env.local jensen-digital-twin
-```
-
-> ⚠️ Double-check the exposed/published port against what's actually in the `DockerFile` `CMD` before running this (see Known Issues below) — there's a mismatch between the documented port and the one uvicorn binds to.
-
----
-
-## API Endpoints
-
-| Method | Route | Description |
-|---|---|---|
-| `GET` | `/` | Serves the frontend |
-| `POST` | `/api/chat` | Send a message, get persona response (+ optional audio) |
-| `POST` | `/api/greet` | Generate a personalized greeting |
-| `POST` | `/api/speak` | Generate TTS audio for arbitrary text |
-| `GET` | `/api/audio/{filename}` | Fetch generated audio file |
-| `POST` | `/api/session/save` | Extract & persist long-term memories from current session |
-| `POST` | `/api/session/reset` | Clear short-term conversation history |
-| `GET` | `/api/memory/{user_id}` | Fetch stored long-term memories |
-| `DELETE` | `/api/memory/{user_id}` | Delete all long-term memories for a user |
-
----
-
-
-
-## Improvements
-
-- Try to implement colBERT Mechanism for rag
-- Using a pipeline to find most common words used in transcripts to generate persona
-- RAG Architecture to be made more complex(for example Pixel RAG)
-- implement multimodal input for Jensen
+Reference documentation: [Gemini streaming](https://ai.google.dev/api/generate-content#method:-models.streamgeneratecontent), [Groq text generation](https://console.groq.com/docs/text-chat), [Pocket TTS](https://github.com/kyutai-labs/pocket-tts), [Neo4j driver](https://neo4j.com/docs/python-manual/current/query-simple/).

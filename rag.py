@@ -13,23 +13,40 @@ Basic RAG retrieval.
 import re
 
 from chroma_utils import get_chroma_collection
-from sentence_transformers import CrossEncoder
+from source_utils import effective_year
+import logging
+import threading
 TOP_K = 15
 TOP_K_FINAL = 5
 INITIAL_FETCH = 15
-reranker = CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2')
+logger = logging.getLogger(__name__)
+_reranker = None
+_reranker_failed = False
+_reranker_lock = threading.Lock()
+
+
+def _get_reranker():
+    global _reranker, _reranker_failed
+    with _reranker_lock:
+        if _reranker is None and not _reranker_failed:
+            try:
+                from sentence_transformers import CrossEncoder
+                _reranker = CrossEncoder('cross-encoder/ms-marco-MiniLM-L6-v2')
+            except Exception:
+                logger.exception('Reranker unavailable; using embedding ranking')
+                _reranker_failed = True
+        return _reranker
 
 # Short greetings / pleasantries — skip retrieval entirely
 NO_RETRIEVAL_PATTERNS = [
-    r"^(hi|hello|hey|thanks|thank you|okay|ok|sure|got it|interesting|cool|wow|nice|great|bye|goodbye|see you)\b",
-    r"^(that'?s? (great|interesting|cool|helpful|fascinating|amazing))",
-    r"^(i see|understood|makes sense|fair enough)",
+    r"(?:hi|hello|hey)(?:[ ,]+jensen)?[!. ]*",
+    r"(?:thanks|thank you|okay|ok|sure|got it|interesting|cool|wow|nice|great|bye|goodbye|see you)[!. ]*",
+    r"(?:that'?s? (?:great|interesting|cool|helpful|fascinating|amazing)|i see|understood|makes sense|fair enough)[!. ]*",
 ]
 
 
 def _is_no_retrieval(query: str) -> bool:
-    q = query.lower().strip()
-    return any(re.search(p, q) for p in NO_RETRIEVAL_PATTERNS)
+    return any(re.fullmatch(pattern, query.lower().strip()) for pattern in NO_RETRIEVAL_PATTERNS)
 
 
 def retrieve_chunks(
@@ -45,6 +62,7 @@ def retrieve_chunks(
         return []
     
     where_conditions = []
+    if year_min is None and year_max is not None: year_min = 1
     if year_min is not None:
         where_conditions.append({"year": {"$gte": year_min}})
     if year_max is not None:
@@ -67,12 +85,8 @@ def retrieve_chunks(
     if where_clause:
         kwargs["where"] = where_clause
 
-    try:
-        results = collection.query(**kwargs)
-    except Exception:
-        # If the metadata filter is too restrictive / errors, retry without it
-        kwargs.pop("where", None)
-        results = collection.query(**kwargs)
+    # A failed filtered query must not silently leak sources from another era.
+    results = collection.query(**kwargs)
 
     chunks = []
     for doc, meta, dist in zip(
@@ -80,14 +94,18 @@ def retrieve_chunks(
         results["metadatas"][0],
         results["distances"][0],
     ):
+        year=effective_year(meta)
+        if year_min is not None and year < year_min:continue
+        if year_max is not None and (year <= 0 or year > year_max):continue
         chunks.append({
             "text": doc,
             "source": meta.get("source", ""),
-            "year": meta.get("year", 0),
+            "year": year,
             "domain": meta.get("domain", ""),
             "filename": meta.get("filename", ""),
             "chunk_index": meta.get("chunk_index", 0),
             "distance": dist,
+            "url": meta.get("url"), "start_seconds": meta.get("start_seconds"),
         })
     return chunks
 
@@ -123,13 +141,24 @@ def retrieve(
             "needs_retrieval": False,
         }
 
-    chunks = retrieve_chunks(query, year_min=year_min, year_max=year_max, domain_filter=domain_filter)
-    if chunks:
+    # Resolve short follow-ups using the last user topic, without an extra model call.
+    retrieval_query = query
+    if conversation_history and re.search(r"\b(that|it|this|they|those|more|why)\b", query.lower()) and len(query.split()) < 14:
+        previous = re.findall(r"^User: (.+)$", conversation_history, re.M)
+        if previous: retrieval_query = previous[-1][-500:] + "\nFollow-up: " + query
+    chunks = retrieve_chunks(retrieval_query, year_min=year_min, year_max=year_max, domain_filter=domain_filter)
+    reranker = _get_reranker() if chunks else None
+    if chunks and reranker:
         # Create pairs of [query, document_text]
-        pairs = [[query, c["text"]] for c in chunks]
+        pairs = [[retrieval_query, c["text"]] for c in chunks]
         
         # Score the pairs using the local cross-encoder
-        scores = reranker.predict(pairs)
+        try:
+            with _reranker_lock:
+                scores = reranker.predict(pairs)
+        except Exception:
+            logger.exception('Reranking failed; retaining embedding ranking')
+            scores = [-c['distance'] for c in chunks]
         
         # Attach the scores to our chunk dictionaries
         for chunk, score in zip(chunks, scores):
@@ -140,12 +169,14 @@ def retrieve(
         
         # Slice to keep only the absolute best matches
         chunks = chunks[:TOP_K_FINAL]
+    chunks = chunks[:TOP_K_FINAL]
     context = build_context(chunks)
 
     return {
         "context": context,
         "chunks": chunks,
         "query_type": "direct" if chunks else "no_context",
+        "retrieval_query": retrieval_query,
         "needs_retrieval": bool(chunks),
     }
 

@@ -1,0 +1,366 @@
+[
+  {
+    "query": "Explain CUDA using Jensen’s source material.",
+    "era": "all",
+    "expected_aliases": [
+      "cuda"
+    ]
+  },
+  {
+    "query": "Hi Jensen, what have you said about CUDA?",
+    "era": "pre_cuda",
+    "expected_aliases": [
+      "cuda"
+    ]
+  },
+  {
+    "query": "Explain GPU parallelism using Jensen’s source material.",
+    "era": "all",
+    "expected_aliases": [
+      "gpu",
+      "parallel"
+    ]
+  },
+  {
+    "query": "Hi Jensen, what have you said about GPU parallelism?",
+    "era": "deep_learning",
+    "expected_aliases": [
+      "gpu",
+      "parallel"
+    ]
+  },
+  {
+    "query": "Explain accelerated computing using Jensen’s source material.",
+    "era": "all",
+    "expected_aliases": [
+      "accelerated computing"
+    ]
+  },
+  {
+    "query": "Hi Jensen, what have you said about accelerated computing?",
+    "era": "llm_era",
+    "expected_aliases": [
+      "accelerated computing"
+    ]
+  },
+  {
+    "query": "Explain deep learning using Jensen’s source material.",
+    "era": "all",
+    "expected_aliases": [
+      "deep learning"
+    ]
+  },
+  {
+    "query": "Hi Jensen, what have you said about deep learning?",
+    "era": "deep_learning",
+    "expected_aliases": [
+      "deep learning"
+    ]
+  },
+  {
+    "query": "Explain neural networks using Jensen’s source material.",
+    "era": "all",
+    "expected_aliases": [
+      "neural network"
+    ]
+  },
+  {
+    "query": "Hi Jensen, what have you said about neural networks?",
+    "era": "llm_era",
+    "expected_aliases": [
+      "neural network"
+    ]
+  },
+  {
+    "query": "Explain AlexNet using Jensen’s source material.",
+    "era": "all",
+    "expected_aliases": [
+      "alexnet"
+    ]
+  },
+  {
+    "query": "Hi Jensen, what have you said about AlexNet?",
+    "era": "deep_learning",
+    "expected_aliases": [
+      "alexnet"
+    ]
+  },
+  {
+    "query": "Explain AI inference using Jensen’s source material.",
+    "era": "all",
+    "expected_aliases": [
+      "inference"
+    ]
+  },
+  {
+    "query": "Hi Jensen, what have you said about AI inference?",
+    "era": "llm_era",
+    "expected_aliases": [
+      "inference"
+    ]
+  },
+  {
+    "query": "Explain AI training using Jensen’s source material.",
+    "era": "all",
+    "expected_aliases": [
+      "training"
+    ]
+  },
+  {
+    "query": "Hi Jensen, what have you said about AI training?",
+    "era": "llm_era",
+    "expected_aliases": [
+      "training"
+    ]
+  },
+  {
+    "query": "Explain Blackwell using Jensen’s source material.",
+    "era": "all",
+    "expected_aliases": [
+      "blackwell"
+    ]
+  },
+  {
+    "query": "Hi Jensen, what have you said about Blackwell?",
+    "era": "llm_era",
+    "expected_aliases": [
+      "blackwell"
+    ]
+  },
+  {
+    "query": "Explain Hopper using Jensen’s source material.",
+    "era": "all",
+    "expected_aliases": [
+      "hopper"
+    ]
+  },
+  {
+    "query": "Hi Jensen, what have you said about Hopper?",
+    "era": "llm_era",
+    "expected_aliases": [
+      "hopper"
+    ]
+  },
+  {
+    "query": "Explain NVLink using Jensen’s source material.",
+    "era": "all",
+    "expected_aliases": [
+      "nvlink"
+    ]
+  },
+  {
+    "query": "Hi Jensen, what have you said about NVLink?",
+    "era": "llm_era",
+    "expected_aliases": [
+      "nvlink"
+    ]
+  },
+  {
+    "query": "Explain DGX using Jensen’s source material.",
+    "era": "all",
+    "expected_aliases": [
+      "dgx"
+    ]
+  },
+  {
+    "query": "Hi Jensen, what have you said about DGX?",
+    "era": "llm_era",
+    "expected_aliases": [
+      "dgx"
+    ]
+  },
+  {
+    "query": "Explain AI factories using Jensen’s source material.",
+    "era": "all",
+    "expected_aliases": [
+      "ai factor",
+      "ai factories"
+    ]
+  },
+  {
+    "query": "Hi Jensen, what have you said about AI factories?",
+    "era": "llm_era",
+    "expected_aliases": [
+      "ai factor",
+      "ai factories"
+    ]
+  },
+  {
+    "query": "Explain Omniverse using Jensen’s source material.",
+    "era": "all",
+    "expected_aliases": [
+      "omniverse"
+    ]
+  },
+  {
+    "query": "Hi Jensen, what have you said about Omniverse?",
+    "era": "llm_era",
+    "expected_aliases": [
+      "omniverse"
+    ]
+  },
+  {
+    "query": "Explain digital twins using Jensen’s source material.",
+    "era": "all",
+    "expected_aliases": [
+      "digital twin"
+    ]
+  },
+  {
+    "query": "Hi Jensen, what have you said about digital twins?",
+    "era": "llm_era",
+    "expected_aliases": [
+      "digital twin"
+    ]
+  },
+  {
+    "query": "Explain robotics using Jensen’s source material.",
+    "era": "all",
+    "expected_aliases": [
+      "robot"
+    ]
+  },
+  {
+    "query": "Hi Jensen, what have you said about robotics?",
+    "era": "llm_era",
+    "expected_aliases": [
+      "robot"
+    ]
+  },
+  {
+    "query": "Explain physical AI using Jensen’s source material.",
+    "era": "all",
+    "expected_aliases": [
+      "physical ai"
+    ]
+  },
+  {
+    "query": "Hi Jensen, what have you said about physical AI?",
+    "era": "llm_era",
+    "expected_aliases": [
+      "physical ai"
+    ]
+  },
+  {
+    "query": "Explain autonomous driving using Jensen’s source material.",
+    "era": "all",
+    "expected_aliases": [
+      "autonomous",
+      "self-driving"
+    ]
+  },
+  {
+    "query": "Hi Jensen, what have you said about autonomous driving?",
+    "era": "llm_era",
+    "expected_aliases": [
+      "autonomous",
+      "self-driving"
+    ]
+  },
+  {
+    "query": "Explain data centers using Jensen’s source material.",
+    "era": "all",
+    "expected_aliases": [
+      "data center",
+      "datacenter"
+    ]
+  },
+  {
+    "query": "Hi Jensen, what have you said about data centers?",
+    "era": "llm_era",
+    "expected_aliases": [
+      "data center",
+      "datacenter"
+    ]
+  },
+  {
+    "query": "Explain NVIDIA software using Jensen’s source material.",
+    "era": "all",
+    "expected_aliases": [
+      "software"
+    ]
+  },
+  {
+    "query": "Hi Jensen, what have you said about NVIDIA software?",
+    "era": "llm_era",
+    "expected_aliases": [
+      "software"
+    ]
+  },
+  {
+    "query": "Explain leadership using Jensen’s source material.",
+    "era": "all",
+    "expected_aliases": [
+      "leader",
+      "culture"
+    ]
+  },
+  {
+    "query": "Hi Jensen, what have you said about leadership?",
+    "era": "deep_learning",
+    "expected_aliases": [
+      "leader",
+      "culture"
+    ]
+  },
+  {
+    "query": "Explain innovation using Jensen’s source material.",
+    "era": "all",
+    "expected_aliases": [
+      "innovation",
+      "innovate"
+    ]
+  },
+  {
+    "query": "Hi Jensen, what have you said about innovation?",
+    "era": "llm_era",
+    "expected_aliases": [
+      "innovation",
+      "innovate"
+    ]
+  },
+  {
+    "query": "Explain simulation using Jensen’s source material.",
+    "era": "all",
+    "expected_aliases": [
+      "simulat"
+    ]
+  },
+  {
+    "query": "Hi Jensen, what have you said about simulation?",
+    "era": "llm_era",
+    "expected_aliases": [
+      "simulat"
+    ]
+  },
+  {
+    "query": "Explain NVIDIA history using Jensen’s source material.",
+    "era": "all",
+    "expected_aliases": [
+      "nvidia"
+    ]
+  },
+  {
+    "query": "Hi Jensen, what have you said about NVIDIA history?",
+    "era": "deep_learning",
+    "expected_aliases": [
+      "nvidia"
+    ]
+  },
+  {
+    "query": "Explain Jensen Huang using Jensen’s source material.",
+    "era": "all",
+    "expected_aliases": [
+      "jensen",
+      "huang"
+    ]
+  },
+  {
+    "query": "Hi Jensen, what have you said about Jensen Huang?",
+    "era": "llm_era",
+    "expected_aliases": [
+      "jensen",
+      "huang"
+    ]
+  }
+]

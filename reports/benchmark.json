@@ -1,0 +1,1723 @@
+{
+  "state": "complete",
+  "run_date": "2026-10-09T19:51:20+00:00",
+  "corpus_fingerprint": "f1b9ff96b59bb3fb20c27473e204da64058ace484068315b959353231f7bb382",
+  "retrieval_cases": 50,
+  "generation_cases": 8,
+  "retrieval_topic_hit_rate": 88.0,
+  "era_filter_pass_rate": 100.0,
+  "citation_validity_rate": 100.0,
+  "answers_with_citations": 6,
+  "completed_generation_cases": 8,
+  "first_token_p50_seconds": 6.99,
+  "total_response_p50_seconds": 7.81,
+  "method": "Fifty fixed retrieval questions: an expected topic alias must appear in at least one of the top five retrieved passages. Every returned date is checked against the selected era. Eight streamed generation samples check completion, resolvable numbered citations, graph use, and client-observed latency; voice is disabled.",
+  "limitations": "Topic matches do not measure answer correctness. Citation validity checks IDs, not whether every claim is entailed. Latency reflects this one live run after retrieval warm-up and varies with provider load. This is not an overall accuracy score.",
+  "retrieval_run_date": "2026-10-09T18:27:28+00:00",
+  "retrieval_reused_from_unchanged_pipeline": true,
+  "generation_cooldown_seconds": 15,
+  "retrieval_results": [
+    {
+      "query": "Explain CUDA using Jensen’s source material.",
+      "era": "all",
+      "expected_aliases": [
+        "cuda"
+      ],
+      "topic_hit": true,
+      "era_valid": true,
+      "source_count": 5,
+      "latency_seconds": 12.585
+    },
+    {
+      "query": "Hi Jensen, what have you said about CUDA?",
+      "era": "pre_cuda",
+      "expected_aliases": [
+        "cuda"
+      ],
+      "topic_hit": false,
+      "era_valid": true,
+      "source_count": 0,
+      "latency_seconds": 1.467
+    },
+    {
+      "query": "Explain GPU parallelism using Jensen’s source material.",
+      "era": "all",
+      "expected_aliases": [
+        "gpu",
+        "parallel"
+      ],
+      "topic_hit": true,
+      "era_valid": true,
+      "source_count": 5,
+      "latency_seconds": 2.869
+    },
+    {
+      "query": "Hi Jensen, what have you said about GPU parallelism?",
+      "era": "deep_learning",
+      "expected_aliases": [
+        "gpu",
+        "parallel"
+      ],
+      "topic_hit": true,
+      "era_valid": true,
+      "source_count": 5,
+      "latency_seconds": 2.684
+    },
+    {
+      "query": "Explain accelerated computing using Jensen’s source material.",
+      "era": "all",
+      "expected_aliases": [
+        "accelerated computing"
+      ],
+      "topic_hit": true,
+      "era_valid": true,
+      "source_count": 5,
+      "latency_seconds": 2.907
+    },
+    {
+      "query": "Hi Jensen, what have you said about accelerated computing?",
+      "era": "llm_era",
+      "expected_aliases": [
+        "accelerated computing"
+      ],
+      "topic_hit": true,
+      "era_valid": true,
+      "source_count": 5,
+      "latency_seconds": 3.824
+    },
+    {
+      "query": "Explain deep learning using Jensen’s source material.",
+      "era": "all",
+      "expected_aliases": [
+        "deep learning"
+      ],
+      "topic_hit": true,
+      "era_valid": true,
+      "source_count": 5,
+      "latency_seconds": 3.353
+    },
+    {
+      "query": "Hi Jensen, what have you said about deep learning?",
+      "era": "deep_learning",
+      "expected_aliases": [
+        "deep learning"
+      ],
+      "topic_hit": true,
+      "era_valid": true,
+      "source_count": 5,
+      "latency_seconds": 4.032
+    },
+    {
+      "query": "Explain neural networks using Jensen’s source material.",
+      "era": "all",
+      "expected_aliases": [
+        "neural network"
+      ],
+      "topic_hit": true,
+      "era_valid": true,
+      "source_count": 5,
+      "latency_seconds": 3.416
+    },
+    {
+      "query": "Hi Jensen, what have you said about neural networks?",
+      "era": "llm_era",
+      "expected_aliases": [
+        "neural network"
+      ],
+      "topic_hit": false,
+      "era_valid": true,
+      "source_count": 5,
+      "latency_seconds": 3.148
+    },
+    {
+      "query": "Explain AlexNet using Jensen’s source material.",
+      "era": "all",
+      "expected_aliases": [
+        "alexnet"
+      ],
+      "topic_hit": false,
+      "era_valid": true,
+      "source_count": 5,
+      "latency_seconds": 2.758
+    },
+    {
+      "query": "Hi Jensen, what have you said about AlexNet?",
+      "era": "deep_learning",
+      "expected_aliases": [
+        "alexnet"
+      ],
+      "topic_hit": false,
+      "era_valid": true,
+      "source_count": 5,
+      "latency_seconds": 4.463
+    },
+    {
+      "query": "Explain AI inference using Jensen’s source material.",
+      "era": "all",
+      "expected_aliases": [
+        "inference"
+      ],
+      "topic_hit": true,
+      "era_valid": true,
+      "source_count": 5,
+      "latency_seconds": 6.179
+    },
+    {
+      "query": "Hi Jensen, what have you said about AI inference?",
+      "era": "llm_era",
+      "expected_aliases": [
+        "inference"
+      ],
+      "topic_hit": true,
+      "era_valid": true,
+      "source_count": 5,
+      "latency_seconds": 4.169
+    },
+    {
+      "query": "Explain AI training using Jensen’s source material.",
+      "era": "all",
+      "expected_aliases": [
+        "training"
+      ],
+      "topic_hit": true,
+      "era_valid": true,
+      "source_count": 5,
+      "latency_seconds": 3.218
+    },
+    {
+      "query": "Hi Jensen, what have you said about AI training?",
+      "era": "llm_era",
+      "expected_aliases": [
+        "training"
+      ],
+      "topic_hit": true,
+      "era_valid": true,
+      "source_count": 5,
+      "latency_seconds": 2.711
+    },
+    {
+      "query": "Explain Blackwell using Jensen’s source material.",
+      "era": "all",
+      "expected_aliases": [
+        "blackwell"
+      ],
+      "topic_hit": true,
+      "era_valid": true,
+      "source_count": 5,
+      "latency_seconds": 2.989
+    },
+    {
+      "query": "Hi Jensen, what have you said about Blackwell?",
+      "era": "llm_era",
+      "expected_aliases": [
+        "blackwell"
+      ],
+      "topic_hit": true,
+      "era_valid": true,
+      "source_count": 5,
+      "latency_seconds": 2.542
+    },
+    {
+      "query": "Explain Hopper using Jensen’s source material.",
+      "era": "all",
+      "expected_aliases": [
+        "hopper"
+      ],
+      "topic_hit": true,
+      "era_valid": true,
+      "source_count": 5,
+      "latency_seconds": 3.932
+    },
+    {
+      "query": "Hi Jensen, what have you said about Hopper?",
+      "era": "llm_era",
+      "expected_aliases": [
+        "hopper"
+      ],
+      "topic_hit": true,
+      "era_valid": true,
+      "source_count": 5,
+      "latency_seconds": 3.583
+    },
+    {
+      "query": "Explain NVLink using Jensen’s source material.",
+      "era": "all",
+      "expected_aliases": [
+        "nvlink"
+      ],
+      "topic_hit": true,
+      "era_valid": true,
+      "source_count": 5,
+      "latency_seconds": 3.527
+    },
+    {
+      "query": "Hi Jensen, what have you said about NVLink?",
+      "era": "llm_era",
+      "expected_aliases": [
+        "nvlink"
+      ],
+      "topic_hit": true,
+      "era_valid": true,
+      "source_count": 5,
+      "latency_seconds": 4.351
+    },
+    {
+      "query": "Explain DGX using Jensen’s source material.",
+      "era": "all",
+      "expected_aliases": [
+        "dgx"
+      ],
+      "topic_hit": true,
+      "era_valid": true,
+      "source_count": 5,
+      "latency_seconds": 3.032
+    },
+    {
+      "query": "Hi Jensen, what have you said about DGX?",
+      "era": "llm_era",
+      "expected_aliases": [
+        "dgx"
+      ],
+      "topic_hit": true,
+      "era_valid": true,
+      "source_count": 5,
+      "latency_seconds": 4.12
+    },
+    {
+      "query": "Explain AI factories using Jensen’s source material.",
+      "era": "all",
+      "expected_aliases": [
+        "ai factor",
+        "ai factories"
+      ],
+      "topic_hit": true,
+      "era_valid": true,
+      "source_count": 5,
+      "latency_seconds": 2.819
+    },
+    {
+      "query": "Hi Jensen, what have you said about AI factories?",
+      "era": "llm_era",
+      "expected_aliases": [
+        "ai factor",
+        "ai factories"
+      ],
+      "topic_hit": true,
+      "era_valid": true,
+      "source_count": 5,
+      "latency_seconds": 3.612
+    },
+    {
+      "query": "Explain Omniverse using Jensen’s source material.",
+      "era": "all",
+      "expected_aliases": [
+        "omniverse"
+      ],
+      "topic_hit": true,
+      "era_valid": true,
+      "source_count": 5,
+      "latency_seconds": 2.864
+    },
+    {
+      "query": "Hi Jensen, what have you said about Omniverse?",
+      "era": "llm_era",
+      "expected_aliases": [
+        "omniverse"
+      ],
+      "topic_hit": true,
+      "era_valid": true,
+      "source_count": 5,
+      "latency_seconds": 3.08
+    },
+    {
+      "query": "Explain digital twins using Jensen’s source material.",
+      "era": "all",
+      "expected_aliases": [
+        "digital twin"
+      ],
+      "topic_hit": true,
+      "era_valid": true,
+      "source_count": 5,
+      "latency_seconds": 2.989
+    },
+    {
+      "query": "Hi Jensen, what have you said about digital twins?",
+      "era": "llm_era",
+      "expected_aliases": [
+        "digital twin"
+      ],
+      "topic_hit": true,
+      "era_valid": true,
+      "source_count": 5,
+      "latency_seconds": 3.433
+    },
+    {
+      "query": "Explain robotics using Jensen’s source material.",
+      "era": "all",
+      "expected_aliases": [
+        "robot"
+      ],
+      "topic_hit": true,
+      "era_valid": true,
+      "source_count": 5,
+      "latency_seconds": 3.367
+    },
+    {
+      "query": "Hi Jensen, what have you said about robotics?",
+      "era": "llm_era",
+      "expected_aliases": [
+        "robot"
+      ],
+      "topic_hit": true,
+      "era_valid": true,
+      "source_count": 5,
+      "latency_seconds": 3.562
+    },
+    {
+      "query": "Explain physical AI using Jensen’s source material.",
+      "era": "all",
+      "expected_aliases": [
+        "physical ai"
+      ],
+      "topic_hit": true,
+      "era_valid": true,
+      "source_count": 5,
+      "latency_seconds": 3.227
+    },
+    {
+      "query": "Hi Jensen, what have you said about physical AI?",
+      "era": "llm_era",
+      "expected_aliases": [
+        "physical ai"
+      ],
+      "topic_hit": true,
+      "era_valid": true,
+      "source_count": 5,
+      "latency_seconds": 3.045
+    },
+    {
+      "query": "Explain autonomous driving using Jensen’s source material.",
+      "era": "all",
+      "expected_aliases": [
+        "autonomous",
+        "self-driving"
+      ],
+      "topic_hit": true,
+      "era_valid": true,
+      "source_count": 5,
+      "latency_seconds": 2.907
+    },
+    {
+      "query": "Hi Jensen, what have you said about autonomous driving?",
+      "era": "llm_era",
+      "expected_aliases": [
+        "autonomous",
+        "self-driving"
+      ],
+      "topic_hit": true,
+      "era_valid": true,
+      "source_count": 5,
+      "latency_seconds": 3.076
+    },
+    {
+      "query": "Explain data centers using Jensen’s source material.",
+      "era": "all",
+      "expected_aliases": [
+        "data center",
+        "datacenter"
+      ],
+      "topic_hit": true,
+      "era_valid": true,
+      "source_count": 5,
+      "latency_seconds": 3.347
+    },
+    {
+      "query": "Hi Jensen, what have you said about data centers?",
+      "era": "llm_era",
+      "expected_aliases": [
+        "data center",
+        "datacenter"
+      ],
+      "topic_hit": true,
+      "era_valid": true,
+      "source_count": 5,
+      "latency_seconds": 4.237
+    },
+    {
+      "query": "Explain NVIDIA software using Jensen’s source material.",
+      "era": "all",
+      "expected_aliases": [
+        "software"
+      ],
+      "topic_hit": true,
+      "era_valid": true,
+      "source_count": 5,
+      "latency_seconds": 3.519
+    },
+    {
+      "query": "Hi Jensen, what have you said about NVIDIA software?",
+      "era": "llm_era",
+      "expected_aliases": [
+        "software"
+      ],
+      "topic_hit": true,
+      "era_valid": true,
+      "source_count": 5,
+      "latency_seconds": 2.867
+    },
+    {
+      "query": "Explain leadership using Jensen’s source material.",
+      "era": "all",
+      "expected_aliases": [
+        "leader",
+        "culture"
+      ],
+      "topic_hit": false,
+      "era_valid": true,
+      "source_count": 5,
+      "latency_seconds": 3.024
+    },
+    {
+      "query": "Hi Jensen, what have you said about leadership?",
+      "era": "deep_learning",
+      "expected_aliases": [
+        "leader",
+        "culture"
+      ],
+      "topic_hit": false,
+      "era_valid": true,
+      "source_count": 5,
+      "latency_seconds": 3.118
+    },
+    {
+      "query": "Explain innovation using Jensen’s source material.",
+      "era": "all",
+      "expected_aliases": [
+        "innovation",
+        "innovate"
+      ],
+      "topic_hit": true,
+      "era_valid": true,
+      "source_count": 5,
+      "latency_seconds": 4.205
+    },
+    {
+      "query": "Hi Jensen, what have you said about innovation?",
+      "era": "llm_era",
+      "expected_aliases": [
+        "innovation",
+        "innovate"
+      ],
+      "topic_hit": true,
+      "era_valid": true,
+      "source_count": 5,
+      "latency_seconds": 2.92
+    },
+    {
+      "query": "Explain simulation using Jensen’s source material.",
+      "era": "all",
+      "expected_aliases": [
+        "simulat"
+      ],
+      "topic_hit": true,
+      "era_valid": true,
+      "source_count": 5,
+      "latency_seconds": 2.89
+    },
+    {
+      "query": "Hi Jensen, what have you said about simulation?",
+      "era": "llm_era",
+      "expected_aliases": [
+        "simulat"
+      ],
+      "topic_hit": true,
+      "era_valid": true,
+      "source_count": 5,
+      "latency_seconds": 2.723
+    },
+    {
+      "query": "Explain NVIDIA history using Jensen’s source material.",
+      "era": "all",
+      "expected_aliases": [
+        "nvidia"
+      ],
+      "topic_hit": true,
+      "era_valid": true,
+      "source_count": 5,
+      "latency_seconds": 2.976
+    },
+    {
+      "query": "Hi Jensen, what have you said about NVIDIA history?",
+      "era": "deep_learning",
+      "expected_aliases": [
+        "nvidia"
+      ],
+      "topic_hit": true,
+      "era_valid": true,
+      "source_count": 5,
+      "latency_seconds": 2.506
+    },
+    {
+      "query": "Explain Jensen Huang using Jensen’s source material.",
+      "era": "all",
+      "expected_aliases": [
+        "jensen",
+        "huang"
+      ],
+      "topic_hit": true,
+      "era_valid": true,
+      "source_count": 5,
+      "latency_seconds": 2.945
+    },
+    {
+      "query": "Hi Jensen, what have you said about Jensen Huang?",
+      "era": "llm_era",
+      "expected_aliases": [
+        "jensen",
+        "huang"
+      ],
+      "topic_hit": true,
+      "era_valid": true,
+      "source_count": 5,
+      "latency_seconds": 2.625
+    }
+  ],
+  "generation_results": [
+    {
+      "query": "Hi Jensen, explain CUDA and why software matters.",
+      "mode": "beginner",
+      "completed": true,
+      "answer": "CUDA is a software layer that translates a developer’s code into work for the thousands of cores inside an NVIDIA GPU, turning a graphics chip into a parallel‑processing engine. Think of it like handing every worker in a city a precise blueprint so they can all erect a skyscraper together, instead of each working in isolation. It runs on every NVIDIA GPU [6] and has attracted six million developers across 200 countries [1]. Without that software, the silicon would remain a silent brick rather than a catalyst for computation.  \n\nSoftware matters because today’s breakthroughs are defined by the code we write, not just the transistors we fabricate [4]. When developers get a powerful, easy‑to‑use API, they can build libraries that shrink hours of work into seconds—CUOFT does exactly that for supply‑chain optimization [2]. A concrete example: a medical‑imaging researcher adds a few lines of CUDA to a Python script and cuts processing time from ten minutes to under a minute, enabling real‑time diagnostics. That partnership of hardware and software is the engine driving the AI era.",
+      "citations": [
+        {
+          "filename": "gtc_2025.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2025",
+          "year": 2025,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=_waPvOwL9Z8",
+          "start_seconds": null,
+          "chunk_id": "9",
+          "quote": "can reach everywhere. And so we've now reached the tipping point of accelerated computing. CUDA has made it possible. And all of you, this is what GTC is about, the ecosystem, all of you made this possible. And so we made a little short video for you. Thank you. To the creators, the pioneers, the builders of the future, CUDA was made. Since 2006, 6 million developers in over 200 countries have used CUDA and transformed CUDA with over 900 CUDA X libraries and AI models. You're accelerating",
+          "id": 1
+        },
+        {
+          "filename": "gtc_2025.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2025",
+          "year": 2025,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=_waPvOwL9Z8",
+          "start_seconds": null,
+          "chunk_id": "8",
+          "quote": "every single industry uses this when you plan seats and flights, inventory and customers, workers and plants. Drivers and riders, so on and so forth. Where we have multiple constraints, multiple constraints, a whole bunch of variables, and you're optimizing for time, profit, quality of service, usage of resource, whatever happens to be. Evide uses it for our supply chain management. CUOFT is an incredible library. It takes hours and hours and it turns into seconds. The reason why that's a big",
+          "id": 2
+        },
+        {
+          "filename": "gtc_2024.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2024",
+          "year": 2024,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=Y2F8yisiS6E",
+          "start_seconds": null,
+          "chunk_id": "23",
+          "quote": "depending on whether you have a single GPU, multi-gpu or multi-node GPUs, it's optimised for that. And it's connected up with APIs that are simple to use. Think about what an AI API is. An AI API is an interface that you just talked to. And so this is a piece of software in the future that has a really simple API, and that API is called Human. And these packages, incredible bodies of software, will be optimised and packaged, and will put it on a website. And you can download it, you can take it",
+          "id": 3
+        },
+        {
+          "filename": "gtc_2019.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2019",
+          "year": 2019,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=Z2XlNfCtxwI",
+          "start_seconds": null,
+          "chunk_id": "2",
+          "quote": "the end. It's programmable. Well, the reason for that is because most algorithms today want to be software-wide. You want your computers to be software-wide, because so much innovation is going to computer algorithms today. And we want to put architecture, put the computer, put the capabilities of that machine, in the hands of the software developers, making it software-defined, makes that computer forever more powerful, improving all the time. If it's software-defined, if it's programmable,",
+          "id": 4
+        },
+        {
+          "filename": "gtc_spring_2022.txt",
+          "source": "gtc_keynote",
+          "title": "GTC SPRING 2022",
+          "year": 2022,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=39ubNuxnrK8",
+          "start_seconds": null,
+          "chunk_id": "1",
+          "quote": "robotics. AI planning actions. Digital robots, avatars, and physical robots will perceive, plan, and act. And just as AI frameworks like TensorFlow and PyTorch have become integrals AI software. Omniverse will be essential to making robotics software. Omniverse will enable the next wave of AI. We will talk about the next million X and other data shaping our industry this GTC. Over the past decade, Nvidia accelerated computing. Delivered a million X speed up in AI. And started the modern AI",
+          "id": 5
+        },
+        {
+          "filename": "gtc_2019.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2019",
+          "year": 2019,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=Z2XlNfCtxwI",
+          "start_seconds": null,
+          "chunk_id": "gtc_2019-1",
+          "quote": "CUDA runs on top of all of our GPUs.",
+          "id": 6
+        },
+        {
+          "filename": "gtc_2019.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2019",
+          "year": 2019,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=Z2XlNfCtxwI",
+          "start_seconds": null,
+          "chunk_id": "gtc_2019-8",
+          "quote": "adoption is the entire ecosystem supporting it. And the ecosystem starts with the most pervasive computing 500 3D in the world, Microsoft Windows. And Microsoft Windows Direct X with ray tracing called DXR is now available. But that's just the API. That's the lower level API. On top of it are the game engines. The two most important game engines in the world, Unreal and Unity, represent 90% of the world's games. You just saw just now Unity with DXR and",
+          "id": 7
+        },
+        {
+          "filename": "gtc_2019.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2019",
+          "year": 2019,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=Z2XlNfCtxwI",
+          "start_seconds": null,
+          "chunk_id": "gtc_2019-8",
+          "quote": "mind. This is going to be a huge success. We just have to continuously innovate and create these new models. While creating the GPU is the first step, inventing the technologies the first step, and ultimately what's going to enhance the adoption is the entire ecosystem supporting it. And the ecosystem starts with the most pervasive computing 500 3D in the world, Microsoft Windows. And Microsoft Windows Direct X with ray tracing called DXR is now",
+          "id": 8
+        },
+        {
+          "filename": "gtc_2021.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2021",
+          "year": 2021,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=jhDiaUL_RaM",
+          "start_seconds": null,
+          "chunk_id": "gtc_2021-2",
+          "quote": "and Envidea Modulus builds and trains physics-informed machine learning models that can learn and obey the laws of physics. GPU acceleration, data center scale, and physics-informed machine learning will give us million X speed-ups, and revolutionize drug discovery and climate science. Triton, an inference server for all workloads, now inferences for models, and does multi-GPU, multi-note, inference for large language models. We introduced many exciting",
+          "id": 9
+        },
+        {
+          "filename": "gtc_2021.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2021",
+          "year": 2021,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=jhDiaUL_RaM",
+          "start_seconds": null,
+          "chunk_id": "gtc_2021-2",
+          "quote": "Edge applications are different than cloud. They stream sensors, do signal or physics processing, AI inference, speech, computer graphics, all-in real-time. Clara Holliscan, built with UCL, is a new software-defined medical instruments platform, and runs in the data center or ORAN, our new superfast robotics process. The new Maxi is an Avatar platform. Maxi connects computer vision, re-bus speech AI, and Avatar animation and graphics into a real-time,",
+          "id": 10
+        },
+        {
+          "filename": "gtc_2019.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2019",
+          "year": 2019,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=Z2XlNfCtxwI",
+          "start_seconds": null,
+          "chunk_id": "gtc_2019-0",
+          "quote": "clear. 50% more developers on video GPUs. 50% more cooted downloads than a year ago. We now have 140 supercomputers powered by Nvidia. A 50% growth. The number one faster supercomputer in the world. The summit. The number one fastest supercomputer in Europe. The Swiss supercomputing center does paint. And the number one fastest in Japan. 22 of the most energy efficient supercomputer powered by Nvidia. We now have 600 applications that are powered by",
+          "id": 11
+        },
+        {
+          "filename": "gtc_2019.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2019",
+          "year": 2019,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=Z2XlNfCtxwI",
+          "start_seconds": null,
+          "chunk_id": "gtc_2019-0",
+          "quote": "taken on. If you take a look at what we've achieved last year, the momentum is absolutely clear. 50% more developers on video GPUs. 50% more cooted downloads than a year ago. We now have 140 supercomputers powered by Nvidia. A 50% growth. The number one faster supercomputer in the world. The summit. The number one fastest supercomputer in Europe. The Swiss supercomputing center does paint. And the number one fastest in Japan. 22 of the most energy",
+          "id": 12
+        }
+      ],
+      "graph_paths_used": 6,
+      "graph_backend": "neo4j",
+      "citation_ids_valid": true,
+      "has_citation": true,
+      "first_token_seconds": 16.252,
+      "total_seconds": 16.988,
+      "delta_count": 224,
+      "error": null
+    },
+    {
+      "query": "Explain the relationship between Omniverse and digital twins.",
+      "completed": true,
+      "answer": "Omniverse is the glue that turns a high‑fidelity simulation into a living digital twin. It ties the virtual world to the physical one with a physically‑based engine that scales across any RTX platform, letting engineers model factories, stores or railroads as if they were real [1][2][4]. The platform’s cloud‑native, multi‑GPU architecture means a twin can grow from a single workstation to a global data‑center without losing fidelity, and the same USD scene description language lets AI agents read and write the model directly [5]. In short, Omniverse provides the universal language and compute fabric that makes a digital twin more than a static CAD model—it becomes an interactive, predictive partner.\n\nThink of a digital twin as a flight simulator for reality: pilots learn without crashing a real plane, and robots learn without breaking the world they will inhabit. By running those simulations in Omniverse, we let AI, robotics and autonomous systems iterate millions of times faster, then deploy the proven solution to the physical asset [2][8]. That is why we announced Omniverse Cloud, to bring this capability to every designer, creator and researcher who needs a safe, scalable sandbox for the next wave of intelligent machines.",
+      "citations": [
+        {
+          "filename": "gtc_spring_2022.txt",
+          "source": "gtc_keynote",
+          "title": "GTC SPRING 2022",
+          "year": 2022,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=39ubNuxnrK8",
+          "start_seconds": null,
+          "chunk_id": "14",
+          "quote": "real gems, where AI and robots learn, and industrial digital twins. But first, let me show you the technologies that make omniverse possible. Omniverse technology will transform the way you create. Omniverse is a virtual world that is connected to the physical world. Omniverse is scalable. Omniverse is a virtual world that is connected to the physical world. Omniverse is a virtual world that is connected to the physical world. So for digital twins, the omniverse software and computer need to be",
+          "id": 1
+        },
+        {
+          "filename": "gtc_spring_2022.txt",
+          "source": "gtc_keynote",
+          "title": "GTC SPRING 2022",
+          "year": 2022,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=39ubNuxnrK8",
+          "start_seconds": null,
+          "chunk_id": "24",
+          "quote": "Just like NASA and Amazon, our customers in robotics and industrial automation are realizing the importance of digital twins and are doing amazing things in Omniverse. You can see how important Omniverse is throughout Invidia's work in AI and robotics. The next wave of AI, robotics systems, needs a platform like Omniverse. We want Omniverse to reach every one of the tens of millions of designers, creators, robot assistants, and AI researchers. So today, we are announcing Omniverse Cloud.",
+          "id": 2
+        },
+        {
+          "filename": "gtc_spring_2021.txt",
+          "source": "gtc_keynote",
+          "title": "GTC SPRING 2021",
+          "year": 2021,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=eAn_oiZwUXA",
+          "start_seconds": null,
+          "chunk_id": "5",
+          "quote": "and omniverse is fully integrated with the media AI. Omniverse is cloud native, multi-GPU scaling, and runs on any RTX platform and streams remotely to key demise. The third part is a video cloud XR, a star gated camera. You can teleport into omniverse with VR, and AI's can teleport out of omniverse with AR. Omniverse was released open beta in the semi. Let me show you what talented creators of me. The omniverse is a platform built from the ground up to be physically based. The omniverse is a",
+          "id": 3
+        },
+        {
+          "filename": "gtc_2022.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2022",
+          "year": 2022,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=PWcNlRI00jo",
+          "start_seconds": null,
+          "chunk_id": "5",
+          "quote": "using Omniverse to design, build and operate digital twins of their stores to optimize operations and enhance the shopping experience and with the amazing Magic League 2 headsets connected to Omniverse, associates can enter a mixed, physical and Omniverse world to explore new store designs. The $300 billion global railroad market helps move the world, a critical part of the global supply chain. Deutsche Bahn, the national railway company of Germany, uses Omniverse to build and operate a digital",
+          "id": 4
+        },
+        {
+          "filename": "gtc_2024.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2024",
+          "year": 2024,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=Y2F8yisiS6E",
+          "start_seconds": null,
+          "chunk_id": "31",
+          "quote": "the future that omniverse is going to be. And with these APIs, you're going to have these magical digital twin capability. We also have turned omniverse into an AI and integrated it with the ability to chat USD, the language of our language is human and omniverse is language, it turns out is universal scene description. And so that language is rather complex and so we've tied our omniverse that language. And so you can speak to it in English and it will directly generate USD. And we'll talk",
+          "id": 5
+        },
+        {
+          "filename": "gtc_2022.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2022",
+          "year": 2022,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=PWcNlRI00jo",
+          "start_seconds": null,
+          "chunk_id": "gtc_2022-2",
+          "quote": "Nvidia LightSpeed Studios used Omniverse to remaster one of the most celebrated games in history.",
+          "id": 6
+        },
+        {
+          "filename": "gtc_2023.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2023",
+          "year": 2023,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=DiGB5uAYKAg",
+          "start_seconds": null,
+          "chunk_id": "gtc_2023-1",
+          "quote": "Nvidia invented accelerated computing.",
+          "id": 7
+        },
+        {
+          "filename": "gtc_2022.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2022",
+          "year": 2022,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=PWcNlRI00jo",
+          "start_seconds": null,
+          "chunk_id": "gtc_2022-0",
+          "quote": "simulation, built with NVIDIA Omniverse",
+          "id": 8
+        },
+        {
+          "filename": "gtc_2022.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2022",
+          "year": 2022,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=PWcNlRI00jo",
+          "start_seconds": null,
+          "chunk_id": "gtc_2022-2",
+          "quote": "is Flight Sims 40F anniversary. With Ada and DLSS 3, Flight Simulator is silky smooth. I am thrilled to announce portal RTX. Nvidia LightSpeed Studios used Omniverse to remaster one of the most celebrated games in history. Portal was developed by Val and released in 2007. It was GDC's Game of the Year and exhibited at the Smithsonian. Portal RTX is both nostalgic and futuristic at the same time. Let's take a look. This was a triumph. I'm making a note",
+          "id": 9
+        },
+        {
+          "filename": "gtc_2022.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2022",
+          "year": 2022,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=PWcNlRI00jo",
+          "start_seconds": null,
+          "chunk_id": "gtc_2022-2",
+          "quote": "16 times increase in four years with artificial intelligence. Some pixels are calculated. Most are predicted. Let's enjoy Microsoft Flight Simulator. Again, that is CPU limited. Because of the realistic physics in the giant worlds, it is one of the longest running franchises. This is Flight Sims 40F anniversary. With Ada and DLSS 3, Flight Simulator is silky smooth. I am thrilled to announce portal RTX. Nvidia LightSpeed Studios used Omniverse to remaster",
+          "id": 10
+        },
+        {
+          "filename": "gtc_2019.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2019",
+          "year": 2019,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=Z2XlNfCtxwI",
+          "start_seconds": null,
+          "chunk_id": "gtc_2019-1",
+          "quote": "It's a continuous optimization between the architecture, the chips, the systems, the algorithms, and the applications. The Nvidia stack looks basically like this, and today I'm going to refer back to this repeatedly. Starting from now, we're going to take all of our libraries, we're going to put them together into one body of work, one suite, if you will, one umbrella named called CUDAX. CUDA acceleration libraries. It's built on top of the architecture",
+          "id": 11
+        },
+        {
+          "filename": "gtc_2019.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2019",
+          "year": 2019,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=Z2XlNfCtxwI",
+          "start_seconds": null,
+          "chunk_id": "gtc_2019-1",
+          "quote": "or hyper-fueling computing, artificial intelligence, autonomous driving, DR, drive, IS, for Isaac, robotics, CL for Clara, healthcare, medical imaging, and last one is what?",
+          "id": 12
+        }
+      ],
+      "graph_paths_used": 6,
+      "graph_backend": "neo4j",
+      "citation_ids_valid": true,
+      "has_citation": true,
+      "first_token_seconds": 7.046,
+      "total_seconds": 7.717,
+      "delta_count": 251,
+      "error": null
+    },
+    {
+      "query": "How do Blackwell and NVLink connect in AI infrastructure?",
+      "completed": true,
+      "answer": "Blackwell isn’t just a single chip; it’s a platform built to scale AI workloads by stitching together dozens, even hundreds, of GPU dies with the same fabric that powers our data‑center supercomputers.  NVLink 144, as we call it, ties 144 individual GPU dies together, each die acting like a brick in a massive wall of compute, and the physical packaging can evolve as we push the limits of density and power [4].  This fabric gives us the bandwidth to move tensors as fast as they’re produced, turning the raw horsepower of Blackwell into a coherent, low‑latency engine for training trillion‑parameter models [6].  The result is an infrastructure that can grow organically, adding more bricks without breaking the wall.\n\nFrom a systems perspective we first scale up a single Blackwell node, then we scale out across many nodes using the same NVLink fabric, a pattern we refined when we re‑engineered MVLink for larger clusters [1].  The high‑speed links let each GPU share weights and activations in real time, making the whole cluster behave like one gigantic brain rather than a collection of isolated processors.  That’s why customers can deploy AI factories that deliver unprecedented throughput while keeping power and latency in check.  It’s an extraordinary leap that turns raw silicon into a truly unified AI supercomputer.",
+      "citations": [
+        {
+          "filename": "gtc_2025.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2025",
+          "year": 2025,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=_waPvOwL9Z8",
+          "start_seconds": null,
+          "chunk_id": "15",
+          "quote": "into what is an AI super computer. This is the way it was in the past. This is the way this is how we started. Well, this is as far as we scaled up before we scaled out. But we wanted to scale up even further. And I told you that Ranger took this system and scaled it out, scaled it up by another factor of four. And so we had MV link 32, but the system was way too large. And so we had to do something quite remarkable. Re-engineer how MV link worked and how scale up worked. And so the person that",
+          "id": 1
+        },
+        {
+          "filename": "gtc_2024.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2024",
+          "year": 2024,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=Y2F8yisiS6E",
+          "start_seconds": null,
+          "chunk_id": "17",
+          "quote": "And so this ability is super, super important. The excitement of blackwell is really off the charts. When we first, when we first, you know, this year and a half ago, two years ago, I guess two years ago, when we first started to go to market with Hopper, we had to benefit of two CSPs joined us in a lunch and we were delighted. And so we had two customers. We have more now. Unbelievable excitement for blackwell. Unbelievable excitement. And there's a whole bunch of different configurations. Of",
+          "id": 2
+        },
+        {
+          "filename": "gtc_2025.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2025",
+          "year": 2025,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=_waPvOwL9Z8",
+          "start_seconds": null,
+          "chunk_id": "29",
+          "quote": "Okay. And so notice 16 sites, 4 GPUs and one package, extremely large NVLink. I just put that in perspective. This is what it looks like. Okay. Now this is going to be fun. So this, you are just literally ramping up Grace Blackwell at the moment. I don't mean to make it look like a laptop, but here you go. Okay. So this is what Grace Blackwell looks like. And this is what Ruben looks like. ISO, ISO dimension. And so this is another way of saying, before you scale out, you have to scale up.",
+          "id": 3
+        },
+        {
+          "filename": "gtc_2025.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2025",
+          "year": 2025,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=_waPvOwL9Z8",
+          "start_seconds": null,
+          "chunk_id": "28",
+          "quote": "a GPU, and that was wrong. And the reason for that is it screws up all the NVLink numbing creature and things like that. So, going forward, without going back to blackwell to fix it, going forward, when I say NVLink 144, it just means that it's connected to 144 GPUs. And each one of those GPUs is a GPU die. And it could be assembled in some package. How it's assembled could change from time to time. And so each GPU dies GPU. Each NVLink is connected to the GPU. And so Vera Rubin, NVLink 144.",
+          "id": 4
+        },
+        {
+          "filename": "gtc_2025.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2025",
+          "year": 2025,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=_waPvOwL9Z8",
+          "start_seconds": null,
+          "chunk_id": "27",
+          "quote": "coming. Yeah, next. Yeah. And in fact, that's exactly the response I was hoping to get. And here's why. Look, we're building AI factories and AI infrastructure. It's going to take years of planning. This isn't like buying a laptop. You know, this isn't a, this isn't discretionary spent. This is spend that we have to go plan on. And so we have plan on having, of course, the land and the power. And we have to get our, our cat-backed rating, engineering teams. And we have to lay it out a couple of",
+          "id": 5
+        },
+        {
+          "filename": "gtc_2024.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2024",
+          "year": 2024,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=Y2F8yisiS6E",
+          "start_seconds": null,
+          "chunk_id": "gtc_2024-6",
+          "quote": "but we need bigger GPUs. And so, ladies and gentlemen, I would like to introduce you to a very, very big GPU. Name, Dr. David Blackwell. Mathematician. Game theorists. Probability. We thought it was a perfect, perfect need. Blackwell, ladies and gentlemen, enjoy this. Blackwell is not a chip. Blackwell is the name of a platform.",
+          "id": 6
+        },
+        {
+          "filename": "gtc_2024.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2024",
+          "year": 2024,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=Y2F8yisiS6E",
+          "start_seconds": null,
+          "chunk_id": "gtc_2024-6",
+          "quote": "the size of our model. It's going to increase the amount of data that we have, and we're going to have to build even bigger GPUs. Opera is fantastic, but we need bigger GPUs. And so, ladies and gentlemen, I would like to introduce you to a very, very big GPU. Name, Dr. David Blackwell. Mathematician. Game theorists. Probability. We thought it was a perfect, perfect need. Blackwell, ladies and gentlemen, enjoy this. Blackwell is not a chip. Blackwell is",
+          "id": 7
+        },
+        {
+          "filename": "gtc_2019.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2019",
+          "year": 2019,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=Z2XlNfCtxwI",
+          "start_seconds": null,
+          "chunk_id": "gtc_2019-1",
+          "quote": "CUDA runs on top of all of our GPUs.",
+          "id": 8
+        },
+        {
+          "filename": "gtc_2022.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2022",
+          "year": 2022,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=PWcNlRI00jo",
+          "start_seconds": null,
+          "chunk_id": "gtc_2022-2",
+          "quote": "RTX Remix will be available shortly after 8.0 launch. RTX Neural rendering algorithms run on programmable shaders, RTX cores and Tensor cores to create amazing images.",
+          "id": 9
+        },
+        {
+          "filename": "gtc_2022.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2022",
+          "year": 2022,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=PWcNlRI00jo",
+          "start_seconds": null,
+          "chunk_id": "gtc_2022-2",
+          "quote": "We can deliver 16 times increase in four years with artificial intelligence. Some pixels are calculated. Most are predicted. Let's enjoy Microsoft Flight Simulator. Again, that is CPU limited. Because of the realistic physics in the giant worlds, it is one of the longest running franchises. This is Flight Sims 40F anniversary. With Ada and DLSS 3, Flight Simulator is silky smooth. I am thrilled to announce portal RTX. Nvidia LightSpeed Studios used",
+          "id": 10
+        },
+        {
+          "filename": "gtc_2022.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2022",
+          "year": 2022,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=PWcNlRI00jo",
+          "start_seconds": null,
+          "chunk_id": "gtc_2022-2",
+          "quote": "RTX Neural rendering algorithms run on programmable shaders, RTX cores and Tensor cores to create amazing images.",
+          "id": 11
+        },
+        {
+          "filename": "gtc_2019.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2019",
+          "year": 2019,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=Z2XlNfCtxwI",
+          "start_seconds": null,
+          "chunk_id": "gtc_2019-0",
+          "quote": "the momentum is absolutely clear. 50% more developers on video GPUs. 50% more cooted downloads than a year ago. We now have 140 supercomputers powered by Nvidia. A 50% growth. The number one faster supercomputer in the world. The summit. The number one fastest supercomputer in Europe. The Swiss supercomputing center does paint. And the number one fastest in Japan. 22 of the most energy efficient supercomputer powered by Nvidia. We now have 600",
+          "id": 12
+        }
+      ],
+      "graph_paths_used": 2,
+      "graph_backend": "neo4j",
+      "citation_ids_valid": true,
+      "has_citation": true,
+      "first_token_seconds": 6.94,
+      "total_seconds": 7.774,
+      "delta_count": 274,
+      "error": null
+    },
+    {
+      "query": "Review my startup pitch: a simulation platform for robotics teams.",
+      "mode": "pitch",
+      "completed": true,
+      "answer": "**Strengths**  \n- You can plug directly into NVIDIA’s Omniverse simulation engine, the same backbone that powers our digital‑twin and robotics stacks [6][7].  \n- The ecosystem already includes Isaac for robot perception, Drive for autonomous vehicles, and Clara HoloScan for medical instruments, giving you ready‑made SDKs and a 3 million‑developer community [1][4].  \n- Physical‑AI research at NVIDIA shows that the same AI kernels that run inference on a robot can be reused in high‑fidelity simulation, cutting development cycles dramatically [8].\n\n**Risks**  \n- Heavy reliance on NVIDIA GPUs and CUDA means cost spikes if hardware pricing shifts, and it ties you to a single‑vendor roadmap.  \n- Simulation fidelity is only as good as the underlying physics models; any gap can erode trust from safety‑critical teams.  \n- The market already has entrenched players (e.g., Unity, ROS‑based simulators), so gaining traction will require a clear moat beyond raw performance.\n\n**Assumptions**  \n- Your customers have access to RTX/Hopper‑class GPUs and are comfortable adopting Omniverse as a development platform.  \n- The primary value proposition is speed‑to‑deployment for robotics teams that already use NVIDIA’s Isaac or Drive stacks.  \n- You can sustain a rapid SDK update cadence comparable to NVIDIA’s 60‑SDK refresh at GTC [1].\n\n**Two concrete experiments**  \n1. Deploy an Omniverse‑based digital twin of a pick‑and‑place arm, run a closed‑loop control loop, and compare latency and error metrics against the physical robot.  \n2. Integrate Clara HoloScan with your simulator to model a surgical robot’s tool‑tip forces, then validate against bench‑top sensor data.\n\n**Missing details** – What is your go‑to‑market strategy for reaching robotics teams already invested in ROS? How do you plan to price the platform relative to existing simulators, and what early traction or pilot customers do you have?",
+      "citations": [
+        {
+          "filename": "gtc_spring_2022.txt",
+          "source": "gtc_keynote",
+          "title": "GTC SPRING 2022",
+          "year": 2022,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=39ubNuxnrK8",
+          "start_seconds": null,
+          "chunk_id": "27",
+          "quote": "The platforms are open to developers to adopt in part or in whole. Omniverse is central to our robotics platforms. And like NASA and Amazon, we and our customers in robotics and industrial automation realize the importance of digital twins and Omniverse. Drive, Orrin, is in full production. Isaac, or in developer kits are available now. Clara, HoloScan, DevKids, are available in May. We updated 60 SDKs at this GTC. For our 3 million developers, scientists, and AI researchers, and tens of",
+          "id": 1
+        },
+        {
+          "filename": "gtc_spring_2021.txt",
+          "source": "gtc_keynote",
+          "title": "GTC SPRING 2021",
+          "year": 2021,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=eAn_oiZwUXA",
+          "start_seconds": null,
+          "chunk_id": "7",
+          "quote": "I'll catch you at Tower 1 but there's perfect. We would like to be able to do this at scale in simulation. That's exactly why Nvidia has digital human for simulation. Digital humans are trained with data from real-sotions. You can then use digital humans in simulation to test new workflows for worker ergonomics and efficiency. Now your factory is employ 57,000 people that share workspace with main robots designed to make their jobs easier. Let's talk about them. You're right, Jensi. Robots are",
+          "id": 2
+        },
+        {
+          "filename": "gtc_2019.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2019",
+          "year": 2019,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=Z2XlNfCtxwI",
+          "start_seconds": null,
+          "chunk_id": "51",
+          "quote": "and localization mapping and planning. These three parts of the computing AI, computing stack, robotics stack is inside drive plan. All of those algorithms are ensemble together to essentially create what we call drive AV. Constellation is our simulation platform.",
+          "id": 3
+        },
+        {
+          "filename": "gtc_spring_2022.txt",
+          "source": "gtc_keynote",
+          "title": "GTC SPRING 2022",
+          "year": 2022,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=39ubNuxnrK8",
+          "start_seconds": null,
+          "chunk_id": "21",
+          "quote": "or surgery. Just as in video drive, is a platform for robotic vehicles. Clara Holliscan is a platform for robotic medical instruments. We are delighted to see the enthusiasm around Holliscan and to partner with leading medical device makers and robotics surgery companies. The demand for robotics and automation is increasing exponentially. Some robots move and other robots watch things that move. Envideas working with thousands of customers and developers, building robots for manufacturing,",
+          "id": 4
+        },
+        {
+          "filename": "gtc_2024.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2024",
+          "year": 2024,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=Y2F8yisiS6E",
+          "start_seconds": null,
+          "chunk_id": "36",
+          "quote": "moves? Dirt, check this out. All this incredible intelligence is powered by the new JetSync door robotics chips, designed for group built for the future, with Isaac Lath, Osmo, and Groot, we're providing the building blocks for the next generation of AI-powered robotics. About the same size. The sole of NVIDIA, the intersection of computer graphics, physics, artificial intelligence, it all came to bear at this moment. The name of that project, General Robotics 003.",
+          "id": 5
+        },
+        {
+          "filename": "gtc_2022.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2022",
+          "year": 2022,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=PWcNlRI00jo",
+          "start_seconds": null,
+          "chunk_id": "gtc_2022-0",
+          "quote": "simulation, built with NVIDIA Omniverse",
+          "id": 6
+        },
+        {
+          "filename": "gtc_2022.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2022",
+          "year": 2022,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=PWcNlRI00jo",
+          "start_seconds": null,
+          "chunk_id": "gtc_2022-2",
+          "quote": "Nvidia LightSpeed Studios used Omniverse to remaster one of the most celebrated games in history.",
+          "id": 7
+        },
+        {
+          "filename": "gtc_2025.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2025",
+          "year": 2025,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=_waPvOwL9Z8",
+          "start_seconds": null,
+          "chunk_id": "gtc_2025-2",
+          "quote": "Robotics, which has been enabled by physical AI.",
+          "id": 8
+        },
+        {
+          "filename": "gtc_2019.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2019",
+          "year": 2019,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=Z2XlNfCtxwI",
+          "start_seconds": null,
+          "chunk_id": "gtc_2019-1",
+          "quote": "It's a continuous optimization between the architecture, the chips, the systems, the algorithms, and the applications. The Nvidia stack looks basically like this, and today I'm going to refer back to this repeatedly. Starting from now, we're going to take all of our libraries, we're going to put them together into one body of work, one suite, if you will, one umbrella named called CUDAX. CUDA acceleration libraries. It's built on top of the architecture",
+          "id": 9
+        },
+        {
+          "filename": "gtc_2019.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2019",
+          "year": 2019,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=Z2XlNfCtxwI",
+          "start_seconds": null,
+          "chunk_id": "gtc_2019-1",
+          "quote": "CrowdSpark. The reconstruction of particles from cryoelectron B microscopy. Fun 3D, CFD simulation, RhoMAX, molecular dynamics, microvolution, a inverse convolution method to enhance imagery, hair bricks, genomics analysis, and work the world's most popular, most frequently used, whether seemingly. The thing that's really great about a software-defined method in an accelerated computing approach like ours is that we never give up on the applications and",
+          "id": 10
+        },
+        {
+          "filename": "gtc_2023.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2023",
+          "year": 2023,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=DiGB5uAYKAg",
+          "start_seconds": null,
+          "chunk_id": "gtc_2023-1",
+          "quote": "Nvidia invented accelerated computing.",
+          "id": 11
+        },
+        {
+          "filename": "gtc_2024.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2024",
+          "year": 2024,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=Y2F8yisiS6E",
+          "start_seconds": null,
+          "chunk_id": "gtc_2024-31",
+          "quote": "and integrated it with the ability to chat USD, the language of our language is human and omniverse is language, it turns out is universal scene description. And so that language is rather complex and so we've tied our omniverse that language. And so you can speak to it in English and it will directly generate USD. And we'll talk back in USD but converse back to you in English. You could also look for information in this world semantically. Instead of the",
+          "id": 12
+        }
+      ],
+      "graph_paths_used": 5,
+      "graph_backend": "neo4j",
+      "citation_ids_valid": true,
+      "has_citation": true,
+      "first_token_seconds": 7.615,
+      "total_seconds": 8.627,
+      "delta_count": 422,
+      "error": null
+    },
+    {
+      "query": "Review an architecture with a GPU inference service, request batching, and a CPU API server.",
+      "mode": "architecture",
+      "completed": true,
+      "answer": "The GPU inference service sits on a single‑architecture platform that gives us elasticity across video, LLM and robotics workloads, but the CPU API front‑end becomes the choke point when request rates spike.  We need a high‑throughput, low‑latency path from the API server to the GPU, enough PCIe lanes and NVLink bandwidth to keep the accelerator fed, and a memory budget that can hold the model plus batch buffers.  Without proper batching, each kernel launch incurs overhead that dwarfs the actual compute, and the inference server’s energy‑efficiency advantage disappears [2].  Triton’s multi‑GPU, multi‑node inference capability can hide latency, but only if the surrounding stack—CPU scheduling, network stack, and batch queue—are engineered for parallelism [4].  The current design also assumes a static batch size and a single model, which limits flexibility as workloads shift.\n\nTo unlock performance we should enable dynamic request batching inside the API server, letting the CPU aggregate small calls into larger GPU kernels, and expose a configurable batch window that adapts to latency SLAs.  Second, we must provision a high‑speed interconnect fabric—NVLink or PCIe 5.0—and align CPU cores to the GPU’s lane topology so that data movement never stalls the accelerator, a pattern proven in our data‑center inference platforms [1][3].  Missing requirements include explicit latency targets, model‑size limits, and monitoring of GPU memory fragmentation; we are assuming the model fits comfortably in GPU VRAM and that network jitter is negligible.  Addressing those assumptions will make the service truly remarkable.",
+      "citations": [
+        {
+          "filename": "gtc_2023.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2023",
+          "year": 2023,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=DiGB5uAYKAg",
+          "start_seconds": null,
+          "chunk_id": "13",
+          "quote": "models, data types, and sizes. NVIDIA's one architecture platform offers both acceleration and elasticity. Today, we are announcing our new inference platform. For configurations, one architecture, one software staff, each configuration is optimized for a class of workloads. For AI video worklins, we have L4, optimized for video decoding and transcode, video content moderation, and video call features like background replacement, lighting, making eye content, transcription, and real-time",
+          "id": 1
+        },
+        {
+          "filename": "gtc_spring_2021.txt",
+          "source": "gtc_keynote",
+          "title": "GTC SPRING 2021",
+          "year": 2021,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=eAn_oiZwUXA",
+          "start_seconds": null,
+          "chunk_id": "16",
+          "quote": "Deep learning training servers are built like super computers, with the largest number of fast CPU cores, the fastest memory, the fastest I-O, and high-speed lengths to connect the GPUs. Deep learning inference servers are optimized for energy efficiency, and best ability to process a large number of models concurrently. The genius of the X86 server architecture is the ability to do a good job using varying configurations of CPU, memory, PCI Express, and peripherals to serve all of these",
+          "id": 2
+        },
+        {
+          "filename": "gtc_2023.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2023",
+          "year": 2023,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=DiGB5uAYKAg",
+          "start_seconds": null,
+          "chunk_id": "15",
+          "quote": "inference platform, one architecture for diverse AI workloads and maximum data center acceleration and elasticity. The world's largest industries make physical things, but they want to build them digital. Omniverse is a platform for industrial visualization that bridges digital and physical. It lets industries design, build, operate and optimize physical products and factories digital before making a physical replica. Digitalization boosts efficiency and speed and saves money. One use of",
+          "id": 3
+        },
+        {
+          "filename": "gtc_2021.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2021",
+          "year": 2021,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=jhDiaUL_RaM",
+          "start_seconds": null,
+          "chunk_id": "2",
+          "quote": "Graphs can now be projected into team and frameworks, and Envidea Modulus builds and trains physics-informed machine learning models that can learn and obey the laws of physics. GPU acceleration, data center scale, and physics-informed machine learning will give us million X speed-ups, and revolutionize drug discovery and climate science. Triton, an inference server for all workloads, now inferences for models, and does multi-GPU, multi-note, inference for large language models. We introduced",
+          "id": 4
+        },
+        {
+          "filename": "gtc_2024.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2024",
+          "year": 2024,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=Y2F8yisiS6E",
+          "start_seconds": null,
+          "chunk_id": "23",
+          "quote": "server, all completely packaged together. It's optimised, depending on whether you have a single GPU, multi-gpu or multi-node GPUs, it's optimised for that. And it's connected up with APIs that are simple to use. Think about what an AI API is. An AI API is an interface that you just talked to. And so this is a piece of software in the future that has a really simple API, and that API is called Human. And these packages, incredible bodies of software, will be optimised and packaged, and will put",
+          "id": 5
+        },
+        {
+          "filename": "gtc_2019.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2019",
+          "year": 2019,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=Z2XlNfCtxwI",
+          "start_seconds": null,
+          "chunk_id": "gtc_2019-1",
+          "quote": "CUDA runs on top of all of our GPUs.",
+          "id": 6
+        },
+        {
+          "filename": "gtc_2019.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2019",
+          "year": 2019,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=Z2XlNfCtxwI",
+          "start_seconds": null,
+          "chunk_id": "gtc_2019-1",
+          "quote": "It's a continuous optimization between the architecture, the chips, the systems, the algorithms, and the applications. The Nvidia stack looks basically like this, and today I'm going to refer back to this repeatedly. Starting from now, we're going to take all of our libraries, we're going to put them together into one body of work, one suite, if you will, one umbrella named called CUDAX. CUDA acceleration libraries. It's built on top of the architecture",
+          "id": 7
+        },
+        {
+          "filename": "gtc_2019.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2019",
+          "year": 2019,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=Z2XlNfCtxwI",
+          "start_seconds": null,
+          "chunk_id": "gtc_2019-1",
+          "quote": "our libraries, we're going to put them together into one body of work, one suite, if you will, one umbrella named called CUDAX. CUDA acceleration libraries. It's built on top of the architecture that all of you know very well, and for many of you the reason why you're here called CUDA. CUDA runs on top of all of our GPUs. It runs on top of our graphics GPU called RTX. Our deep learning systems called EGX, our hyper-scale systems called HGX, and even our",
+          "id": 8
+        },
+        {
+          "filename": "gtc_2019.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2019",
+          "year": 2019,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=Z2XlNfCtxwI",
+          "start_seconds": null,
+          "chunk_id": "gtc_2019-1",
+          "quote": "ours is that we never give up on the applications and together with the developers continue to advance. Using exactly the same GPU, the same exacting, same infrastructure, applications continue to improve in performance. If you take a look at the most popular, some of the most popular applications from New York go, this year over year we improved the performance from 25x to almost 40x. We continue to enhance those applications, continue to refine them,",
+          "id": 9
+        },
+        {
+          "filename": "gtc_2019.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2019",
+          "year": 2019,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=Z2XlNfCtxwI",
+          "start_seconds": null,
+          "chunk_id": "gtc_2019-48",
+          "quote": "So super excited to announce this today. A new instance coming out in AWS, coming soon, the G4 instance. It'll be featuring Nvidia T4 processors and really designed for me to learn learning. It's really designed to help our customers really shrink the time that it takes to do inference at the edge with that response time really matter matters, but also really to produce the cost they have for our viewer notice. In addition to machine learning, this is a",
+          "id": 10
+        },
+        {
+          "filename": "gtc_2019.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2019",
+          "year": 2019,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=Z2XlNfCtxwI",
+          "start_seconds": null,
+          "chunk_id": "gtc_2019-48",
+          "quote": "doing, as you mentioned, through that pipeline we had up here earlier. They do their training, but they also then spread out inference. Many of the customers tell us that actually 80 to 90% of the cost of machine learning at scale ends up being, yeah, this is the big point. So super excited to announce this today. A new instance coming out in AWS, coming soon, the G4 instance. It'll be featuring Nvidia T4 processors and really designed for me to learn",
+          "id": 11
+        },
+        {
+          "filename": "gtc_2022.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2022",
+          "year": 2022,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=PWcNlRI00jo",
+          "start_seconds": null,
+          "chunk_id": "gtc_2022-2",
+          "quote": "Nvidia LightSpeed Studios used Omniverse to remaster one of the most celebrated games in history.",
+          "id": 12
+        }
+      ],
+      "graph_paths_used": 5,
+      "graph_backend": "neo4j",
+      "citation_ids_valid": true,
+      "has_citation": true,
+      "first_token_seconds": 6.94,
+      "total_seconds": 7.855,
+      "delta_count": 333,
+      "error": null
+    },
+    {
+      "query": "Compare the source coverage of accelerated computing in 2019 and 2025.",
+      "mode": "compare",
+      "compare_years": [
+        2019,
+        2025
+      ],
+      "completed": true,
+      "answer": "In 2019 our messaging centered on the notion that accelerated computing is a holistic stack, not just silicon. We highlighted the continuous optimization across architecture, chips, systems, algorithms and applications, and introduced the emerging Rapids memory and scheduling layers as part of a unified CUDA‑X library suite. The talk stressed that CPUs were hitting scaling limits and that data volumes were exploding, driving the need for DGX appliances and a co‑design approach. This view positioned NVIDIA as the builder of the world’s largest GPUs and the software glue that makes them productive [1][3][4][5][11].\n\nBy 2025 the narrative shifted to the scale of the AI economy and the ubiquity of our full stack across every industry. We forecast trillion‑dollar data‑center build‑outs, described AI as a parallel “factory” that will sit beside traditional manufacturing, and showed how smart solvers and CAE libraries now accelerate design cycles from hours to seconds. The emphasis moved from proving the concept to illustrating concrete optimization wins in supply chains, travel, and cloud services, underscoring that accelerated computing has become an indispensable engine of global productivity [6][7][8][9][10].",
+      "citations": [
+        {
+          "filename": "gtc_2019.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2019",
+          "year": 2019,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=Z2XlNfCtxwI",
+          "start_seconds": null,
+          "chunk_id": "1",
+          "quote": "so that you can continue to be more and more productive, or similarly larger and larger solutions. Accelerated computing is not just about the chips. The chips is really important. There's no question about that, and we certainly build up world's largest chips. But Accelerated computing is a collaboration, it's a co-design. It's a continuous optimization between the architecture, the chips, the systems, the algorithms, and the applications. The Nvidia stack looks basically like this, and today",
+          "id": 1
+        },
+        {
+          "filename": "gtc_2019.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2019",
+          "year": 2019,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=Z2XlNfCtxwI",
+          "start_seconds": null,
+          "chunk_id": "2",
+          "quote": "you could download it into any cloud, any data center, any computer that has been certified, and it will just run the entire acceleration step, fully integrated, fully optimized, and enhance all the time. Now, the reason that we do this is for several characteristics that we really love about accelerated computing. And remember, it's not just about chip, it's about the entire stack. And so one way to think about that is this. The first thing you want to do for accelerated computing is you want",
+          "id": 2
+        },
+        {
+          "filename": "gtc_2019.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2019",
+          "year": 2019,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=Z2XlNfCtxwI",
+          "start_seconds": null,
+          "chunk_id": "4",
+          "quote": "it out loud. One, Prata. Okay, thank you very much. My job is done. Have a nice day. Okay, Prata, accelerated computing. The approach that we've hired here that doesn't need us to go is really taken off. And it's taken off because we're seeing that CPUs are not scaling as fast as they used to. And because the number of workloads that are really, really important to the future of computing of future society has just gone berserk. The amount of computation that is necessary for the future is",
+          "id": 3
+        },
+        {
+          "filename": "gtc_2019.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2019",
+          "year": 2019,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=Z2XlNfCtxwI",
+          "start_seconds": null,
+          "chunk_id": "41",
+          "quote": "slow. And the data kept getting bigger and bigger and bigger. And now we have to accelerate that. And that's where Rapids came. Rapids is an effort that started about six years ago. And the industry has been working together on that. And it came in several different layers. The first layer is to completely re-engineer the memory system. The in-memory architecture is now called Apache era. The second part of it is a scheduling system called DASC. And the third, the new compute engine, the new",
+          "id": 4
+        },
+        {
+          "filename": "gtc_2019.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2019",
+          "year": 2019,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=Z2XlNfCtxwI",
+          "start_seconds": null,
+          "chunk_id": "43",
+          "quote": "now. And so, now we're going to take them to market. And the market is fragmenting very quickly in the sense that the number of customers they use, data analytics and data science, these various different kinds of computers to the world. And so we have to, for each one of these markets and each one of these segments, we have to use a different go-to-market. One of the ways we're going to market, we're taking the DGX and basically these AI-Soup computing appliance stock storage and all the",
+          "id": 5
+        },
+        {
+          "filename": "gtc_2025.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2025",
+          "year": 2025,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=_waPvOwL9Z8",
+          "start_seconds": null,
+          "chunk_id": "6",
+          "quote": "across the board. We're now seeing, and this is the purple is the forecast of analysts about the next set, the increase of capital expense of the world's data centers, including CSPs and enterprise and so on. The world's data centers through the end of the decade, so 2030. I've said before that I expect data center build out to reach a trillion dollars. And I am fairly certain we're going to reach that very soon. Two dynamics is happening at the same time. The first dynamic is that the vast",
+          "id": 6
+        },
+        {
+          "filename": "gtc_2025.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2025",
+          "year": 2025,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=_waPvOwL9Z8",
+          "start_seconds": null,
+          "chunk_id": "9",
+          "quote": "smart solvers, really important for CAE. This is one of the biggest things that has happened in the last year. Working with cadence and synopsis and answers, the so and into all of the systems companies we've now made possible just about every important ADA and CAE library to be accelerated. What's amazing is until recently, and VIN has been using general-purpose computers running software super slowly to design accelerated computers for everybody else. And the reason for that is because we",
+          "id": 7
+        },
+        {
+          "filename": "gtc_2025.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2025",
+          "year": 2025,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=_waPvOwL9Z8",
+          "start_seconds": null,
+          "chunk_id": "7",
+          "quote": "lithography, which is the second factory in a fab. There's the factory that manufactures the wafers and then there's the factory that manufactures the information to manufactured wafers. Every industry, every company that has factories will have two factories in the future. The factory for what they build and the factory for the mathematics, the factory for the AI. Factory for cars, factory for AI, sport of cars, factory for smart speakers and factories, AI for smart speakers. And so CULitha is",
+          "id": 8
+        },
+        {
+          "filename": "gtc_2025.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2025",
+          "year": 2025,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=_waPvOwL9Z8",
+          "start_seconds": null,
+          "chunk_id": "10",
+          "quote": "take off in the cloud and the CSPs. But that's not where AI is limited to. AI will go everywhere. And we're going to talk about AI in a lot of different ways. And the cloud service providers, of course, they like our leading edge technology. They like the fact that we have full stack because accelerated computing, as you know, as I was explaining earlier is not about the chip. It's not even just the chip in the library. The programming model is the chip, the programming model, and a whole bunch",
+          "id": 9
+        },
+        {
+          "filename": "gtc_2025.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2025",
+          "year": 2025,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=_waPvOwL9Z8",
+          "start_seconds": null,
+          "chunk_id": "8",
+          "quote": "optimization. Almost every single industry uses this when you plan seats and flights, inventory and customers, workers and plants. Drivers and riders, so on and so forth. Where we have multiple constraints, multiple constraints, a whole bunch of variables, and you're optimizing for time, profit, quality of service, usage of resource, whatever happens to be. Evide uses it for our supply chain management. CUOFT is an incredible library. It takes hours and hours and it turns into seconds. The",
+          "id": 10
+        },
+        {
+          "filename": "gtc_2019.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2019",
+          "year": 2019,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=Z2XlNfCtxwI",
+          "start_seconds": null,
+          "chunk_id": "gtc_2019-1",
+          "quote": "It's a continuous optimization between the architecture, the chips, the systems, the algorithms, and the applications. The Nvidia stack looks basically like this, and today I'm going to refer back to this repeatedly. Starting from now, we're going to take all of our libraries, we're going to put them together into one body of work, one suite, if you will, one umbrella named called CUDAX. CUDA acceleration libraries. It's built on top of the architecture",
+          "id": 11
+        },
+        {
+          "filename": "gtc_2019.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2019",
+          "year": 2019,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=Z2XlNfCtxwI",
+          "start_seconds": null,
+          "chunk_id": "gtc_2019-1",
+          "quote": "after another, whether it's graphics or hyper-fueling computing, artificial intelligence, autonomous driving, DR, drive, IS, for Isaac, robotics, CL for Clara, healthcare, medical imaging, and last one is what?",
+          "id": 12
+        }
+      ],
+      "graph_paths_used": 0,
+      "graph_backend": "neo4j",
+      "citation_ids_valid": true,
+      "has_citation": true,
+      "first_token_seconds": 14.244,
+      "total_seconds": 14.828,
+      "delta_count": 241,
+      "error": null
+    },
+    {
+      "query": "Explain Blackwell as it was understood in 2007.",
+      "era": "pre_cuda",
+      "completed": true,
+      "answer": "I don’t have reliable source material from this era for that question. Choose a year covered by the source timeline, or select All Eras.",
+      "citations": [],
+      "graph_paths_used": 0,
+      "graph_backend": "neo4j",
+      "citation_ids_valid": false,
+      "has_citation": false,
+      "first_token_seconds": 3.271,
+      "total_seconds": 3.28,
+      "delta_count": 1,
+      "error": null
+    },
+    {
+      "query": "What is the secret unpublished NVIDIA chip launch date next month?",
+      "completed": true,
+      "answer": "I don't think that's what we hired you for. Let's move on, shall we?",
+      "citations": [
+        {
+          "filename": "gtc_spring_2022.txt",
+          "source": "gtc_keynote",
+          "title": "GTC SPRING 2022",
+          "year": 2022,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=39ubNuxnrK8",
+          "start_seconds": null,
+          "chunk_id": "26",
+          "quote": "Nvidia H100's CNX connects the network directly into H100 through the most advanced networking chip. Nvidia CX7. Nvidia H100, the engine of the world's AI infrastructures. H100 is in production with availability starting in Q3. Grace is on track for production next year. Grace is an amazing superchip. Two CPUs connected over a 900 GB per second NVLink chip-to-chip interconnect to make a 144-core CPU with one terabytes per second of memory bandwidth. Grace is the ideal CPU for the world's AI",
+          "id": 1
+        },
+        {
+          "filename": "gtc_2025.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2025",
+          "year": 2025,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=_waPvOwL9Z8",
+          "start_seconds": null,
+          "chunk_id": "34",
+          "quote": "This is what started it all. This is the NVIDIA DGX-1. 20 CPU cores, 128 gigabytes of GPU memory, one petaflops of computation, 150,000 dollars, 3,500 watts. Let me now introduce you to the new DGX. This is NVIDIA's new DGX and we call it DGX Spark. Now you'll be surprised. 20 CPU cores, we partnered with MediaTek to build this for us. They did a fantastic job. It's been a great joy working with Prasad and the MediaTek team. I really appreciate their partnership. They built us a chip to chip,",
+          "id": 2
+        },
+        {
+          "filename": "gtc_2026.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2026",
+          "year": 2026,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=11Y3B33oCLE",
+          "start_seconds": null,
+          "chunk_id": "1",
+          "quote": "which is video games. It is also the closest to our heart. This is Poza. This is 007 by the way. The new 007 game I'm looking forward to playing. I look a little bit like him. Ladies and gentlemen, Nvidia's RTX Spark laptops. Now. Thank you. I have too many things in my pocket. Hi, doldonsula. Okay. All right. This is the most amazing chip the world has ever built. This is the N1X that we built in partnership with MediaTip. I think I saw Rick earlier. This is the N1X. This is a beautiful chip.",
+          "id": 3
+        },
+        {
+          "filename": "gtc_spring_2021.txt",
+          "source": "gtc_keynote",
+          "title": "GTC SPRING 2021",
+          "year": 2021,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=eAn_oiZwUXA",
+          "start_seconds": null,
+          "chunk_id": "2",
+          "quote": "Now enterprises and industries can do AI and deploy AI on fine G. We'll talk about Nvidia AI and pre-trained models, like Jarvis Conversational AI. And finally, our work with the auto industry to revolutionize the future of transportation and video drive. We'll talk about new chips, new platforms and software and lots of new customers. Let's get started. Scientists, researchers, developers and creators are using Nvidia to do amazing things. Your work gets global reach with the install base of",
+          "id": 4
+        },
+        {
+          "filename": "gtc_spring_2022.txt",
+          "source": "gtc_keynote",
+          "title": "GTC SPRING 2022",
+          "year": 2022,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=39ubNuxnrK8",
+          "start_seconds": null,
+          "chunk_id": "11",
+          "quote": "the Grace Superchip to have a spec in 2017 rate of 740, nothing close to that ships today. And the amazing thing is the entire module, including a terabyte of memory, is only 500 watts. We expect the Grace Superchip to be the highest performance, and twice the energy efficiency of the best CPU at that time. Grace will be amazing at AI, data analytics, scientific computing, and hyperscale computing, and Grace will be welcomed by all of Nvidia software platforms, Nvidia RTX, HPC, Nvidia AI, and",
+          "id": 5
+        },
+        {
+          "filename": "gtc_2022.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2022",
+          "year": 2022,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=PWcNlRI00jo",
+          "start_seconds": null,
+          "chunk_id": "gtc_2022-2",
+          "quote": "Nvidia LightSpeed Studios used Omniverse to remaster one of the most celebrated games in history.",
+          "id": 6
+        },
+        {
+          "filename": "gtc_2022.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2022",
+          "year": 2022,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=PWcNlRI00jo",
+          "start_seconds": null,
+          "chunk_id": "gtc_2022-0",
+          "quote": "simulation, built with NVIDIA Omniverse",
+          "id": 7
+        },
+        {
+          "filename": "gtc_2023.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2023",
+          "year": 2023,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=DiGB5uAYKAg",
+          "start_seconds": null,
+          "chunk_id": "gtc_2023-1",
+          "quote": "Nvidia invented accelerated computing.",
+          "id": 8
+        },
+        {
+          "filename": "gtc_2019.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2019",
+          "year": 2019,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=Z2XlNfCtxwI",
+          "start_seconds": null,
+          "chunk_id": "gtc_2019-16",
+          "quote": "into the Omniverse, this is what you get to see. Where we have early access planning and come to this website, come to the Nvidia website, and develop it in the Nvidia Omniverse. Let us know if you'd like to have early access. Rendering is data center graphics. Omniverse ultimately will be data center graphics. Another data center graphics is GeForceNow. We've been working on GeForceNow for a few years. In fact, we've been working on it for about six",
+          "id": 9
+        },
+        {
+          "filename": "gtc_2019.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2019",
+          "year": 2019,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=Z2XlNfCtxwI",
+          "start_seconds": null,
+          "chunk_id": "gtc_2019-16",
+          "quote": "It doesn't matter how you would like to enjoy it. Omniverse is one shared world. What do you guys think? Okay, so working on this, this is, thank you guys. Let's come back to this slide. The studios we've talked to are so blown away by this. This is something they've been looking for a whole long time. And finally, we have essentially the Google Docs for 3D design, except it also works across all the headwalking-us tools. And all the data formats are",
+          "id": 10
+        },
+        {
+          "filename": "gtc_2022.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2022",
+          "year": 2022,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=PWcNlRI00jo",
+          "start_seconds": null,
+          "chunk_id": "gtc_2022-3",
+          "quote": "into the omnivores virtual world. We've written some omnivores applications like create and view collaboration, replicator for synthetic data generation, an Isaacson and driveson for digital twin simulations. We are releasing a major update to Omniverse.",
+          "id": 11
+        },
+        {
+          "filename": "gtc_2022.txt",
+          "source": "gtc_keynote",
+          "title": "GTC 2022",
+          "year": 2022,
+          "date_note": null,
+          "url": "https://www.youtube.com/watch?v=PWcNlRI00jo",
+          "start_seconds": null,
+          "chunk_id": "gtc_2022-3",
+          "quote": "through a browser. The Metaverse the 3D internet connects virtual 3D worlds described in USD and viewed through a simulation. Omniverse is a platform for building and operating Metaverse applications. Omniverse is useful wherever digital and physical worlds meet. One of the most essential uses of Omniverse is robotics. The next wave of AI where AI interacts with the physical world. Omniverse is like nothing ever built. Omniverse is a real-time,",
+          "id": 12
+        }
+      ],
+      "graph_paths_used": 6,
+      "graph_backend": "neo4j",
+      "citation_ids_valid": false,
+      "has_citation": false,
+      "first_token_seconds": 6.615,
+      "total_seconds": 6.766,
+      "delta_count": 17,
+      "error": null
+    }
+  ]
+}

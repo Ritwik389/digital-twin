@@ -1,0 +1,7 @@
+-r requirements.txt
+beautifulsoup4>=4.12
+pypdf>=4
+yt-dlp
+openai-whisper
+noisereduce
+scipy
