@@ -15,7 +15,7 @@ A conversational experience built around Jensen's source material: ask questions
 
 The application combines Chroma semantic search, local reranking, Neo4j graph retrieval, Gemini with Groq fallback, and streamed Pocket TTS. Answers expose numbered source excerpts, while conversation memory records facts about the visitor separately from the public source graph.
 
-[![Jensen's World: an interactive topic map with a selected CUDA relationship and its original source excerpt](docs/images/jensen-map.jpg)](https://rj8307-digital-twin-2.hf.space)
+[![Jensen's World: an interactive topic map with a selected CUDA relationship and its original source excerpt](https://raw.githubusercontent.com/Ritwik389/digital-twin/main/docs/images/jensen-map.jpg)](https://rj8307-digital-twin-2.hf.space)
 
 *Jensen's World is built before you chat. Click a topic to ask about it; select a connection to inspect its supporting passage.*
 
@@ -293,7 +293,7 @@ Chat accepts `message`, `user_id`, `session_id`, `era`, `mode`, optional `knowle
 | [`knowledge_graph.py`](knowledge_graph.py), [`memory.py`](memory.py) | Conversation graph and local memory |
 | [`api_client.py`](api_client.py), [`tts.py`](tts.py), [`streaming.py`](streaming.py) | Generation providers, reference voice, and stream transport |
 | [`static/`](static/) | Office interface, map explorer, audio, and showcase |
-| [`data/`](data/), [`source_catalog.json`](source_catalog.json), [`ingest.py`](ingest.py) | Source texts, provenance, and versioned ingestion |
+| [`data/`](https://github.com/Ritwik389/digital-twin/tree/main/data), [`source_catalog.json`](source_catalog.json), [`ingest.py`](ingest.py) | Source texts, provenance, and versioned ingestion |
 | [`tests/`](tests/), [`evals/`](evals/), [`reports/evaluation.json`](reports/evaluation.json) | Regression checks and reproducible evaluation |
 
 Reference documentation: [Gemini streaming](https://ai.google.dev/api/generate-content#method:-models.streamgeneratecontent), [Groq text generation](https://console.groq.com/docs/text-chat), [Pocket TTS](https://github.com/kyutai-labs/pocket-tts), and the [Neo4j Python driver](https://neo4j.com/docs/python-manual/current/query-simple/).
