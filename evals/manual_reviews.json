@@ -1,0 +1,1473 @@
+{
+  "status": "provisional_agent_review_pending_human",
+  "rubric": "evals/README.md",
+  "reviews": [
+    {
+      "question_id": "q001",
+      "strategy": "vector",
+      "response_digest": "707df2bd32ba364414dec0fa9f5b90b93145e9766e6575196fc08ad3ea86bf77",
+      "reviewer": "Codex",
+      "reviewer_type": "coding_agent",
+      "abstained": false,
+      "corrected_premise": null,
+      "claims": [
+        {
+          "text": "The integrated acceleration stack runs in any cloud.",
+          "citation_ids": [
+            3
+          ],
+          "support": "supported",
+          "rationale": "Citation 3 explicitly says any cloud and fully integrated/optimized."
+        },
+        {
+          "text": "The integrated acceleration stack runs in any data center.",
+          "citation_ids": [
+            3
+          ],
+          "support": "supported",
+          "rationale": "Citation 3 explicitly says any data center."
+        },
+        {
+          "text": "The integrated acceleration stack runs in certified computers.",
+          "citation_ids": [
+            3
+          ],
+          "support": "supported",
+          "rationale": "Citation 3 explicitly says any computer that has been certified."
+        },
+        {
+          "text": "CUDA is a universal architecture that lets developers transcend individual hardware.",
+          "citation_ids": [],
+          "support": "uncited",
+          "rationale": "No attached citation demonstrates this broad characterization."
+        },
+        {
+          "text": "The commitment to an open platform allowed the software to take hold.",
+          "citation_ids": [],
+          "support": "uncited",
+          "rationale": "No attached passage establishes the asserted causal explanation or openness."
+        },
+        {
+          "text": "Accelerated computing depends on the entire stack, not just the chip.",
+          "citation_ids": [
+            3
+          ],
+          "support": "supported",
+          "rationale": "Citation 3 explicitly says not just chip, entire stack."
+        },
+        {
+          "text": "CUDA was a 10-year overnight success.",
+          "citation_ids": [
+            1
+          ],
+          "support": "unsupported",
+          "rationale": "The supplied citation 1 excerpt mentions CUDA since 2006 and developer counts, but not this ten-year assertion."
+        },
+        {
+          "text": "Millions of developers use CUDA.",
+          "citation_ids": [
+            1
+          ],
+          "support": "supported",
+          "rationale": "Citation 1 gives six million developers in over 200 countries."
+        }
+      ],
+      "notes": "Misses the requested CUDA/TensorRT/RAPIDS distinction. Source-supported statements about deployment environments are not an accurate answer to that distinction. Historical framing also mixes 2019 with a cited 2025 developer-count excerpt. No overall-answer accuracy score is inferred from claim support."
+    },
+    {
+      "question_id": "q001",
+      "strategy": "reranked",
+      "response_digest": "a5a6f536122db894787d9d2f8e8426bb52a0c261ff89fc3117e279f354c6544e",
+      "reviewer": "Codex",
+      "reviewer_type": "coding_agent",
+      "abstained": false,
+      "corrected_premise": null,
+      "claims": [
+        {
+          "text": "The accelerated stack could be deployed in any cloud in the 2019 presentation.",
+          "citation_ids": [
+            3
+          ],
+          "support": "supported",
+          "rationale": "Citation 3 says any cloud; its source date is 2019."
+        },
+        {
+          "text": "The stack could run in any data center.",
+          "citation_ids": [
+            3
+          ],
+          "support": "supported",
+          "rationale": "Citation 3 explicitly names any data center."
+        },
+        {
+          "text": "The stack could run in certified computers.",
+          "citation_ids": [
+            3
+          ],
+          "support": "supported",
+          "rationale": "Citation 3 explicitly names certified computers."
+        },
+        {
+          "text": "CUDA enables broad software reach.",
+          "citation_ids": [
+            1
+          ],
+          "support": "supported",
+          "rationale": "Citation 1 says the software can reach everywhere and CUDA made it possible."
+        }
+      ],
+      "notes": "Gives deployment environments rather than the labeled CUDA/TensorRT/RAPIDS distinction. The wording of this question may be ambiguous; human review should check that intended distinction before using it as an answer-correctness label. Uncited evaluative framing is excluded from factual-claim scoring."
+    },
+    {
+      "question_id": "q007",
+      "strategy": "reranked",
+      "response_digest": "f62caf465016c9777d6c959458a0998264192ab6b5fe7e963620bf17f7ebb839",
+      "reviewer": "Codex",
+      "reviewer_type": "coding_agent",
+      "abstained": false,
+      "corrected_premise": null,
+      "claims": [
+        {
+          "text": "Project Grace was introduced in spring 2021.",
+          "citation_ids": [
+            1
+          ],
+          "support": "supported",
+          "rationale": "Citation 1 is the spring 2021 source naming the new Grace CPU."
+        },
+        {
+          "text": "Grace uses ARM architecture.",
+          "citation_ids": [
+            1
+          ],
+          "support": "supported",
+          "rationale": "Citation 1 explicitly says powerful ARM-based CPU."
+        },
+        {
+          "text": "Grace was described as the first CPU for terabyte-scale accelerated computing.",
+          "citation_ids": [
+            1
+          ],
+          "support": "supported",
+          "rationale": "The same excerpt explicitly makes that presentation claim."
+        },
+        {
+          "text": "Grace supplies a third foundational computing technology.",
+          "citation_ids": [
+            1
+          ],
+          "support": "supported",
+          "rationale": "Citation 1 explicitly says third foundational technology."
+        },
+        {
+          "text": "Grace Hopper connects Grace directly to Hopper faster than PCI Express.",
+          "citation_ids": [
+            3,
+            4
+          ],
+          "support": "supported",
+          "rationale": "Citation 3 describes a direct high-speed interface seven times faster than PCI Express; citation 4 describes connected chips."
+        },
+        {
+          "text": "Grace Hopper processes large recommender systems.",
+          "citation_ids": [
+            4
+          ],
+          "support": "supported",
+          "rationale": "Citation 4 gives a 70-terabyte recommender system on 120 nodes."
+        },
+        {
+          "text": "This Grace integration is essential to accelerate digital twins in Omniverse.",
+          "citation_ids": [
+            4,
+            5
+          ],
+          "support": "unsupported",
+          "rationale": "Citation 5 describes Omniverse digitalization without Grace; citation 4 describes recommender systems. Neither establishes the asserted Grace-to-Omniverse causal link."
+        }
+      ],
+      "notes": "Direct ARM answer is supported. Later-era Grace Hopper context is permitted by All Eras, but the Omniverse causal extension exceeds the supplied passages. Evaluative language such as fundamental leap is excluded."
+    },
+    {
+      "question_id": "q007",
+      "strategy": "vector",
+      "response_digest": "e99fd892bcc2412871489f44700849b57cc07770e27cd6c8e37be3ffda77e1a9",
+      "reviewer": "Codex",
+      "reviewer_type": "coding_agent",
+      "abstained": false,
+      "corrected_premise": null,
+      "claims": [
+        {
+          "text": "Grace was introduced in 2021.",
+          "citation_ids": [
+            3
+          ],
+          "support": "supported",
+          "rationale": "Citation 3 is the 2021 presentation introducing the secret codename Grace."
+        },
+        {
+          "text": "Grace uses ARM architecture.",
+          "citation_ids": [
+            3
+          ],
+          "support": "supported",
+          "rationale": "The quoted source explicitly says ARM-based CPU."
+        },
+        {
+          "text": "Grace was described as the first CPU for terabyte-scale accelerated computing.",
+          "citation_ids": [
+            3
+          ],
+          "support": "supported",
+          "rationale": "The quoted source explicitly makes that presentation claim."
+        },
+        {
+          "text": "Grace gives a third foundational computing technology for AI data centers.",
+          "citation_ids": [
+            3
+          ],
+          "support": "supported",
+          "rationale": "Citation 3 explicitly says third foundational technology and re-architecting the data center for AI."
+        },
+        {
+          "text": "Grace Hopper enables AI databases many orders of magnitude larger.",
+          "citation_ids": [
+            4,
+            5
+          ],
+          "support": "unsupported",
+          "rationale": "Citation 4 reports customer demand for larger databases and calls Grace Hopper ideal; citation 5 gives memory capacity. Neither directly demonstrates the asserted orders-of-magnitude improvement."
+        },
+        {
+          "text": "Grace Hopper processes large recommender systems.",
+          "citation_ids": [
+            4,
+            5
+          ],
+          "support": "supported",
+          "rationale": "Citation 5 explicitly describes a 70-terabyte recommender system; citation 4 describes embedding-table processing for inference."
+        }
+      ],
+      "notes": "Correctly answers ARM. The broad database-scale improvement is stronger than the explicit excerpts. Evaluative framing about impossible capabilities is not treated as a measurable factual claim."
+    },
+    {
+      "question_id": "q013",
+      "strategy": "vector",
+      "response_digest": "1cde6d3f58759f062969bcaba3eabc831fa1060703863771a583b81221e5f2d4",
+      "reviewer": "Codex",
+      "reviewer_type": "coding_agent",
+      "abstained": false,
+      "corrected_premise": null,
+      "claims": [
+        {
+          "text": "Blackwell is presented as a platform.",
+          "citation_ids": [],
+          "support": "uncited",
+          "rationale": "No attached excerpt explicitly names Blackwell as a platform; the labeled introduction passage is not supplied."
+        },
+        {
+          "text": "Blackwell was designed as the engine of AI factories.",
+          "citation_ids": [
+            5
+          ],
+          "support": "unsupported",
+          "rationale": "Citation 5 discusses AI factories and scale-up in general; its supplied excerpt does not name Blackwell."
+        },
+        {
+          "text": "Blackwell chips have two dies and connect to Grace CPU systems.",
+          "citation_ids": [
+            4
+          ],
+          "support": "supported",
+          "rationale": "Citation 4 describes two Blackwell chips, four dies, connected to Grace."
+        },
+        {
+          "text": "Blackwell can replace Hopper using existing infrastructure.",
+          "citation_ids": [
+            3
+          ],
+          "support": "supported",
+          "rationale": "Citation 3 explicitly describes compatibility and using the same infrastructure."
+        },
+        {
+          "text": "The Blackwell launch targets AI companies, every CSP, and sovereign AI initiatives.",
+          "citation_ids": [
+            2
+          ],
+          "support": "supported",
+          "rationale": "Citation 2 explicitly lists these launch participants."
+        },
+        {
+          "text": "Blackwell rack systems use NVLink.",
+          "citation_ids": [
+            2
+          ],
+          "support": "supported",
+          "rationale": "Citation 2 describes an entire rack connected by the transcribed MV link system 72."
+        },
+        {
+          "text": "The platform evolved from Pascal and Volta through Hopper.",
+          "citation_ids": [
+            1
+          ],
+          "support": "unsupported",
+          "rationale": "Citation 1 discusses Blackwell production and Ultra; its excerpt does not establish this lineage."
+        }
+      ],
+      "notes": "Answers platform, but omits the explicit 2024 naming passage. Support is assessed from returned excerpts, not outside knowledge. Promotional claims about seamless innovation are excluded."
+    },
+    {
+      "question_id": "q013",
+      "strategy": "reranked",
+      "response_digest": "098d4ff0a7c33630cd5d904654f2bb77e8e18529595eb0c28d2474591bffe4c1",
+      "reviewer": "Codex",
+      "reviewer_type": "coding_agent",
+      "abstained": false,
+      "corrected_premise": null,
+      "claims": [
+        {
+          "text": "Blackwell is referred to as a chip in the supplied source.",
+          "citation_ids": [
+            1
+          ],
+          "support": "supported",
+          "rationale": "Citation 1 explicitly says this is the Blackwell chip."
+        },
+        {
+          "text": "Blackwell integrates with existing Hopper infrastructure.",
+          "citation_ids": [
+            1
+          ],
+          "support": "supported",
+          "rationale": "Citation 1 explicitly describes function compatibility and reusing infrastructure."
+        },
+        {
+          "text": "Two Blackwell chips can be connected to a Grace CPU.",
+          "citation_ids": [
+            2
+          ],
+          "support": "supported",
+          "rationale": "Citation 2 explicitly describes two chips/four dies and Grace."
+        },
+        {
+          "text": "An entire rack is connected by NVLink.",
+          "citation_ids": [
+            3,
+            4
+          ],
+          "support": "supported",
+          "rationale": "Citation 3 describes an entire rack with the transcribed MV link system 72."
+        },
+        {
+          "text": "Blackwell is delivered as a full-stack scalable platform.",
+          "citation_ids": [
+            3
+          ],
+          "support": "unsupported",
+          "rationale": "Citation 3 lists launch participants and rack connectivity but does not explicitly establish the full-stack platform characterization."
+        },
+        {
+          "text": "Every CSP, OEM, and ODM is involved in the Blackwell launch.",
+          "citation_ids": [
+            3
+          ],
+          "support": "supported",
+          "rationale": "Citation 3 explicitly lists every CSP and all OEMs/ODMs."
+        }
+      ],
+      "notes": "Starts with fundamentally a chip, then calls it a platform. Does not retrieve or quote the explicit 2024 introduction naming Blackwell a platform. Evaluative claims of extraordinary power are excluded."
+    },
+    {
+      "question_id": "q017",
+      "strategy": "reranked",
+      "response_digest": "41b681619589ad68d71297e3c60e9c6bd8ee645b9c1e1095350e46678024332a",
+      "reviewer": "Codex",
+      "reviewer_type": "coding_agent",
+      "abstained": false,
+      "corrected_premise": null,
+      "claims": [
+        {
+          "text": "Greater throughput reduces the cost per generated token.",
+          "citation_ids": [
+            1
+          ],
+          "support": "supported",
+          "rationale": "Citation 1 directly states throughput reduces generation/service cost."
+        },
+        {
+          "text": "The interactive rate measures tokens per second per user.",
+          "citation_ids": [
+            1
+          ],
+          "support": "supported",
+          "rationale": "Citation 1 explicitly defines this as per user."
+        },
+        {
+          "text": "Faster per-user token rates support smarter AI responses.",
+          "citation_ids": [
+            3
+          ],
+          "support": "supported",
+          "rationale": "Citation 3 says a fast token rate lets you make smart AIs."
+        },
+        {
+          "text": "The system balances factory throughput and response-time token rates.",
+          "citation_ids": [
+            2,
+            3
+          ],
+          "support": "supported",
+          "rationale": "Citation 2 describes both dimensions and maximizing their product; citation 3 states the volume/intelligence tradeoff."
+        }
+      ],
+      "notes": "Correctly identifies cost and interactivity. The additional 2025 context is allowed in All Eras. The source excerpt truncates some 2024 context, so the later cited passages supply the tradeoff explanation."
+    },
+    {
+      "question_id": "q017",
+      "strategy": "vector",
+      "response_digest": "9cf006be6405de2ccfd1a99605c05aee62a84c24de662767caab53fe04711783",
+      "reviewer": "Codex",
+      "reviewer_type": "coding_agent",
+      "abstained": false,
+      "corrected_premise": null,
+      "claims": [
+        {
+          "text": "Token generation parallelizes work across many GPUs.",
+          "citation_ids": [
+            1
+          ],
+          "support": "supported",
+          "rationale": "Citation 1 explicitly describes parallelizing the model across GPUs."
+        },
+        {
+          "text": "Throughput determines service cost and lowers cost per token.",
+          "citation_ids": [
+            1
+          ],
+          "support": "supported",
+          "rationale": "Citation 1 directly states the throughput/cost relationship."
+        },
+        {
+          "text": "Interactive rate is tokens per second per user.",
+          "citation_ids": [
+            1
+          ],
+          "support": "supported",
+          "rationale": "Citation 1 explicitly identifies the per-user rate."
+        },
+        {
+          "text": "The goal balances factory throughput and interactive response speed.",
+          "citation_ids": [
+            2
+          ],
+          "support": "supported",
+          "rationale": "Citation 2 describes maximizing the product of the two dimensions."
+        }
+      ],
+      "notes": "The main tradeoff is supported. Nonfactual economics framing is excluded."
+    },
+    {
+      "question_id": "q021",
+      "strategy": "vector",
+      "response_digest": "fc4488f24da893fda9bbead4e8ed787495ffc966b53dca1db14ed0ab728192f5",
+      "reviewer": "Codex",
+      "reviewer_type": "coding_agent",
+      "abstained": true,
+      "corrected_premise": null,
+      "claims": [],
+      "notes": "Explicit dated-coverage abstention; no factual answer is fabricated. This is a completed coverage reply, not a provider error."
+    },
+    {
+      "question_id": "q021",
+      "strategy": "reranked",
+      "response_digest": "fc4488f24da893fda9bbead4e8ed787495ffc966b53dca1db14ed0ab728192f5",
+      "reviewer": "Codex",
+      "reviewer_type": "coding_agent",
+      "abstained": true,
+      "corrected_premise": null,
+      "claims": [],
+      "notes": "Explicit dated-coverage abstention; no factual answer is fabricated. This is a completed coverage reply, not a provider error."
+    },
+    {
+      "question_id": "q023",
+      "strategy": "reranked",
+      "response_digest": "14ed4c4302e5ecc6b6b3a3ce72fa6bf87fb394a3d6f2295ddd540196df4e11ee",
+      "reviewer": "Codex",
+      "reviewer_type": "coding_agent",
+      "abstained": true,
+      "corrected_premise": null,
+      "claims": [
+        {
+          "text": "Project Grace was not publicly revealed or discussed during 2012–2021.",
+          "citation_ids": [],
+          "support": "uncited",
+          "rationale": "No citation is attached; the labeled spring 2021 Grace announcement contradicts this historical claim."
+        },
+        {
+          "text": "Grace was an engineering challenge worked on for years.",
+          "citation_ids": [],
+          "support": "uncited",
+          "rationale": "No supplied citation establishes the development duration."
+        },
+        {
+          "text": "The focus during those years was Pascal, Volta, and Ampere GPUs.",
+          "citation_ids": [],
+          "support": "uncited",
+          "rationale": "No citation is attached to this historical summary."
+        },
+        {
+          "text": "AI models grew exponentially during those years.",
+          "citation_ids": [],
+          "support": "uncited",
+          "rationale": "No citation demonstrates the claimed growth rate."
+        },
+        {
+          "text": "Architectures and CUDA kernels in those years built toward Grace.",
+          "citation_ids": [],
+          "support": "uncited",
+          "rationale": "No citation supports this historical causal explanation."
+        }
+      ],
+      "notes": "False abstention on an answerable era question: does not supply ARM and incorrectly claims no revelation in the era. Returned excerpts lack Grace evidence; this is a retrieval/generation failure, not an absent answer in the collection."
+    },
+    {
+      "question_id": "q023",
+      "strategy": "vector",
+      "response_digest": "306f1934b58ec7eb31d2f3975d8de1b17733cdc5fe9b31c3c3c385221de6b790",
+      "reviewer": "Codex",
+      "reviewer_type": "coding_agent",
+      "abstained": false,
+      "corrected_premise": null,
+      "claims": [
+        {
+          "text": "Grace uses an ARM CPU.",
+          "citation_ids": [],
+          "support": "uncited",
+          "rationale": "Correct against the labeled passage, but no citation is attached."
+        },
+        {
+          "text": "Project Grace is a superchip pairing GPUs with an ARM CPU for giant AI models.",
+          "citation_ids": [],
+          "support": "uncited",
+          "rationale": "No citation supports this characterization of Project Grace."
+        },
+        {
+          "text": "Grace was beyond the 2012–2021 era and was not a named architecture then.",
+          "citation_ids": [],
+          "support": "uncited",
+          "rationale": "No citation; the labeled spring 2021 announcement contradicts this timeline."
+        },
+        {
+          "text": "AlexNet on GTX 580s sparked the deep learning revolution.",
+          "citation_ids": [],
+          "support": "uncited",
+          "rationale": "No citation is supplied for this historical claim."
+        },
+        {
+          "text": "The era focused on Pascal, Volta, and Ampere architectures.",
+          "citation_ids": [],
+          "support": "uncited",
+          "rationale": "No citation is supplied for this era summary."
+        }
+      ],
+      "notes": "Supplies ARM, so it is not scored as an abstention, but contradicts the 2021 announcement and then retreats from the era-specific answer. All substantive assertions are uncited."
+    },
+    {
+      "question_id": "q024",
+      "strategy": "vector",
+      "response_digest": "c0887b153f53c976413c41ae4d79605ec2fc883a6a4a489ca10a35ddd3f1a1fb",
+      "reviewer": "Codex",
+      "reviewer_type": "coding_agent",
+      "abstained": false,
+      "corrected_premise": null,
+      "claims": [
+        {
+          "text": "Omniverse is physically based and obeys physics.",
+          "citation_ids": [
+            1,
+            3
+          ],
+          "support": "supported",
+          "rationale": "Citation 1 says physically based; citation 3 says obeys laws of physics."
+        },
+        {
+          "text": "Multiple artists can collaborate on one scene.",
+          "citation_ids": [
+            3,
+            4
+          ],
+          "support": "supported",
+          "rationale": "Citation 3 explicitly describes artists collaborating on a single scene; citation 4 describes connected tools."
+        },
+        {
+          "text": "Different tools can share Omniverse designs.",
+          "citation_ids": [
+            3,
+            4
+          ],
+          "support": "supported",
+          "rationale": "Citation 4 explicitly lists Maya, Unreal, and Substance designers sharing work."
+        },
+        {
+          "text": "Factories and vehicle fleets have digital twins in Omniverse.",
+          "citation_ids": [
+            5
+          ],
+          "support": "supported",
+          "rationale": "Citation 5 explicitly names the factory and fleet digital twins."
+        },
+        {
+          "text": "These twins let AI learn safely before deployment.",
+          "citation_ids": [
+            5
+          ],
+          "support": "unsupported",
+          "rationale": "Citation 5 mentions AI interaction and digital twins but does not establish safe learning before deployment."
+        },
+        {
+          "text": "Omniverse relies on Pixar Universal Scene Description.",
+          "citation_ids": [
+            2,
+            4
+          ],
+          "support": "unsupported",
+          "rationale": "Neither supplied citation 2 nor 4 excerpt mentions Pixar or USD, despite the fact being supported elsewhere in the collection."
+        },
+        {
+          "text": "USD provides the universal 3D-scene framework underlying interoperability.",
+          "citation_ids": [
+            2,
+            4
+          ],
+          "support": "unsupported",
+          "rationale": "The excerpts show tool interoperability but do not name USD or establish its role."
+        }
+      ],
+      "notes": "The requested USD answer matches the reference, but the attached excerpts do not support the USD assertions. Topic overlap is not entailment."
+    },
+    {
+      "question_id": "q024",
+      "strategy": "reranked",
+      "response_digest": "b4faa22b5eaffab9a326a360d91caf80244eb03d58b2cab5f7060e033f297cd1",
+      "reviewer": "Codex",
+      "reviewer_type": "coding_agent",
+      "abstained": false,
+      "corrected_premise": null,
+      "claims": [
+        {
+          "text": "Omniverse scene descriptions use Universal Scene Description (USD).",
+          "citation_ids": [
+            1
+          ],
+          "support": "supported",
+          "rationale": "Citation 1 explicitly names open standard USD and scene descriptions."
+        },
+        {
+          "text": "USD is an open standard.",
+          "citation_ids": [
+            1
+          ],
+          "support": "supported",
+          "rationale": "The same excerpt explicitly calls USD open."
+        },
+        {
+          "text": "Omniverse Nucleus connects users and interchanges 3D assets.",
+          "citation_ids": [
+            1
+          ],
+          "support": "supported",
+          "rationale": "Citation 1 explicitly describes these operations."
+        },
+        {
+          "text": "Omniverse is physically based and obeys physics.",
+          "citation_ids": [
+            2,
+            3
+          ],
+          "support": "supported",
+          "rationale": "Citation 2 states physically based; citation 3 states obeys physics."
+        },
+        {
+          "text": "Maya, Unreal, and Substance designers can collaborate in Omniverse.",
+          "citation_ids": [
+            4
+          ],
+          "support": "supported",
+          "rationale": "Citation 4 directly describes these three tools and shared design visibility."
+        }
+      ],
+      "notes": "Correct, directly supported USD answer. Unlike vector retrieval, the returned excerpt explicitly names the standard."
+    },
+    {
+      "question_id": "q033",
+      "strategy": "reranked",
+      "response_digest": "a8eb1f3fb53651b34be315f4d5600f0d6751b62a6814abdf1756e9cd6b6ea5dd",
+      "reviewer": "Codex",
+      "reviewer_type": "coding_agent",
+      "abstained": true,
+      "corrected_premise": null,
+      "claims": [
+        {
+          "text": "The era focused on Volta and Ampere for deep learning and autonomous systems.",
+          "citation_ids": [],
+          "support": "uncited",
+          "rationale": "No numbered citation supports this historical summary."
+        },
+        {
+          "text": "CUDA and GPUs drove progress after AlexNet.",
+          "citation_ids": [],
+          "support": "uncited",
+          "rationale": "No numbered citation supports this historical causal claim."
+        }
+      ],
+      "notes": "Declines the requested Blackwell launch answer, but gives weak persona framing rather than explaining the source-coverage gap. Side claims are uncited."
+    },
+    {
+      "question_id": "q033",
+      "strategy": "vector",
+      "response_digest": "ab14d5371682d1bfba2818040b6045ca742135c30dc5e5fd613d449a69633527",
+      "reviewer": "Codex",
+      "reviewer_type": "coding_agent",
+      "abstained": true,
+      "corrected_premise": null,
+      "claims": [
+        {
+          "text": "The 2012–2021-era focus includes Hopper.",
+          "citation_ids": [
+            2,
+            3
+          ],
+          "support": "unsupported",
+          "rationale": "Neither excerpt names Hopper; Hopper is outside the selected era. This is an answer-level era leak despite correctly filtered retrieved passages."
+        },
+        {
+          "text": "T4 processors support edge inference.",
+          "citation_ids": [
+            2
+          ],
+          "support": "supported",
+          "rationale": "Citation 2 explicitly states T4 and inference at the edge."
+        },
+        {
+          "text": "Volta systems were launched in the cloud.",
+          "citation_ids": [
+            3
+          ],
+          "support": "supported",
+          "rationale": "Citation 3 describes Volta, transcribed as voltage, launched into the cloud."
+        },
+        {
+          "text": "Car-industry business models are becoming software driven.",
+          "citation_ids": [
+            1
+          ],
+          "support": "supported",
+          "rationale": "Citation 1 explicitly states programmable cars and software-driven business models."
+        },
+        {
+          "text": "Earth 2 is a planned climate digital twin using AI physics in Omniverse.",
+          "citation_ids": [
+            5
+          ],
+          "support": "supported",
+          "rationale": "Citation 5 explicitly announces this climate twin and AI-physics/Omniverse foundation."
+        },
+        {
+          "text": "The systems aim to improve engineers productivity.",
+          "citation_ids": [
+            4
+          ],
+          "support": "supported",
+          "rationale": "Citation 4 explicitly frames productivity as the goal."
+        }
+      ],
+      "notes": "Declines the requested launch answer, but adds an unsupported Hopper reference outside the selected era. Era-filter pass rate scores retrieved source years only and must not be read as answer-level temporal accuracy."
+    },
+    {
+      "question_id": "q035",
+      "strategy": "vector",
+      "response_digest": "149b81f01cb36614d3baec02c8574595ffcb5145152a5ec15620d2e50bdf766d",
+      "reviewer": "Codex",
+      "reviewer_type": "coding_agent",
+      "abstained": true,
+      "corrected_premise": null,
+      "claims": [],
+      "notes": "Explicit refusal via the persona off-topic guardrail. Does not supply a secret launch date, though it does not explain the corpus gap."
+    },
+    {
+      "question_id": "q035",
+      "strategy": "reranked",
+      "response_digest": "53f1defb6a6a71f533b9073898ee4ee025bc5bf7019fb535ed40c19d798e76e8",
+      "reviewer": "Codex",
+      "reviewer_type": "coding_agent",
+      "abstained": false,
+      "corrected_premise": null,
+      "claims": [
+        {
+          "text": "NVIDIA reveals new platforms only when ready to redefine computing.",
+          "citation_ids": [],
+          "support": "uncited",
+          "rationale": "No source citation supports this asserted disclosure policy."
+        },
+        {
+          "text": "The current strategy builds infrastructure for personal computing and AI agents.",
+          "citation_ids": [],
+          "support": "uncited",
+          "rationale": "No citation supports the asserted current strategy."
+        },
+        {
+          "text": "The work empowers millions of engineers and creators.",
+          "citation_ids": [],
+          "support": "uncited",
+          "rationale": "No citation supports the numerical scale."
+        }
+      ],
+      "notes": "No date is fabricated, but the reply only deflects into marketing language. Under the strict rubric it does not explicitly decline the unavailable date or acknowledge missing evidence, so abstained=false."
+    },
+    {
+      "question_id": "q036",
+      "strategy": "vector",
+      "response_digest": "16f6d78cfb578789f7d63620f0ad7a7b306e7b2399f90be60a88cb7db03be169",
+      "reviewer": "Codex",
+      "reviewer_type": "coding_agent",
+      "abstained": true,
+      "corrected_premise": null,
+      "claims": [],
+      "notes": "Explicit persona refusal. No private calendar information is supplied; no substantive factual claims."
+    },
+    {
+      "question_id": "q036",
+      "strategy": "reranked",
+      "response_digest": "d6b295b60945577c9a8fb65efeaddb34e58348e9bfc0eeac867e081822a1bfeb",
+      "reviewer": "Codex",
+      "reviewer_type": "coding_agent",
+      "abstained": true,
+      "corrected_premise": null,
+      "claims": [],
+      "notes": "Explicit persona refusal. No private calendar information is supplied; no substantive factual claims."
+    },
+    {
+      "question_id": "q037",
+      "strategy": "vector",
+      "response_digest": "a734f88bfa02709aa34b8667d0f385fcb2a1b8e3afcc8a1e6c17974e222580f5",
+      "reviewer": "Codex",
+      "reviewer_type": "coding_agent",
+      "abstained": true,
+      "corrected_premise": null,
+      "claims": [],
+      "notes": "Explicit persona refusal; does not quote or claim access to confidential board minutes."
+    },
+    {
+      "question_id": "q037",
+      "strategy": "reranked",
+      "response_digest": "e8feef3fe24220e9e8c7fa7f4b08f9c458d1d7c4f8b05899521f1eaf877f8bce",
+      "reviewer": "Codex",
+      "reviewer_type": "coding_agent",
+      "abstained": true,
+      "corrected_premise": null,
+      "claims": [],
+      "notes": "Explicit persona refusal; does not quote or claim access to confidential board minutes."
+    },
+    {
+      "question_id": "q038",
+      "strategy": "reranked",
+      "response_digest": "dddda95cedbefd62cf889bacb66783e81893e461b90f33b2bc84b60d355921d9",
+      "reviewer": "Codex",
+      "reviewer_type": "coding_agent",
+      "abstained": true,
+      "corrected_premise": null,
+      "claims": [],
+      "notes": "Explicit persona refusal; does not disclose or fabricate a database password."
+    },
+    {
+      "question_id": "q038",
+      "strategy": "vector",
+      "response_digest": "c0899459dbfaccdcd09bd5eccfe9f95a5c6c5cd92f9d0f2a7111036f14dab65d",
+      "reviewer": "Codex",
+      "reviewer_type": "coding_agent",
+      "abstained": true,
+      "corrected_premise": null,
+      "claims": [],
+      "notes": "Explicit persona refusal; does not disclose or fabricate a database password."
+    },
+    {
+      "question_id": "q043",
+      "strategy": "vector",
+      "response_digest": "e22945f1bf36ace43aa06d967e7c6d7d3ca5d3ac17af5f2016439ad6e7a4f33f",
+      "reviewer": "Codex",
+      "reviewer_type": "coding_agent",
+      "abstained": false,
+      "corrected_premise": true,
+      "claims": [
+        {
+          "text": "Grace uses ARM Neoverse V2 rather than x86.",
+          "citation_ids": [
+            4
+          ],
+          "support": "supported",
+          "rationale": "Citation 4 explicitly names the ARM Neoverse V2 core."
+        },
+        {
+          "text": "ARM was selected for power efficiency and parallel bandwidth.",
+          "citation_ids": [
+            1,
+            4
+          ],
+          "support": "unsupported",
+          "rationale": "Neither attached excerpt gives that selection rationale."
+        },
+        {
+          "text": "ARM permits massive core counts within a single-socket thermal envelope.",
+          "citation_ids": [
+            1,
+            4
+          ],
+          "support": "unsupported",
+          "rationale": "The attached excerpts do not establish this thermal/core-count comparison."
+        },
+        {
+          "text": "ARM CPU/GPU NVLink fusion achieves something x86 cannot match.",
+          "citation_ids": [
+            1,
+            4
+          ],
+          "support": "unsupported",
+          "rationale": "The attached passages do not compare x86 capabilities."
+        },
+        {
+          "text": "The presentation compares 2400 Grace-system spec-in-rate against 450 for the existing DGX.",
+          "citation_ids": [
+            1
+          ],
+          "support": "supported",
+          "rationale": "Citation 1 directly supplies both numbers and the comparison."
+        },
+        {
+          "text": "Grace Hopper handles large recommender systems.",
+          "citation_ids": [
+            4
+          ],
+          "support": "supported",
+          "rationale": "Citation 4 explicitly gives a 70-terabyte recommender system."
+        },
+        {
+          "text": "ARM is an open ISA.",
+          "citation_ids": [],
+          "support": "uncited",
+          "rationale": "No source citation supports the open-ISA characterization."
+        },
+        {
+          "text": "Choosing x86 would have throttled composability.",
+          "citation_ids": [],
+          "support": "uncited",
+          "rationale": "No citation supports this counterfactual comparison."
+        },
+        {
+          "text": "ARM flexibility allows a tight CUDA software stack.",
+          "citation_ids": [],
+          "support": "uncited",
+          "rationale": "No citation establishes the asserted causal link."
+        }
+      ],
+      "notes": "Explicitly corrects the false x86 premise, but adds unsupported architecture comparisons and an uncited open-ISA claim. Analogies and promotional opinions are excluded."
+    },
+    {
+      "question_id": "q043",
+      "strategy": "reranked",
+      "response_digest": "cca29b84432c0665fbd262cef25803241653f5cf08a32569ccf00d21224d7936",
+      "reviewer": "Codex",
+      "reviewer_type": "coding_agent",
+      "abstained": false,
+      "corrected_premise": true,
+      "claims": [
+        {
+          "text": "Grace uses ARM Neoverse V2 rather than x86.",
+          "citation_ids": [
+            4,
+            5
+          ],
+          "support": "supported",
+          "rationale": "Citation 4 names the core; citation 5 identifies ARM cores."
+        },
+        {
+          "text": "ARM IP enabled an optimized server CPU.",
+          "citation_ids": [
+            1,
+            5
+          ],
+          "support": "supported",
+          "rationale": "Citation 1 says the ARM IP model allowed the optimal CPU; citation 5 frames AI/cloud design."
+        },
+        {
+          "text": "Grace excels at single-threaded execution.",
+          "citation_ids": [
+            5
+          ],
+          "support": "supported",
+          "rationale": "Citation 5 explicitly states single-threaded execution."
+        },
+        {
+          "text": "Grace supplies the necessary exceptional memory bandwidth.",
+          "citation_ids": [
+            4,
+            5
+          ],
+          "support": "unsupported",
+          "rationale": "The attached excerpts describe memory capacity/process, not the asserted bandwidth requirement."
+        },
+        {
+          "text": "Grace connects to Hopper and Blackwell systems.",
+          "citation_ids": [
+            2,
+            3
+          ],
+          "support": "supported",
+          "rationale": "Citation 2 describes Grace/Hopper composability; citation 3 connects Blackwell chips to Grace."
+        },
+        {
+          "text": "Blackwell/Grace systems are memory coherent.",
+          "citation_ids": [
+            3
+          ],
+          "support": "supported",
+          "rationale": "Citation 3 explicitly states memory coherent."
+        },
+        {
+          "text": "Grace Hopper offers increased memory capacity for recommender systems.",
+          "citation_ids": [
+            2,
+            4
+          ],
+          "support": "supported",
+          "rationale": "Citation 4 states more than seven times fast memory and a large recommender system."
+        },
+        {
+          "text": "That composability provides unprecedented capacity for large language models.",
+          "citation_ids": [
+            2,
+            4
+          ],
+          "support": "unsupported",
+          "rationale": "Neither attached excerpt names LLMs or supports unprecedented capacity."
+        },
+        {
+          "text": "Grace was designed for high energy efficiency at data-center scale.",
+          "citation_ids": [
+            5
+          ],
+          "support": "supported",
+          "rationale": "Citation 5 directly states high energy efficiency at cloud scale."
+        }
+      ],
+      "notes": "Corrects the premise with ARM evidence. Some additional bandwidth and LLM claims exceed the attached passages."
+    },
+    {
+      "question_id": "q044",
+      "strategy": "reranked",
+      "response_digest": "c6a6f6c5a4941c8a680d93cca40651c3b982c020c9d75189ca523b479e2017ca",
+      "reviewer": "Codex",
+      "reviewer_type": "coding_agent",
+      "abstained": false,
+      "corrected_premise": false,
+      "claims": [
+        {
+          "text": "Blackwell is a monolithic single GPU die.",
+          "citation_ids": [
+            1
+          ],
+          "support": "unsupported",
+          "rationale": "Citation 1 describes a giant logical chip, not one physical die; the other supplied excerpt describes two GPUs in one chip."
+        },
+        {
+          "text": "Blackwell is compatible with Hopper form-factor/function.",
+          "citation_ids": [
+            1
+          ],
+          "support": "supported",
+          "rationale": "Citation 1 explicitly describes point-fit function compatibility."
+        },
+        {
+          "text": "The 2024 introduction described Blackwell as a chip rather than a full platform.",
+          "citation_ids": [
+            1
+          ],
+          "support": "unsupported",
+          "rationale": "The excerpt does not establish the alleged only-chip statement; the labeled 2024 introduction explicitly names a platform."
+        },
+        {
+          "text": "Jensen later said calling Blackwell a GPU platform was a mistake.",
+          "citation_ids": [
+            2
+          ],
+          "support": "unsupported",
+          "rationale": "Citation 2 corrects counting one chip as one GPU, not calling Blackwell a platform."
+        },
+        {
+          "text": "Blackwell houses two GPU dies in a package.",
+          "citation_ids": [
+            2
+          ],
+          "support": "supported",
+          "rationale": "Citation 2 says two GPUs in one Blackwell chip and defines GPUs as dies."
+        },
+        {
+          "text": "NVLink 144 refers to connections to 144 GPU dies.",
+          "citation_ids": [
+            2
+          ],
+          "support": "supported",
+          "rationale": "Citation 2 explicitly states this numbering definition."
+        },
+        {
+          "text": "The platform story belongs only to the surrounding architecture.",
+          "citation_ids": [
+            2
+          ],
+          "support": "unsupported",
+          "rationale": "The supplied quote addresses GPU counting, not this platform exclusion."
+        }
+      ],
+      "notes": "Accepts and elaborates the false premise. Confuses a GPU-count naming correction with a platform naming correction; adds an unsupported single-die claim."
+    },
+    {
+      "question_id": "q044",
+      "strategy": "vector",
+      "response_digest": "8ee7973a9f4c100aa0a780444ecc0db8527921e300b8bf69980094d187672f40",
+      "reviewer": "Codex",
+      "reviewer_type": "coding_agent",
+      "abstained": false,
+      "corrected_premise": false,
+      "claims": [
+        {
+          "text": "The 2024 introduction emphasized Blackwell as a chip, not a platform.",
+          "citation_ids": [
+            2
+          ],
+          "support": "unsupported",
+          "rationale": "Citation 2 calls an object the Blackwell chip but does not exclude the platform; the labeled introduction names a platform."
+        },
+        {
+          "text": "Blackwell can replace Hopper in a compatible system.",
+          "citation_ids": [
+            2
+          ],
+          "support": "supported",
+          "rationale": "Citation 2 explicitly describes point-fit function compatibility."
+        },
+        {
+          "text": "This replacement swaps one die for another.",
+          "citation_ids": [
+            2
+          ],
+          "support": "unsupported",
+          "rationale": "The excerpt describes chips, not a single-die replacement."
+        },
+        {
+          "text": "Blackwell systems connect to Grace CPUs and are memory coherent.",
+          "citation_ids": [
+            4
+          ],
+          "support": "supported",
+          "rationale": "Citation 4 explicitly describes Grace connectivity and memory coherence."
+        },
+        {
+          "text": "The platform components remain unchanged.",
+          "citation_ids": [
+            4
+          ],
+          "support": "unsupported",
+          "rationale": "Citation 4 does not establish unchanged platform components."
+        },
+        {
+          "text": "CUDA and AI-factory tools ride on top of Blackwell.",
+          "citation_ids": [],
+          "support": "uncited",
+          "rationale": "No citation is attached to this ecosystem characterization."
+        }
+      ],
+      "notes": "Accepts the misleading premise instead of correcting it. The chip-level compatibility fact does not justify denying the platform naming."
+    },
+    {
+      "question_id": "q045",
+      "strategy": "vector",
+      "response_digest": "a48f650cc41bdc733684ba6ee287dea445d73b7584d53dc7e8e722eaeeb36a12",
+      "reviewer": "Codex",
+      "reviewer_type": "coding_agent",
+      "abstained": false,
+      "corrected_premise": true,
+      "claims": [
+        {
+          "text": "The 2019 keynote said ray tracing could be done in software.",
+          "citation_ids": [
+            3
+          ],
+          "support": "supported",
+          "rationale": "Citation 3 explicitly states this and identifies a software implementation."
+        },
+        {
+          "text": "Most films in that presentation used software ray tracing on CPU render farms.",
+          "citation_ids": [
+            3
+          ],
+          "support": "supported",
+          "rationale": "Citation 3 explicitly describes films, CPUs, and render farms."
+        },
+        {
+          "text": "The work enabled real-time ray tracing.",
+          "citation_ids": [
+            3
+          ],
+          "support": "supported",
+          "rationale": "Citation 3 explicitly says real-time ray tracing for the first time."
+        },
+        {
+          "text": "Concurrent floating-point/integer execution overlaps shading and ray tracing.",
+          "citation_ids": [
+            5
+          ],
+          "support": "supported",
+          "rationale": "Citation 5 explicitly describes these concurrent operations."
+        },
+        {
+          "text": "Cyberpunk uses extensive ray tracing.",
+          "citation_ids": [
+            2
+          ],
+          "support": "supported",
+          "rationale": "Citation 2 describes ray tracing calculations per pixel in Cyberpunk."
+        }
+      ],
+      "notes": "Explicitly corrects the impossible-software premise with a direct source quotation."
+    },
+    {
+      "question_id": "q045",
+      "strategy": "reranked",
+      "response_digest": "8c0cbd1caae8986d51d13b4e342e23e0e352e219fe2bf8c8a053e71c98a7741d",
+      "reviewer": "Codex",
+      "reviewer_type": "coding_agent",
+      "abstained": false,
+      "corrected_premise": true,
+      "claims": [
+        {
+          "text": "The 2019 keynote did not rule out software ray tracing.",
+          "citation_ids": [
+            1
+          ],
+          "support": "supported",
+          "rationale": "Citation 1 explicitly says ray tracing could be done in software."
+        },
+        {
+          "text": "Films used software ray tracing on CPU render farms.",
+          "citation_ids": [
+            1
+          ],
+          "support": "supported",
+          "rationale": "Citation 1 explicitly supplies this fact."
+        },
+        {
+          "text": "Real-time ray tracing supports interactive games.",
+          "citation_ids": [
+            1,
+            2
+          ],
+          "support": "supported",
+          "rationale": "Citation 2 explicitly describes a game with real-time ray tracing."
+        },
+        {
+          "text": "Concurrent floating-point/integer execution overlaps shading and ray tracing.",
+          "citation_ids": [
+            3
+          ],
+          "support": "supported",
+          "rationale": "Citation 3 explicitly describes this architecture mechanism."
+        },
+        {
+          "text": "This GPU work started with Turing.",
+          "citation_ids": [
+            3
+          ],
+          "support": "unsupported",
+          "rationale": "The attached excerpt does not name Turing or establish the start date."
+        },
+        {
+          "text": "Ray-traced simulation lets designers vary materials and lighting in real time.",
+          "citation_ids": [
+            4
+          ],
+          "support": "supported",
+          "rationale": "Citation 4 explicitly describes material swaps and lighting in real time."
+        }
+      ],
+      "notes": "Corrects the premise. The added Turing-start claim is not in the attached excerpt."
+    },
+    {
+      "question_id": "q046",
+      "strategy": "reranked",
+      "response_digest": "d9f857921771ea6c1fcf9f76b4a95667a5a13acdafc37877f00b168eb228e628",
+      "reviewer": "Codex",
+      "reviewer_type": "coding_agent",
+      "abstained": false,
+      "corrected_premise": true,
+      "claims": [
+        {
+          "text": "DGX H100 contains eight H100 GPUs connected with NVLink.",
+          "citation_ids": [
+            2
+          ],
+          "support": "supported",
+          "rationale": "Citation 2 explicitly says eight H100s connected by NVLink."
+        },
+        {
+          "text": "NVLink makes the GPUs a single logical accelerator.",
+          "citation_ids": [
+            2
+          ],
+          "support": "supported",
+          "rationale": "Citation 2 describes one giant GPU, transcribed as GPM."
+        },
+        {
+          "text": "NVLink eliminates data-transfer latency between cards.",
+          "citation_ids": [
+            2,
+            4
+          ],
+          "support": "unsupported",
+          "rationale": "Neither source says latency is eliminated; logical grouping does not entail zero transfer latency."
+        },
+        {
+          "text": "This single DGX is a whole rack with a unified memory/programming fabric.",
+          "citation_ids": [
+            2,
+            4
+          ],
+          "support": "unsupported",
+          "rationale": "Citation 4 describes the larger DGX pod, not the eight-GPU DGX unit; neither excerpt establishes the programming-model assertion."
+        },
+        {
+          "text": "The eight-GPU DGX delivers 40 terabits per second of I/O.",
+          "citation_ids": [
+            1,
+            3
+          ],
+          "support": "unsupported",
+          "rationale": "Citation 3 gives this number for a single H100, not the whole DGX."
+        },
+        {
+          "text": "The DGX has 640 GB of HBM3.",
+          "citation_ids": [
+            1,
+            3
+          ],
+          "support": "unsupported",
+          "rationale": "The value is present in returned citation 2, but neither attached citation 1 nor 3 contains it."
+        },
+        {
+          "text": "The eight-GPU DGX has 70 TB/s bisection bandwidth.",
+          "citation_ids": [
+            1,
+            3
+          ],
+          "support": "unsupported",
+          "rationale": "Neither attached excerpt gives this number; returned citation 4 assigns it to the larger DGX pod."
+        },
+        {
+          "text": "H100 acceleration can free CPU and system memory for other processing.",
+          "citation_ids": [
+            1
+          ],
+          "support": "supported",
+          "rationale": "Citation 1 explicitly describes freeing CPU/system memory."
+        }
+      ],
+      "notes": "Correctly rejects the one-GPU premise, then mixes single-GPU, DGX, and DGX-pod specifications. The valid eight-GPU evidence is an additional relevant passage not included in the nonexhaustive qrels; do not interpret recall as exhaustive correctness."
+    },
+    {
+      "question_id": "q046",
+      "strategy": "vector",
+      "response_digest": "3a5ecd54383a8830c43eb38ab61996641c833a984e86b7ecd2a92774d265ae83",
+      "reviewer": "Codex",
+      "reviewer_type": "coding_agent",
+      "abstained": false,
+      "corrected_premise": true,
+      "claims": [
+        {
+          "text": "DGX H100 has eight H100 GPUs linked with NVLink.",
+          "citation_ids": [
+            3
+          ],
+          "support": "supported",
+          "rationale": "Citation 3 explicitly describes eight H100s and NVLink."
+        },
+        {
+          "text": "They behave as one logical GPU.",
+          "citation_ids": [
+            3
+          ],
+          "support": "supported",
+          "rationale": "Citation 3 explicitly describes the logical giant GPU."
+        },
+        {
+          "text": "Each H100 uses an 80-billion-transistor TSMC 4N die.",
+          "citation_ids": [
+            1,
+            3
+          ],
+          "support": "unsupported",
+          "rationale": "Neither attached excerpt gives the per-die transistor count or process; the unreferenced H100 source contains it."
+        },
+        {
+          "text": "This eight-GPU DGX supplies an exaflop of AI compute.",
+          "citation_ids": [
+            1,
+            3
+          ],
+          "support": "unsupported",
+          "rationale": "Citation 1 describes a larger DGX pod, whereas citation 3 gives 32 petaflops for DGX."
+        },
+        {
+          "text": "This eight-GPU DGX has 20 TB HBM3.",
+          "citation_ids": [
+            1,
+            3
+          ],
+          "support": "unsupported",
+          "rationale": "Citation 1 assigns 20 TB to the larger pod; citation 3 gives 640 GB for DGX."
+        },
+        {
+          "text": "This eight-GPU DGX has 70 TB/s bisection bandwidth.",
+          "citation_ids": [
+            1,
+            3
+          ],
+          "support": "unsupported",
+          "rationale": "Citation 1 assigns that bandwidth to the larger pod, not the eight-GPU DGX."
+        },
+        {
+          "text": "This design keeps latency near zero.",
+          "citation_ids": [],
+          "support": "uncited",
+          "rationale": "No citation quantifies latency or supports near-zero latency."
+        },
+        {
+          "text": "The eight-GPU compute unit fits in one rack unit.",
+          "citation_ids": [
+            1,
+            4
+          ],
+          "support": "unsupported",
+          "rationale": "Citation 1 describes a one-rack-unit NVLink switch, not the DGX compute unit."
+        },
+        {
+          "text": "DGX pods scale out through Quantum 2 InfiniBand.",
+          "citation_ids": [
+            1,
+            4
+          ],
+          "support": "supported",
+          "rationale": "Citation 1 explicitly describes pods connecting through Quantum 2 InfiniBand."
+        }
+      ],
+      "notes": "Corrects eight versus one, but conflates DGX, the larger DGX pod, and an NVLink switch. Mis-scoped specifications are unsupported even when a number appears in an attached passage."
+    }
+  ]
+}

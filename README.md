@@ -190,6 +190,23 @@ The [50-question evaluation set](evals/grounded_questions.json) includes support
 
 The [paired report](reports/evaluation.json) records recall@5, candidate recall@15, MRR@5, nDCG@5, citation support, abstention, failures, and latency. The [protocol and review rubric](evals/README.md) define each metric and its limitations. Initial passage labels and coding-agent claim reviews are **provisional until independently reviewed by a human**. Citation ID validity alone is not evidence of factual support. The showcase reads this report at `/api/evaluation`.
 
+The live run on **October 11, 2026, 06:17 UTC** completed all 100 retrieval requests and all 32 answer samples. The table below uses provisional passage labels and coding-agent claim reviews; it is **not a human-validated accuracy score**.
+
+| Metric | Vector top 5 | Reranked top 5 |
+| --- | ---: | ---: |
+| Recall@5 (36 positive-labeled questions) | 33.3% | 47.2% |
+| Candidate recall@15 | 47.2% | 47.2% |
+| MRR@5 | 0.248 | 0.394 |
+| nDCG@5 | 0.269 | 0.414 |
+| Retrieval client p50 / p95 | 0.65 / 0.74 s | 2.00 / 2.29 s |
+| First text client p50 / p95 | 3.98 / 4.67 s | 5.60 / 10.68 s |
+| Cited claim support (reviewed claims) | 67.8% · 40/59 | 75.0% · 42/56 |
+| Abstention recall (6 cases each) | 100% · 6/6 | 83.3% · 5/6 |
+| False abstention (10 answerable cases each) | 0% · 0/10 | 10% · 1/10 |
+| Misleading premise correction (4 cases each) | 75% · 3/4 | 75% · 3/4 |
+
+All returned source years passed their era filters, and all numbered references resolved. The manual review still found an answer-level era leak, unsupported side claims, and DGX versus DGX-pod specification confusion. Both pipelines accepted the misleading Blackwell premise; reranking also falsely abstained on an answerable Grace-era question. Those cases remain visible in [the 32 response reviews](evals/manual_reviews.json). Some questions and relevance judgments need refinement, including the potentially ambiguous CUDA-platform question and additional valid H100 passages outside the initial qrels. Candidate retrieval is the limiting stage in this sample: reranking retained every annotated positive present in its pool but could not recover missing candidates.
+
 ```sh
 python -m pip install pytest httpx
 python -m pytest -q tests
@@ -233,7 +250,7 @@ The existing browser visitor IDs and demo access are retained, without an owners
 
 Recent prompt history lives in the server process; completed turns awaiting graph extraction and locally saved facts use `storage/memory.db`. Neo4j stores the external conversation graph. Default Hugging Face Space storage is ephemeral across rebuilds; local Docker Compose mounts the storage directories from your checkout.
 
-Only completed replies become completed turns. Failed memory extraction leaves pending turns available for retry. Fact edits/deletions are scoped to the current visitor. Forgetting a fact suppresses its exact wording in later extraction of old chat; paraphrases are not covered by that check. Deleting a browser chat removes its local display; saved facts are managed separately through the memory controls. There is no account authentication. A stable per-owner visitor lock serializes turns and reset/save/clear operations, including when agents leave the LRU cache. The locking design assumes one application process, as configured in Docker; multiple workers would require coordinated locks.
+Only completed replies become completed turns. Failed memory extraction leaves pending turns available for retry. Fact edits/deletions are scoped to the current visitor. Forgetting a fact suppresses its exact wording in later extraction of old chat; paraphrases are not covered by that check. Deleting a browser chat removes its local display; saved facts are managed separately through the memory controls. There is no account authentication. A stable per-visitor lock serializes turns and reset/save/clear operations, including when agents leave the LRU cache. The locking design assumes one application process, as configured in Docker; multiple workers would require coordinated locks.
 
 ## API
 

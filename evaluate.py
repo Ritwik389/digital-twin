@@ -71,7 +71,7 @@ def run(args):
     report={'schema_version':1,'state':'running','run_date':datetime.now(timezone.utc).isoformat(timespec='seconds'),
             'base_url':base,'corpus_fingerprint':corpus['fingerprint'],
             'dataset_sha256':hashlib.sha256(dataset_bytes).hexdigest(),'dataset_label_status':dataset['label_status'],
-            'pipeline_version':'grounded-eval-v1','candidate_pool':15,'top_k':5,
+            'pipeline_version':'grounded-eval-v1','server_revision':args.server_revision,'candidate_pool':15,'top_k':5,
             'category_counts':dict(Counter(c['category'] for c in cases)),
             'graph_enabled':False,'voice_enabled':False,'generation_cooldown_seconds':args.generation_interval,
             'warmup':[],'retrieval_results':[],'generation_results':[],
@@ -101,6 +101,9 @@ def run(args):
                 'candidate_recall_at_15':rank_metrics(case,data['candidate_ids'],15)['recall'],
                 'era_valid':valid,'empty_results':not ids,'server_ms':data['retrieval_ms'],'ranking_ms':data['ranking_ms'],
                 'client_ms':round((time.perf_counter()-start)*1000,3)})
+        pair=report['retrieval_results'][-2:]
+        if pair[0]['candidate_chunk_ids'] != pair[1]['candidate_chunk_ids']:
+            raise RuntimeError('The paired candidate pools differ; this run cannot isolate reranking.')
         write_json(args.output,report)
         print(f"Retrieval {index+1}/{len(cases)}",flush=True)
     run_id=uuid.uuid4().hex
@@ -154,6 +157,7 @@ def run(args):
 if __name__=='__main__':
     parser=argparse.ArgumentParser()
     parser.add_argument('--base')
+    parser.add_argument('--server-revision',help='Verified deployment commit, recorded as provenance')
     parser.add_argument('--dataset',type=Path,default=Path('evals/grounded_questions.json'))
     parser.add_argument('--output',type=Path,default=Path('reports/evaluation.json'))
     parser.add_argument('--generation',action='store_true')

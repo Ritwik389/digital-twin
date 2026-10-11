@@ -20,7 +20,7 @@ def percentile(values, fraction):
 
 
 def rank_metrics(case, ids, k=5):
-    grades = {p['chunk_id']: p['grade'] for p in case['relevant_passages']}
+    grades = {p['chunk_id']: p['grade'] for p in case['relevant_passages'] if p['grade'] > 0}
     if not grades:
         return {'recall': None, 'mrr': None, 'ndcg': None}
     ranked = list(dict.fromkeys(ids))[:k]
@@ -54,6 +54,9 @@ def review_metrics(samples, reviews):
     claims=[claim for _,r in audited for claim in r.get('claims',[]) if claim.get('support') in {'supported','unsupported','uncited'}]
     cited=[c for c in claims if c.get('citation_ids')]
     return {'reviewed_responses':len(audited),
+            'reviewed_abstention_cases':len(abstentions),
+            'reviewed_answerable_cases':len(answerable),
+            'reviewed_premise_cases':sum(isinstance(r.get('corrected_premise'),bool) for _,r in misleading),
             'abstention_recall':mean([int(r['abstained']) for _,r in abstentions]),
             'false_abstention_rate':mean([int(r['abstained']) for _,r in answerable]),
             'premise_correction_rate':mean([int(r['corrected_premise']) for _,r in misleading if isinstance(r.get('corrected_premise'),bool)]),

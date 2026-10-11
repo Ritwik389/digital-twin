@@ -191,7 +191,7 @@ def stream_speech(req: StreamSpeakRequest):
             for event in tts_module.speak_stream(req.text,stop):emit(event)
         except tts_module.VoiceSetupError as exc:emit({'type':'error','error':str(exc)+' You can still read the reply.','code':'tts_unavailable','retryable':True})
         except Exception:
-            logger.exception('Voice stream failed');emit({'type':'error','error':'Voice could not finish. Please retry Play.'})
+            logger.exception('Voice stream failed');emit({'type':'error','error':'Voice could not finish. You can still read the reply or retry Play.','code':'tts_unavailable','retryable':True})
         finally:
             with _voice_jobs_lock:_voice_jobs.pop(key,None)
     return event_response(worker,cancel)

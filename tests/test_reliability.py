@@ -1,7 +1,6 @@
 from concurrent.futures import ThreadPoolExecutor
 import json
 from pathlib import Path
-from types import SimpleNamespace
 import threading
 from unittest.mock import Mock
 
@@ -12,7 +11,6 @@ from test_app import isolate
 import agent
 import knowledge_graph as kg
 import main
-import memory
 import rag
 import tts
 from evaluation_metrics import rank_metrics, review_metrics, sample_digest
@@ -54,6 +52,32 @@ def test_returned_metadata_is_defensively_filtered(monkeypatch):
     monkeypatch.setattr(rag,'get_chroma_collection',lambda:collection)
     assert [c['chunk_id'] for c in rag.retrieve_chunks('GPU',year_max=2021,domain_filter='gpu')]==['valid']
     assert collection.query.call_count==1
+
+
+def test_reset_waits_for_active_stream_even_after_eviction(monkeypatch):
+    started=threading.Event();release=threading.Event();reset_entered=threading.Event()
+    original_lock=main.conversation_lock
+    def lock(user_id):
+        if started.is_set():reset_entered.set()
+        return original_lock(user_id)
+    monkeypatch.setattr(main,'conversation_lock',lock)
+    monkeypatch.setattr(agent,'retrieve',lambda **k:{'chunks':[],'query_type':'no_retrieval'})
+    def generate(prompt,cancel):
+        started.set()
+        assert release.wait(5)
+        yield 'Completed streamed reply'
+    monkeypatch.setattr(agent,'generate_text_stream',generate)
+    with TestClient(main.app) as one, TestClient(main.app) as two, ThreadPoolExecutor(max_workers=2) as pool:
+        stream=pool.submit(one.post,'/api/chat/stream',json={'user_id':'alice','session_id':'s','message':'Hello'})
+        assert started.wait(3)
+        with main._agents_lock:main.agent_instances.clear()
+        reset=pool.submit(two.post,'/api/session/reset',json={'user_id':'alice','session_id':'s'})
+        try:assert reset_entered.wait(3)
+        finally:release.set()
+        events=[json.loads(line) for line in stream.result(timeout=5).text.splitlines()]
+        assert events[-1]['type']=='done'
+        assert reset.result(timeout=5).status_code==200
+    assert kg.restore_history('alice','s')==[]
 
 
 def test_reranker_failure_is_visible_and_strict_evaluation_refuses_it(monkeypatch):
