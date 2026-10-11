@@ -77,16 +77,16 @@ def test_retrieval_failure_still_chats_and_voice_does_not_block(monkeypatch):
     monkeypatch.setattr(tts, 'speak', Mock(side_effect=AssertionError('TTS must be separate')))
     with TestClient(main.app) as client:
         data = client.post('/api/chat', json={'user_id': 'alice', 'session_id': 'a', 'message': 'CUDA?', 'voice_enabled': True}).json()
-        assert data['answer'] == 'A good reply'
+        assert 'Source retrieval is temporarily unavailable' in data['answer']
         assert data['tts_status'] == 'pending'
-        assert data['memory']['pending_turns'] == 1
-    assert len(kg.restore_history('alice', 'a')) == 2
+        assert data['memory']['pending_turns'] == 0
+    assert len(kg.restore_history('alice', 'a')) == 0
     assert not kg.restore_history('alice', 'b')
     assert not kg.restore_history('bob', 'a')
 
 
 def test_outage_not_saved_as_a_reply(monkeypatch):
-    monkeypatch.setattr(agent, 'retrieve', lambda **kwargs: {'context': '', 'chunks': [], 'query_type': 'chat', 'needs_retrieval': False})
+    monkeypatch.setattr(agent, 'retrieve', lambda **kwargs: {'context': '', 'chunks': [], 'query_type': 'no_retrieval', 'needs_retrieval': False})
     monkeypatch.setattr(agent, 'generate_text', Mock(side_effect=api_client.GenerationError('Busy')))
     with TestClient(main.app) as client:
         assert client.post('/api/chat', json={'user_id': 'alice', 'message': 'Hello'}).status_code == 503

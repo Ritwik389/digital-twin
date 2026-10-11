@@ -1,0 +1,762 @@
+{
+  "schema_version": 1,
+  "name": "Jensen source-grounding evaluation",
+  "label_status": "provisional_agent_curated",
+  "label_provenance": "Question and answer expectations curated by the coding agent from checked public corpus passages; not independently human reviewed. Quotes are verified verbatim. Positive passage labels are not exhaustive.",
+  "corpus_passage_count": 282,
+  "questions": [
+    {
+      "id": "q001",
+      "category": "supported",
+      "question": "What three computing platforms does the CUDA ecosystem span in the 2019 keynote?",
+      "era": "all",
+      "expected_behavior": "answer",
+      "reference_answer": "Personal workstations, servers, and cloud.",
+      "relevant_passages": [
+        {
+          "chunk_id": "gtc_2019-22",
+          "filename": "gtc_2019.txt",
+          "quote": "It runs on three computing platforms, personal workstations, servers, and cloud. This is the way computing is consumed today. If you're not in all of that, you're nowhere. Next is the system software stack on top. CUDA, and this subset of CUDA today for this chapter AI in HTML called CUDAX AI, it has data analytics, has graph, analytics machine learning, deep learning for training, and deep learning for inference, and it has to go on the services to the world to the developers in frameworks, in ",
+          "grade": 2
+        }
+      ],
+      "manual_review_subset": true
+    },
+    {
+      "id": "q002",
+      "category": "supported",
+      "question": "What does TensorRT do to a trained model in the 2019 source?",
+      "era": "all",
+      "expected_behavior": "answer",
+      "reference_answer": "Compiles a model to a target computer for inference.",
+      "relevant_passages": [
+        {
+          "chunk_id": "gtc_2019-22",
+          "filename": "gtc_2019.txt",
+          "quote": "tensorRT, our optimizing compiler that takes the output of this, which is a model, and compilers down to a target, where there is a little tiny computer, or a giant supercomputer, or a cloud computer, and our inference server, that runs on top of Kubernetes, called tensorRT inference server, allows us to now run it in a hyperscale data center and make it possible for millions of people to be doing inferencing at the same time. That's exhausting. It was exhausting to say, it must be exhausting to",
+          "grade": 2
+        }
+      ],
+      "manual_review_subset": false
+    },
+    {
+      "id": "q003",
+      "category": "supported",
+      "question": "Which cloud providers are described as adding RAPIDS acceleration in 2019?",
+      "era": "all",
+      "expected_behavior": "answer",
+      "reference_answer": "Google Cloud and Microsoft Azure.",
+      "relevant_passages": [
+        {
+          "chunk_id": "gtc_2019-23",
+          "filename": "gtc_2019.txt",
+          "quote": "Google Cloud now has rapids acceleration. Microsoft today announced that they have rapids acceleration for Azure machine learning. And the next sensor announced that we're partnering together, that one of the world's leading professional services company. And my sideclips were so visionary, that lean into data analytics and AI years ago. They're just one fantastically. It's great to partner with them because we now have rapids in our CUDA X API and platform integrated into their services. And th",
+          "grade": 2
+        }
+      ],
+      "manual_review_subset": false
+    },
+    {
+      "id": "q004",
+      "category": "supported",
+      "question": "Why was automatic mixed precision useful for deep-learning frameworks in the 2019 talk?",
+      "era": "all",
+      "expected_behavior": "answer",
+      "reference_answer": "Numerical range, precision and convergence make manual precision selection difficult; the architecture optimizes it automatically.",
+      "relevant_passages": [
+        {
+          "chunk_id": "gtc_2019-23",
+          "filename": "gtc_2019.txt",
+          "quote": "It turns out that precision is a very complicated problem. There are ranges, there are precision issues. Sometimes you could do it in FD, 60, sometimes you can't. Sometimes you could do it in int-8, sometimes you can't. You've just got to find out when you can and when you can't. Well, it turns out that compiling problem is a very complicated problem. Especially since you have to wait a week, and the answer comes back and off by a little tiny bit. These convergence problems are just historically",
+          "grade": 2
+        }
+      ],
+      "manual_review_subset": false
+    },
+    {
+      "id": "q005",
+      "category": "supported",
+      "question": "What did RTX make possible for ray tracing in the 2019 source?",
+      "era": "all",
+      "expected_behavior": "answer",
+      "reference_answer": "Real-time ray tracing through acceleration.",
+      "relevant_passages": [
+        {
+          "chunk_id": "gtc_2019-5",
+          "filename": "gtc_2019.txt",
+          "quote": "RTX has made it possible for us to perform real-time ray tracing for the very first time. It turns out ray tracing could be done in software. It is true. And the reason for that is because the first implementation of ray tracing was done in software. One of our researchers. A long time ago. And in fact, most films are software ray traced today. They run on a bunch of CPUs. They call it render farms. There's about a million and a half of those render servers running around the world, making moves",
+          "grade": 2
+        }
+      ],
+      "manual_review_subset": false
+    },
+    {
+      "id": "q006",
+      "category": "supported",
+      "question": "Can ray tracing run in software according to the 2019 talk?",
+      "era": "all",
+      "expected_behavior": "answer",
+      "reference_answer": "Yes; software ray tracing and CPU render farms existed, while RTX targets real-time acceleration.",
+      "relevant_passages": [
+        {
+          "chunk_id": "gtc_2019-5",
+          "filename": "gtc_2019.txt",
+          "quote": "It turns out ray tracing could be done in software. It is true. And the reason for that is because the first implementation of ray tracing was done in software. One of our researchers. A long time ago. And in fact, most films are software ray traced today. They run on a bunch of CPUs. They call it render farms. There's about a million and a half of those render servers running around the world, making moves all around the world. And so it stands to reason that ray tracing could be done in softwa",
+          "grade": 2
+        }
+      ],
+      "manual_review_subset": false
+    },
+    {
+      "id": "q007",
+      "category": "supported",
+      "question": "What CPU architecture is Project Grace based on in the spring 2021 talk?",
+      "era": "all",
+      "expected_behavior": "answer",
+      "reference_answer": "ARM, purpose-built for accelerated computing involving large amounts of data.",
+      "relevant_passages": [
+        {
+          "chunk_id": "gtc_spring_2021-16",
+          "filename": "gtc_spring_2021.txt",
+          "quote": "Grace is arm-based and purpose-built for accelerated computing applications of large amounts of data such as AI. Grace highlights the beauty of ARM.",
+          "grade": 2
+        }
+      ],
+      "manual_review_subset": true
+    },
+    {
+      "id": "q008",
+      "category": "supported",
+      "question": "Why would faster CPU memory alone not solve the GPU data bottleneck in the spring 2021 example?",
+      "era": "all",
+      "expected_behavior": "answer",
+      "reference_answer": "PCI Express becomes the bottleneck; NVLink is discussed as fast enough.",
+      "relevant_passages": [
+        {
+          "chunk_id": "gtc_spring_2021-16",
+          "filename": "gtc_spring_2021.txt",
+          "quote": "Even if a package can be made, PCI Express is now the bottleneck. We can surely use NVLink, NVLink is fast enough, but no x86 CPU has NVLink, not to mention four end-banks. Today, we're announcing our first data center CPU, Project Grace. Named after Grace Hopper, a computer scientist and US Navy rear-evolve, who in the 50s partnered computer program. Grace is arm-based and purpose-built for accelerated computing applications of large amounts of data such as AI. Grace highlights the beauty of AR",
+          "grade": 2
+        }
+      ],
+      "manual_review_subset": false
+    },
+    {
+      "id": "q009",
+      "category": "supported",
+      "question": "What is the role of Omniverse Nucleus in the spring 2021 source?",
+      "era": "all",
+      "expected_behavior": "answer",
+      "reference_answer": "A database engine that connects users and enables interchange of 3D assets and scene descriptions.",
+      "relevant_passages": [
+        {
+          "chunk_id": "gtc_spring_2021-4",
+          "filename": "gtc_spring_2021.txt",
+          "quote": "First, the omniverse nucleus, a database engine that connects users, and enables the interchange of 3D assets and scene descriptions. Once connected, designers doing modeling, layout, shading, animation, lighting, special effects, or rendering, can collaborate to create a scene. The omniverse nucleus is described through the open standard USD, universal scene description, a fabulous interchange framework invented by Pixar. Multiple users can connect to nucleus, transmitting and receiving changes",
+          "grade": 2
+        }
+      ],
+      "manual_review_subset": false
+    },
+    {
+      "id": "q010",
+      "category": "supported",
+      "question": "Which open scene-description standard is associated with Omniverse Nucleus?",
+      "era": "all",
+      "expected_behavior": "answer",
+      "reference_answer": "USD, Universal Scene Description.",
+      "relevant_passages": [
+        {
+          "chunk_id": "gtc_spring_2021-4",
+          "filename": "gtc_spring_2021.txt",
+          "quote": "the open standard USD, universal scene description, a fabulous interchange framework invented by Pixar. Multiple users can connect to nucleus, transmitting and receiving changes to the world as USD segments.",
+          "grade": 2
+        }
+      ],
+      "manual_review_subset": false
+    },
+    {
+      "id": "q011",
+      "category": "supported",
+      "question": "How are the eight H100 modules connected in the 2023 DGX description?",
+      "era": "all",
+      "expected_behavior": "answer",
+      "reference_answer": "Across NVLink switches, enabling non-blocking transactions and acting as a giant GPU.",
+      "relevant_passages": [
+        {
+          "chunk_id": "gtc_2023-7",
+          "filename": "gtc_2023.txt",
+          "quote": "The GPU of DGX is 8H100 modules. H100 has a transformer engine designed to process models like the amazing chat GPT, which stands for Generative, Pre-Train Transparency. The 8H100 modules are in the link to each other across NV-Link switches to allow fully non-blocking transactions. The 8H100's work has one giant GPU. The computing fabric is one of the most vital systems of the AI Supercompete. 400 gigabits per second, remote, ultra-low latency, Nvidia Quantum and Finabane, within network proces",
+          "grade": 2
+        }
+      ],
+      "manual_review_subset": false
+    },
+    {
+      "id": "q012",
+      "category": "supported",
+      "question": "What change to computational lithography is described in the 2023 talk?",
+      "era": "all",
+      "expected_behavior": "answer",
+      "reference_answer": "GPU acceleration is described as reducing processing time, power and the number of CPU servers needed.",
+      "relevant_passages": [
+        {
+          "chunk_id": "gtc_2023-6",
+          "filename": "gtc_2023.txt",
+          "quote": "accelerates computational lithography by over 40 times. There are 89 radicals for the NVIDIA H100. Running on CPUs, a single radical currently takes two weeks to process. KOOLitha running on GPUs can process a radical in a single eight-hour shift. TSMC can reduce their 40,000 CPU servers used for computational lithography by accelerating with KOOLitha on just 500 DGX H100 systems, reducing power from 35 MW to just 5 MW. With KOOLitha, TSMC can reduce prototype cycle time, increase throughput and",
+          "grade": 2
+        }
+      ],
+      "manual_review_subset": false
+    },
+    {
+      "id": "q013",
+      "category": "supported",
+      "question": "Is Blackwell presented as a chip or as the name of a platform in the 2024 introduction?",
+      "era": "all",
+      "expected_behavior": "answer",
+      "reference_answer": "The name of a platform, rather than just a chip.",
+      "relevant_passages": [
+        {
+          "chunk_id": "gtc_2024-6",
+          "filename": "gtc_2024.txt",
+          "quote": "Blackwell is not a chip. Blackwell is the name of a platform.",
+          "grade": 2
+        }
+      ],
+      "manual_review_subset": true
+    },
+    {
+      "id": "q014",
+      "category": "supported",
+      "question": "How do the two Blackwell dies behave in the 2024 chip explanation?",
+      "era": "all",
+      "expected_behavior": "answer",
+      "reference_answer": "They behave as one chip without memory locality or cache issues in the quoted description.",
+      "relevant_passages": [
+        {
+          "chunk_id": "gtc_2024-7",
+          "filename": "gtc_2024.txt",
+          "quote": "the two dives think it's one chip. There's 10 terabytes of data between it. 10 terabytes per second. So that these two, these two sides of the Blackwell chip have no clue inside their own. There's no memory locality issues, no cash issues. It's just one giant chip. And so, when we were told that Blackwell's ambitions were beyond the limits of physics, the engineer said, so what? And so this is what, what happened. And so this is the Blackwell chip. And it goes into two types of systems. The firs",
+          "grade": 2
+        }
+      ],
+      "manual_review_subset": false
+    },
+    {
+      "id": "q015",
+      "category": "supported",
+      "question": "What CPU is connected to the Blackwell chips in the 2024 Grace Blackwell system?",
+      "era": "all",
+      "expected_behavior": "answer",
+      "reference_answer": "A Grace CPU with a fast chip-to-chip link and coherent memory.",
+      "relevant_passages": [
+        {
+          "chunk_id": "gtc_2024-8",
+          "filename": "gtc_2024.txt",
+          "quote": "connected to a Grace CPU. The Grace CPU has a super fast chip to chip late. What's amazing is this computer is the first of its kind where this much computation, first of all, fits into this small of a place. Second, it's memory coherent. They feel like they're just one big happy family working on one application together. And so everything is coherent within it. Just the amount of, you know, you solve the numbers. There's a lot of terabytes of this and terabytes of that. But this is, this is a ",
+          "grade": 2
+        }
+      ],
+      "manual_review_subset": false
+    },
+    {
+      "id": "q016",
+      "category": "supported",
+      "question": "Why can a large-language-model chatbot need multiple GPUs in the 2024 discussion?",
+      "era": "all",
+      "expected_behavior": "answer",
+      "reference_answer": "Large models do not fit on one GPU and need a supercomputer behind interactive token generation.",
+      "relevant_passages": [
+        {
+          "chunk_id": "gtc_2024-14",
+          "filename": "gtc_2024.txt",
+          "quote": "they're very large. And so it doesn't fit on one GPU. This is imagine imagine Excel doesn't fit on one GPU, you know, and imagine some application running on a daily basis doesn't run out doesn't fit on one computer. Like a video game doesn't fit on one computer. In fact, do and many times in the past, the hyper scale computing, many applications for many people down the same computer. And now all of a sudden, there's one inference application where you're interacting with this chatbot that chat",
+          "grade": 2
+        }
+      ],
+      "manual_review_subset": false
+    },
+    {
+      "id": "q017",
+      "category": "supported",
+      "question": "What tradeoff does the 2024 keynote describe between throughput and per-user token rate?",
+      "era": "all",
+      "expected_behavior": "answer",
+      "reference_answer": "Throughput affects cost per token; interactive tokens per second per user affects service quality. They compete.",
+      "relevant_passages": [
+        {
+          "chunk_id": "gtc_2024-15",
+          "filename": "gtc_2024.txt",
+          "quote": "you would like throughput because that throughput reduces the cost, the overall cost for token of generating. So your throughput dictates the cost of delivering the service. On the other hand, you have another interactive rate, which is another tokens per second, where it's about per user. And that has everything to do with quality of service. And so these two things, um, compete against each other. And we have to find a way to distribute work across all of these different GPUs and paralyze it i",
+          "grade": 2
+        }
+      ],
+      "manual_review_subset": true
+    },
+    {
+      "id": "q018",
+      "category": "supported",
+      "question": "Why does Jensen show a multi-year AI-factory roadmap in the 2025 talk?",
+      "era": "all",
+      "expected_behavior": "answer",
+      "reference_answer": "Factories require advance planning for land, power and engineering; customers should not be surprised by new systems.",
+      "relevant_passages": [
+        {
+          "chunk_id": "gtc_2025-27",
+          "filename": "gtc_2025.txt",
+          "quote": "It's going to take years of planning. This isn't like buying a laptop. You know, this isn't a, this isn't discretionary spent. This is spend that we have to go plan on. And so we have plan on having, of course, the land and the power. And we have to get our, our cat-backed rating, engineering teams. And we have to lay it out a couple of two, three years in advance, which is the reason why. I show you our roadmap, a couple of two, three years in advance. So that you're, we don't surprise you in M",
+          "grade": 2
+        }
+      ],
+      "manual_review_subset": false
+    },
+    {
+      "id": "q019",
+      "category": "supported",
+      "question": "Which new components are named for Vera Rubin in the 2025 roadmap?",
+      "era": "all",
+      "expected_behavior": "answer",
+      "reference_answer": "Rubin GPU, CX9 networking, NVLink 6 and HBM4 memory; the chassis is retained.",
+      "relevant_passages": [
+        {
+          "chunk_id": "gtc_2025-28",
+          "filename": "gtc_2025.txt",
+          "quote": "Rubin, brand new GPU, CX9, brand new networking smart neck, NVLink 6, brand new NVLink, brand new memories, HBM4. Basically, everything is brand new except for the chassis. And this way, we could take a whole lot of risk in one direction and not risk a whole bunch of other things related to the infrastructure. And so Vera Rubin, NVLink 144, is the second half of next year. Now, one, one of the things that I made a mistake on. And so I just need to make this pivot. We're going to do this one time",
+          "grade": 2
+        }
+      ],
+      "manual_review_subset": false
+    },
+    {
+      "id": "q020",
+      "category": "supported",
+      "question": "How are Omniverse and OVX related in the spring 2022 source?",
+      "era": "all",
+      "expected_behavior": "answer",
+      "reference_answer": "Omniverse is the virtual-world/digital-twin platform; OVX is infrastructure for large-scale digital-twin simulations.",
+      "relevant_passages": [
+        {
+          "chunk_id": "gtc_spring_2022-26",
+          "filename": "gtc_spring_2022.txt",
+          "quote": "Nvidia Omniverse is a platform for virtual worlds, digital twins, and robotic systems, the next wave of AI. Just as TensorFlow and PyTorch are essential frameworks for perception-oriented AI, Omniverse will be integral for action-oriented AI. And as DGX is the infrastructure of AI factories, OVX will be the infrastructure of digital twins. OVX runs Omniverse Digital Twins for large-scale simulations with multiple autonomous systems operating in the same space time. The backbone of OVX is its net",
+          "grade": 2
+        }
+      ],
+      "manual_review_subset": false
+    },
+    {
+      "id": "q021",
+      "category": "era",
+      "question": "Using only sources through 2007, describe Blackwell.",
+      "era": "pre_cuda",
+      "expected_behavior": "abstain",
+      "reference_answer": "No reliable dated corpus coverage through 2007; abstain rather than use the 2024 announcement.",
+      "relevant_passages": [],
+      "manual_review_subset": true
+    },
+    {
+      "id": "q022",
+      "category": "era",
+      "question": "Using only sources through 2007, explain Omniverse Nucleus.",
+      "era": "pre_cuda",
+      "expected_behavior": "abstain",
+      "reference_answer": "No reliable dated corpus coverage through 2007; abstain.",
+      "relevant_passages": [],
+      "manual_review_subset": false
+    },
+    {
+      "id": "q023",
+      "category": "era",
+      "question": "Within the 2012–2021 era, what architecture did Project Grace use?",
+      "era": "deep_learning",
+      "expected_behavior": "answer",
+      "reference_answer": "ARM, based on the spring 2021 source; do not import later Grace Blackwell details.",
+      "relevant_passages": [
+        {
+          "chunk_id": "gtc_spring_2021-16",
+          "filename": "gtc_spring_2021.txt",
+          "quote": "Grace is arm-based and purpose-built for accelerated computing applications of large amounts of data such as AI. Grace highlights the beauty of ARM.",
+          "grade": 2
+        }
+      ],
+      "manual_review_subset": true
+    },
+    {
+      "id": "q024",
+      "category": "era",
+      "question": "Within the 2012–2021 era, which standard underlies Omniverse scene descriptions?",
+      "era": "deep_learning",
+      "expected_behavior": "answer",
+      "reference_answer": "USD, Universal Scene Description, from the 2021 source.",
+      "relevant_passages": [
+        {
+          "chunk_id": "gtc_spring_2021-4",
+          "filename": "gtc_spring_2021.txt",
+          "quote": "the open standard USD, universal scene description, a fabulous interchange framework invented by Pixar. Multiple users can connect to nucleus, transmitting and receiving changes to the world as USD segments.",
+          "grade": 2
+        }
+      ],
+      "manual_review_subset": true
+    },
+    {
+      "id": "q025",
+      "category": "era",
+      "question": "Using only 2012–2021 sources, which computing platforms does the CUDA ecosystem cover?",
+      "era": "deep_learning",
+      "expected_behavior": "answer",
+      "reference_answer": "Personal workstations, servers, and cloud.",
+      "relevant_passages": [
+        {
+          "chunk_id": "gtc_2019-22",
+          "filename": "gtc_2019.txt",
+          "quote": "It runs on three computing platforms, personal workstations, servers, and cloud. This is the way computing is consumed today. If you're not in all of that, you're nowhere. Next is the system software stack on top. CUDA, and this subset of CUDA today for this chapter AI in HTML called CUDAX AI, it has data analytics, has graph, analytics machine learning, deep learning for training, and deep learning for inference, and it has to go on the services to the world to the developers in frameworks, in ",
+          "grade": 2
+        }
+      ],
+      "manual_review_subset": false
+    },
+    {
+      "id": "q026",
+      "category": "era",
+      "question": "From the 2012–2021 sources, could ray tracing run on CPU render farms?",
+      "era": "deep_learning",
+      "expected_behavior": "answer",
+      "reference_answer": "Yes, the 2019 source explicitly describes CPU render farms.",
+      "relevant_passages": [
+        {
+          "chunk_id": "gtc_2019-5",
+          "filename": "gtc_2019.txt",
+          "quote": "most films are software ray traced today. They run on a bunch of CPUs. They call it render farms. There's about a million and a half of those render servers running around the world, making moves all around the world. And so it stands to reason that ray tracing could be done in software. But as in everything else, our goal is to accelerate this particular domain of application. What we want to do is find a way to accelerate enough of it as quickly as we can so that it could be done in real time.",
+          "grade": 2
+        }
+      ],
+      "manual_review_subset": false
+    },
+    {
+      "id": "q027",
+      "category": "era",
+      "question": "Using only 2022-onward sources, how are H100 modules linked in DGX?",
+      "era": "llm_era",
+      "expected_behavior": "answer",
+      "reference_answer": "Eight modules linked across NVLink switches, from the 2023 source.",
+      "relevant_passages": [
+        {
+          "chunk_id": "gtc_2023-7",
+          "filename": "gtc_2023.txt",
+          "quote": "The GPU of DGX is 8H100 modules. H100 has a transformer engine designed to process models like the amazing chat GPT, which stands for Generative, Pre-Train Transparency. The 8H100 modules are in the link to each other across NV-Link switches to allow fully non-blocking transactions. The 8H100's work has one giant GPU. The computing fabric is one of the most vital systems of the AI Supercompete. 400 gigabits per second, remote, ultra-low latency, Nvidia Quantum and Finabane, within network proces",
+          "grade": 2
+        }
+      ],
+      "manual_review_subset": false
+    },
+    {
+      "id": "q028",
+      "category": "era",
+      "question": "Using only 2022-onward sources, how is Blackwell introduced?",
+      "era": "llm_era",
+      "expected_behavior": "answer",
+      "reference_answer": "As the name of a platform, in the 2024 introduction.",
+      "relevant_passages": [
+        {
+          "chunk_id": "gtc_2024-6",
+          "filename": "gtc_2024.txt",
+          "quote": "Blackwell is not a chip. Blackwell is the name of a platform.",
+          "grade": 2
+        }
+      ],
+      "manual_review_subset": false
+    },
+    {
+      "id": "q029",
+      "category": "era",
+      "question": "Using only 2022-onward sources, why are AI-factory roadmaps announced years ahead?",
+      "era": "llm_era",
+      "expected_behavior": "answer",
+      "reference_answer": "Land, power, engineering and capital planning need advance notice.",
+      "relevant_passages": [
+        {
+          "chunk_id": "gtc_2025-27",
+          "filename": "gtc_2025.txt",
+          "quote": "It's going to take years of planning. This isn't like buying a laptop. You know, this isn't a, this isn't discretionary spent. This is spend that we have to go plan on. And so we have plan on having, of course, the land and the power. And we have to get our, our cat-backed rating, engineering teams. And we have to lay it out a couple of two, three years in advance, which is the reason why. I show you our roadmap, a couple of two, three years in advance. So that you're, we don't surprise you in M",
+          "grade": 2
+        }
+      ],
+      "manual_review_subset": false
+    },
+    {
+      "id": "q030",
+      "category": "era",
+      "question": "Using only 2022-onward sources, what tradeoff exists between throughput and interactivity?",
+      "era": "llm_era",
+      "expected_behavior": "answer",
+      "reference_answer": "Cost per token versus interactive per-user service quality.",
+      "relevant_passages": [
+        {
+          "chunk_id": "gtc_2024-15",
+          "filename": "gtc_2024.txt",
+          "quote": "you would like throughput because that throughput reduces the cost, the overall cost for token of generating. So your throughput dictates the cost of delivering the service. On the other hand, you have another interactive rate, which is another tokens per second, where it's about per user. And that has everything to do with quality of service. And so these two things, um, compete against each other. And we have to find a way to distribute work across all of these different GPUs and paralyze it i",
+          "grade": 2
+        }
+      ],
+      "manual_review_subset": false
+    },
+    {
+      "id": "q031",
+      "category": "era",
+      "question": "Using only sources through 2007, give the Hopper H100 specifications.",
+      "era": "pre_cuda",
+      "expected_behavior": "abstain",
+      "reference_answer": "No reliable dated pre-2008 corpus coverage; abstain.",
+      "relevant_passages": [],
+      "manual_review_subset": false
+    },
+    {
+      "id": "q032",
+      "category": "era",
+      "question": "Using only sources through 2007, explain NVLink 6.",
+      "era": "pre_cuda",
+      "expected_behavior": "abstain",
+      "reference_answer": "No reliable dated pre-2008 corpus coverage; abstain.",
+      "relevant_passages": [],
+      "manual_review_subset": false
+    },
+    {
+      "id": "q033",
+      "category": "era",
+      "question": "Using only 2012–2021 sources, explain the 2024 Blackwell launch.",
+      "era": "deep_learning",
+      "expected_behavior": "abstain",
+      "reference_answer": "The requested launch is outside the selected era; acknowledge the restriction and abstain.",
+      "relevant_passages": [],
+      "manual_review_subset": true
+    },
+    {
+      "id": "q034",
+      "category": "era",
+      "question": "Using only 2012–2021 sources, list the Vera Rubin HBM4 specifications.",
+      "era": "deep_learning",
+      "expected_behavior": "abstain",
+      "reference_answer": "The requested roadmap is outside the selected era; do not import the 2025 source.",
+      "relevant_passages": [],
+      "manual_review_subset": false
+    },
+    {
+      "id": "q035",
+      "category": "absent",
+      "question": "What is the exact date of NVIDIA's secret, unpublished next GPU launch?",
+      "era": "all",
+      "expected_behavior": "abstain",
+      "reference_answer": "No access to unpublished launch plans; do not invent a date.",
+      "relevant_passages": [],
+      "manual_review_subset": true
+    },
+    {
+      "id": "q036",
+      "category": "absent",
+      "question": "What is Jensen's private calendar for tomorrow?",
+      "era": "all",
+      "expected_behavior": "abstain",
+      "reference_answer": "The corpus has no private calendar; abstain.",
+      "relevant_passages": [],
+      "manual_review_subset": true
+    },
+    {
+      "id": "q037",
+      "category": "absent",
+      "question": "Quote the latest confidential NVIDIA board-meeting minutes.",
+      "era": "all",
+      "expected_behavior": "abstain",
+      "reference_answer": "No confidential board minutes are supplied; abstain and do not invent a quotation.",
+      "relevant_passages": [],
+      "manual_review_subset": true
+    },
+    {
+      "id": "q038",
+      "category": "absent",
+      "question": "What is the Neo4j password used by this application?",
+      "era": "all",
+      "expected_behavior": "abstain",
+      "reference_answer": "Credentials are not source evidence and must not be disclosed or guessed.",
+      "relevant_passages": [],
+      "manual_review_subset": true
+    },
+    {
+      "id": "q039",
+      "category": "absent",
+      "question": "Give the confidential transistor-by-transistor layout of the next NVIDIA GPU.",
+      "era": "all",
+      "expected_behavior": "abstain",
+      "reference_answer": "The corpus has no confidential chip-layout document; abstain.",
+      "relevant_passages": [],
+      "manual_review_subset": false
+    },
+    {
+      "id": "q040",
+      "category": "absent",
+      "question": "What exactly did Jensen eat for breakfast today?",
+      "era": "all",
+      "expected_behavior": "abstain",
+      "reference_answer": "No source records today's meal; abstain.",
+      "relevant_passages": [],
+      "manual_review_subset": false
+    },
+    {
+      "id": "q041",
+      "category": "absent",
+      "question": "What will NVIDIA's share price be, to the cent, next Friday?",
+      "era": "all",
+      "expected_behavior": "abstain",
+      "reference_answer": "No exact future market price can be established from the corpus; do not invent a prediction.",
+      "relevant_passages": [],
+      "manual_review_subset": false
+    },
+    {
+      "id": "q042",
+      "category": "absent",
+      "question": "What is Jensen's private mobile-phone number?",
+      "era": "all",
+      "expected_behavior": "abstain",
+      "reference_answer": "No private phone number is supported by the corpus; do not invent or disclose one.",
+      "relevant_passages": [],
+      "manual_review_subset": false
+    },
+    {
+      "id": "q043",
+      "category": "misleading",
+      "question": "Why is Project Grace an x86 CPU rather than an ARM CPU?",
+      "era": "all",
+      "expected_behavior": "correct_premise",
+      "reference_answer": "Reject the premise: the source says Grace is ARM-based.",
+      "relevant_passages": [
+        {
+          "chunk_id": "gtc_spring_2021-16",
+          "filename": "gtc_spring_2021.txt",
+          "quote": "Grace is arm-based and purpose-built for accelerated computing applications of large amounts of data such as AI. Grace highlights the beauty of ARM.",
+          "grade": 2
+        }
+      ],
+      "manual_review_subset": true
+    },
+    {
+      "id": "q044",
+      "category": "misleading",
+      "question": "Why did Jensen say Blackwell is only a chip and not a platform in 2024?",
+      "era": "all",
+      "expected_behavior": "correct_premise",
+      "reference_answer": "Reject the premise: the introduction calls Blackwell the name of a platform.",
+      "relevant_passages": [
+        {
+          "chunk_id": "gtc_2024-6",
+          "filename": "gtc_2024.txt",
+          "quote": "Blackwell is not a chip. Blackwell is the name of a platform.",
+          "grade": 2
+        }
+      ],
+      "manual_review_subset": true
+    },
+    {
+      "id": "q045",
+      "category": "misleading",
+      "question": "Why did the 2019 keynote say ray tracing cannot be done in software?",
+      "era": "all",
+      "expected_behavior": "correct_premise",
+      "reference_answer": "Reject the premise: the source says software ray tracing is possible.",
+      "relevant_passages": [
+        {
+          "chunk_id": "gtc_2019-5",
+          "filename": "gtc_2019.txt",
+          "quote": "It turns out ray tracing could be done in software. It is true. And the reason for that is because the first implementation of ray tracing was done in software. One of our researchers. A long time ago. And in fact, most films are software ray traced today. They run on a bunch of CPUs. They call it render farms. There's about a million and a half of those render servers running around the world, making moves all around the world. And so it stands to reason that ray tracing could be done in softwa",
+          "grade": 2
+        }
+      ],
+      "manual_review_subset": true
+    },
+    {
+      "id": "q046",
+      "category": "misleading",
+      "question": "Why does DGX H100 contain just one H100 module?",
+      "era": "all",
+      "expected_behavior": "correct_premise",
+      "reference_answer": "Reject the premise: eight modules are connected to behave as a giant GPU.",
+      "relevant_passages": [
+        {
+          "chunk_id": "gtc_2023-7",
+          "filename": "gtc_2023.txt",
+          "quote": "The GPU of DGX is 8H100 modules. H100 has a transformer engine designed to process models like the amazing chat GPT, which stands for Generative, Pre-Train Transparency. The 8H100 modules are in the link to each other across NV-Link switches to allow fully non-blocking transactions. The 8H100's work has one giant GPU. The computing fabric is one of the most vital systems of the AI Supercompete. 400 gigabits per second, remote, ultra-low latency, Nvidia Quantum and Finabane, within network proces",
+          "grade": 2
+        }
+      ],
+      "manual_review_subset": true
+    },
+    {
+      "id": "q047",
+      "category": "misleading",
+      "question": "Why does the spring 2022 source describe Omniverse as only perception-oriented AI?",
+      "era": "all",
+      "expected_behavior": "correct_premise",
+      "reference_answer": "Reject the premise: it contrasts perception-oriented frameworks with Omniverse for action-oriented AI.",
+      "relevant_passages": [
+        {
+          "chunk_id": "gtc_spring_2022-26",
+          "filename": "gtc_spring_2022.txt",
+          "quote": "Just as TensorFlow and PyTorch are essential frameworks for perception-oriented AI, Omniverse will be integral for action-oriented AI. And as DGX is the infrastructure of AI factories, OVX will be the infrastructure of digital twins. OVX runs Omniverse Digital Twins for large-scale simulations with multiple autonomous systems operating in the same space time. The backbone of OVX is its networking fabric. We announced Nvidia Spectrum 4, 51.2 terabits per second switch, and with CX7 and Bluefield ",
+          "grade": 2
+        }
+      ],
+      "manual_review_subset": false
+    },
+    {
+      "id": "q048",
+      "category": "misleading",
+      "question": "Why does the 2025 Vera Rubin roadmap replace the chassis along with every other component?",
+      "era": "all",
+      "expected_behavior": "correct_premise",
+      "reference_answer": "Reject the premise: the quoted source retains the chassis to limit infrastructure risk.",
+      "relevant_passages": [
+        {
+          "chunk_id": "gtc_2025-28",
+          "filename": "gtc_2025.txt",
+          "quote": "everything is brand new except for the chassis. And this way, we could take a whole lot of risk in one direction and not risk a whole bunch of other things related to the infrastructure. And so Vera Rubin, NVLink 144, is the second half of next year. Now, one, one of the things that I made a mistake on. And so I just need to make this pivot. We're going to do this one time. Blackwell is really two GPUs in one blackwell chip. We call that one chip a GPU, and that was wrong. And the reason for tha",
+          "grade": 2
+        }
+      ],
+      "manual_review_subset": false
+    },
+    {
+      "id": "q049",
+      "category": "misleading",
+      "question": "Why did the 2024 talk say large language models always fit on one GPU?",
+      "era": "all",
+      "expected_behavior": "correct_premise",
+      "reference_answer": "Reject the premise: the source describes models too large for one GPU.",
+      "relevant_passages": [
+        {
+          "chunk_id": "gtc_2024-14",
+          "filename": "gtc_2024.txt",
+          "quote": "they're very large. And so it doesn't fit on one GPU. This is imagine imagine Excel doesn't fit on one GPU, you know, and imagine some application running on a daily basis doesn't run out doesn't fit on one computer. Like a video game doesn't fit on one computer. In fact, do and many times in the past, the hyper scale computing, many applications for many people down the same computer. And now all of a sudden, there's one inference application where you're interacting with this chatbot that chat",
+          "grade": 2
+        }
+      ],
+      "manual_review_subset": false
+    },
+    {
+      "id": "q050",
+      "category": "misleading",
+      "question": "Why does the 2025 roadmap deliberately give AI-factory customers only one month of notice?",
+      "era": "all",
+      "expected_behavior": "correct_premise",
+      "reference_answer": "Reject the premise: the source explains planning and roadmaps several years ahead.",
+      "relevant_passages": [
+        {
+          "chunk_id": "gtc_2025-27",
+          "filename": "gtc_2025.txt",
+          "quote": "I show you our roadmap, a couple of two, three years in advance. So that you're, we don't surprise you in May. You know, hi. In another month, we're going to go to this incredible new system. I'll show you an example in a second. And so we plan this out in multiple years. The next, the next click, one year out. Is named after an astronomer. And her, her grandkids are here. Her name is Vera Rubin. She discovered dark matter.",
+          "grade": 2
+        }
+      ],
+      "manual_review_subset": false
+    }
+  ],
+  "corpus_fingerprint": "f1b9ff96b59bb3fb20c27473e204da64058ace484068315b959353231f7bb382"
+}

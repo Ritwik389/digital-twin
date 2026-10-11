@@ -110,7 +110,7 @@ With Docker and Compose installed, start the application:
 docker compose up --build
 ```
 
-Open [http://localhost:7860](http://localhost:7860). The image installs Python 3.12, CPU PyTorch, libsndfile, and ffmpeg. Compose mounts the local `storage/` and `audio_cache/` directories. Initial model downloads require network access; the first retrieval and voice request can take longer while models initialize.
+Open [http://localhost:7860](http://localhost:7860). Compose explicitly builds `Dockerfile` and maps `7860:7860`, matching the image and Hugging Face metadata. The image installs Python 3.12, CPU PyTorch, libsndfile, and ffmpeg. Compose mounts the local `storage/` and `audio_cache/` directories. Initial model downloads require network access; the first retrieval and voice request can take longer while models initialize.
 
 ### Python environment
 
@@ -167,7 +167,7 @@ curl http://localhost:7860/api/health
 curl http://localhost:7860/api/corpus/status
 ```
 
-`chat_configured` and `neo4j_configured` indicate that the required variables are present; they do not prove the credentials are valid. `tts_loaded` becomes true after a successful voice initialization. Confirm operation by sending a message, playing a reply, and opening the graph.
+`chat_configured` and `neo4j_configured` indicate that the required variables are present; they do not prove the credentials are valid. `tts_loaded` becomes true after a successful voice initialization. `voice_status` and `voice_error` distinguish uninitialized, ready, and unavailable voice. Confirm operation by sending a message, playing a reply, and opening the graph.
 
 | Symptom | Check |
 | --- | --- |
@@ -178,22 +178,17 @@ curl http://localhost:7860/api/corpus/status
 | Neo4j does not synchronize | Check the full URI, database credentials, network availability, and optional database name. |
 | Speech waits in the queue | CPU voice jobs run one at a time. Stop Voice cancels your active job and queued sentences. |
 
+### Availability and concurrency
+
+Provider calls, embedding/reranking, graph operations, and TTS run in synchronous FastAPI handlers or dedicated stream workers. Async stream transport awaits queue reads in a thread, and startup offloads model/graph initialization. A blocked generation does not block the event loop or health route. This does not eliminate CPU contention or thread-pool limits.
+
+A provider failure returns HTTP 503 or a `generation_unavailable` stream error without saving an unfinished turn. Missing source evidence produces an explicit coverage abstention; a retrieval outage produces a distinct temporary-error reply without dropping year/domain filters or saving that error as a conversation turn. Reranker failure retains the filtered vector order and reports `vector_fallback`. Voice failure produces a `tts_unavailable` event and leaves the text readable; Play can retry after configuration is repaired.
+
 ## Evaluation
 
-The [published report](reports/benchmark.json) records the live run at **2026-10-09 19:51 UTC** (October 10 in India), tied to corpus fingerprint `f1b9ff96b59bb3fb20c27473e204da64058ace484068315b959353231f7bb382`.
+The [50-question evaluation set](evals/grounded_questions.json) includes supporting passage IDs and quotes, era restrictions, absent answers, and misleading premises. Both vector retrieval and cross-encoder reranking use the same 15 candidates and return five passages. A balanced 16-question subset produces 32 answers for explicit claim, abstention, and premise-correction review.
 
-| Check | Recorded result | What it measures |
-| --- | --- | --- |
-| Expected topic in retrieved passages | **44/50 · 88%** | An expected alias appears in at least one of the top five passages. |
-| Era filtering | **50/50 · 100%** | All returned source dates fit the selected era; empty results also pass this check. |
-| Streamed replies completed | **8/8** | Each generation sample produced a completed response. |
-| Numbered citations resolve | **6/6 cited replies · 100%** | Referenced IDs exist in the returned citation list; two replies had no numbered citations. |
-| Median first text | **6.99 s** | Client-observed time to the first text delta. |
-| Median complete reply | **7.81 s** | Client-observed time to a completed answer. |
-
-These are retrieval and delivery checks, not an overall answer-accuracy score. Citation IDs do not establish that every claim follows from its source. The 50 retrieval results were reused from an earlier run with the same corpus and unchanged retrieval pipeline; all eight generation samples were rerun. Voice was disabled, and the 15-second cooldown between samples is excluded from latency. Timings vary with model initialization, CPU contention, and provider load.
-
-The upgrade was also verified with **50 passing automated tests**. To run the checks locally:
+The [paired report](reports/evaluation.json) records recall@5, candidate recall@15, MRR@5, nDCG@5, citation support, abstention, failures, and latency. The [protocol and review rubric](evals/README.md) define each metric and its limitations. Initial passage labels and coding-agent claim reviews are **provisional until independently reviewed by a human**. Citation ID validity alone is not evidence of factual support. The showcase reads this report at `/api/evaluation`.
 
 ```sh
 python -m pip install pytest httpx
@@ -202,10 +197,11 @@ node --check static/app.js
 node --check static/stream.js
 node --check static/explorer.js
 node --check static/workbench.js
-python benchmark.py --base http://127.0.0.1:7860
+python evaluate.py --base http://127.0.0.1:7860 --generation
+python evaluate.py --score-manual --reviews evals/manual_reviews.json
 ```
 
-Node.js is only needed for the JavaScript syntax checks. The benchmark needs a running server and provider credentials for generation; it writes `reports/benchmark.json`, displayed at `/showcase` and `/api/benchmark`. It creates disposable evaluation visitor IDs and clears them afterward. Fixed questions live in [`evals/questions.json`](evals/questions.json).
+The runner checks the corpus fingerprint, rejects reranker fallback, records warmup separately, and uses disposable conversations with graph and voice disabled. It writes exact answers and source excerpts plus a review template. Provider errors are failures, not correct abstentions. Node.js is only needed for JavaScript syntax checks. The older [alias-based benchmark](reports/benchmark.json) remains a historical check, available at `/api/benchmark`.
 
 ## Corpus maintenance
 
@@ -233,9 +229,11 @@ Quality checks flag duplicates, undated material, missing original URLs, and pos
 
 ## Memory and storage
 
-The existing browser visitor-ID and session design is retained. Recent prompt history lives in the server process; completed turns awaiting graph extraction and locally saved facts use `storage/memory.db`. Neo4j stores the external conversation graph. Default Hugging Face Space storage is ephemeral across rebuilds; local Docker Compose mounts the storage directories from your checkout.
+The existing browser visitor IDs and demo access are retained, without an ownership cookie or account authentication. Caller-supplied IDs are labels, not proof of ownership; do not use this demo for private or sensitive conversations. This keeps access behavior unchanged at the project owner's request.
 
-Only completed replies become completed turns. Failed memory extraction leaves pending turns available for retry. Fact edits/deletions are scoped to the current visitor. Forgetting a fact suppresses its exact wording in later extraction of old chat; paraphrases are not covered by that check. Deleting a browser chat removes its local display; saved facts are managed separately through the memory controls. Visitor IDs are the demo's access scheme, without account authentication.
+Recent prompt history lives in the server process; completed turns awaiting graph extraction and locally saved facts use `storage/memory.db`. Neo4j stores the external conversation graph. Default Hugging Face Space storage is ephemeral across rebuilds; local Docker Compose mounts the storage directories from your checkout.
+
+Only completed replies become completed turns. Failed memory extraction leaves pending turns available for retry. Fact edits/deletions are scoped to the current visitor. Forgetting a fact suppresses its exact wording in later extraction of old chat; paraphrases are not covered by that check. Deleting a browser chat removes its local display; saved facts are managed separately through the memory controls. There is no account authentication. A stable per-owner visitor lock serializes turns and reset/save/clear operations, including when agents leave the LRU cache. The locking design assumes one application process, as configured in Docker; multiple workers would require coordinated locks.
 
 ## API
 
@@ -255,7 +253,8 @@ FastAPI's interactive schema is available at `/docs` on your running instance.
 | `GET /api/timeline` | Dated corpus coverage |
 | `GET /api/corpus/status` | Fingerprint and quality checks |
 | `POST /api/retrieval/inspect` | Source retrieval diagnostics |
-| `GET /api/benchmark` | Published evaluation JSON |
+| `GET /api/evaluation` | Paired labeled evaluation JSON |
+| `GET /api/benchmark` | Historical alias-based benchmark |
 | `GET /api/memory/{user_id}` | Remembered visitor facts |
 | `PATCH /api/memory/fact` | Edit `{user_id,old_fact,fact,category,importance}` |
 | `DELETE /api/memory/fact` | Forget `{user_id,fact}` |
@@ -265,7 +264,7 @@ FastAPI's interactive schema is available at `/docs` on your running instance.
 | `POST /api/session/reset` | Reset short-term prompt history |
 | `DELETE /api/memory/{user_id}` | Clear that visitor's memory |
 
-Chat accepts `message`, `user_id`, `session_id`, `era`, `mode`, optional `knowledge_node_id`, and optional two-element `compare_years`. Eras are `all`, `pre_cuda` (through 2007), `deep_learning` (2012–2021), and `llm_era` (2022 onward). Modes are `conversation`, `beginner`, `pitch`, `architecture`, and `compare`. Set `use_graph=false` for a vector-retrieval-only comparison. Voice streaming uses a UUID-format `request_id`. Browser requests cannot execute arbitrary Cypher.
+Chat accepts `message`, `user_id`, `session_id`, `era`, `mode`, optional `knowledge_node_id`, and optional two-element `compare_years`. Eras are `all`, `pre_cuda` (through 2007), `deep_learning` (2012–2021), and `llm_era` (2022 onward). Modes are `conversation`, `beginner`, `pitch`, `architecture`, and `compare`. Set `use_graph=false` to exclude graph evidence and `retrieval_strategy` to `vector` or `reranked` for comparison. Retrieval inspection accepts `strategy` and `strict_reranker`; use strict mode when evaluating reranking. Voice streaming uses a UUID-format `request_id`. Browser requests cannot execute arbitrary Cypher.
 
 ## Repository guide
 
@@ -278,6 +277,6 @@ Chat accepts `message`, `user_id`, `session_id`, `era`, `mode`, optional `knowle
 | [`api_client.py`](api_client.py), [`tts.py`](tts.py), [`streaming.py`](streaming.py) | Generation providers, reference voice, and stream transport |
 | [`static/`](static/) | Office interface, map explorer, audio, and showcase |
 | [`data/`](data/), [`source_catalog.json`](source_catalog.json), [`ingest.py`](ingest.py) | Source texts, provenance, and versioned ingestion |
-| [`tests/`](tests/), [`evals/`](evals/), [`reports/benchmark.json`](reports/benchmark.json) | Regression checks and reproducible evaluation |
+| [`tests/`](tests/), [`evals/`](evals/), [`reports/evaluation.json`](reports/evaluation.json) | Regression checks and reproducible evaluation |
 
 Reference documentation: [Gemini streaming](https://ai.google.dev/api/generate-content#method:-models.streamgeneratecontent), [Groq text generation](https://console.groq.com/docs/text-chat), [Pocket TTS](https://github.com/kyutai-labs/pocket-tts), and the [Neo4j Python driver](https://neo4j.com/docs/python-manual/current/query-simple/).

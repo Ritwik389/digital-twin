@@ -11,6 +11,8 @@ Basic RAG retrieval.
 """
 
 import re
+import math
+import time
 
 from chroma_utils import get_chroma_collection
 from source_utils import effective_year
@@ -23,6 +25,10 @@ logger = logging.getLogger(__name__)
 _reranker = None
 _reranker_failed = False
 _reranker_lock = threading.Lock()
+
+
+class RerankerUnavailable(RuntimeError):
+    """Evaluation must not misreport vector fallback as cross-encoder results."""
 
 
 def _get_reranker():
@@ -89,15 +95,19 @@ def retrieve_chunks(
     results = collection.query(**kwargs)
 
     chunks = []
-    for doc, meta, dist in zip(
+    for position, (doc, meta, dist) in enumerate(zip(
         results["documents"][0],
         results["metadatas"][0],
         results["distances"][0],
-    ):
+    )):
+        meta = meta or {}
         year=effective_year(meta)
         if year_min is not None and year < year_min:continue
         if year_max is not None and (year <= 0 or year > year_max):continue
+        if domain_filter is not None and meta.get('domain') != domain_filter:continue
+        ids = results.get('ids', [[]])[0]
         chunks.append({
+            "chunk_id": ids[position] if position < len(ids) else str(meta.get('chunk_index', '')),
             "text": doc,
             "source": meta.get("source", ""),
             "year": year,
@@ -126,6 +136,9 @@ def retrieve(
     year_max: int | None = None,
     domain_filter: str | None = None,
     conversation_history: str = "",
+    strategy: str = "reranked",
+    strict_reranker: bool = False,
+    top_k: int = TOP_K_FINAL,
 ) -> dict:
     """
     Basic RAG entry point used by agent.py.
@@ -133,12 +146,18 @@ def retrieve(
     Returns a dict with the retrieved context, the raw chunks, and a
     couple of flags the agent/UI use for display purposes.
     """
+    if strategy not in {'vector', 'reranked'}:
+        raise ValueError('Unknown retrieval strategy')
+    if not 1 <= top_k <= INITIAL_FETCH:
+        raise ValueError('top_k must be between 1 and the candidate-pool size')
     if _is_no_retrieval(query):
         return {
             "context": "",
             "chunks": [],
             "query_type": "no_retrieval",
             "needs_retrieval": False,
+            "ranking_backend": "skipped", "candidate_count": 0, "candidate_ids": [],
+            "candidate_ms": 0, "ranking_ms": 0,
         }
 
     # Resolve short follow-ups using the last user topic, without an extra model call.
@@ -146,8 +165,17 @@ def retrieve(
     if conversation_history and re.search(r"\b(that|it|this|they|those|more|why)\b", query.lower()) and len(query.split()) < 14:
         previous = re.findall(r"^User: (.+)$", conversation_history, re.M)
         if previous: retrieval_query = previous[-1][-500:] + "\nFollow-up: " + query
+    start = time.perf_counter()
     chunks = retrieve_chunks(retrieval_query, year_min=year_min, year_max=year_max, domain_filter=domain_filter)
-    reranker = _get_reranker() if chunks else None
+    candidate_ms = (time.perf_counter() - start) * 1000
+    candidate_ids = [c['chunk_id'] for c in chunks]
+    ranking_backend = 'vector' if chunks else 'empty'
+    start = time.perf_counter()
+    reranker = _get_reranker() if chunks and strategy == 'reranked' else None
+    if chunks and strategy == 'reranked' and reranker is None:
+        ranking_backend = 'vector_fallback'
+        if strict_reranker:
+            raise RerankerUnavailable('The cross-encoder is unavailable; this is not a reranked evaluation.')
     if chunks and reranker:
         # Create pairs of [query, document_text]
         pairs = [[retrieval_query, c["text"]] for c in chunks]
@@ -156,8 +184,14 @@ def retrieve(
         try:
             with _reranker_lock:
                 scores = reranker.predict(pairs)
+            if len(scores) != len(chunks) or not all(math.isfinite(float(s)) for s in scores):
+                raise ValueError('Invalid reranker scores')
+            ranking_backend = 'cross_encoder'
         except Exception:
             logger.exception('Reranking failed; retaining embedding ranking')
+            if strict_reranker:
+                raise RerankerUnavailable('The cross-encoder failed; reranked evaluation was not completed.') from None
+            ranking_backend = 'vector_fallback'
             scores = [-c['distance'] for c in chunks]
         
         # Attach the scores to our chunk dictionaries
@@ -168,8 +202,8 @@ def retrieve(
         chunks.sort(key=lambda x: x["cross_score"], reverse=True)
         
         # Slice to keep only the absolute best matches
-        chunks = chunks[:TOP_K_FINAL]
-    chunks = chunks[:TOP_K_FINAL]
+    ranking_ms = (time.perf_counter() - start) * 1000
+    chunks = chunks[:top_k]
     context = build_context(chunks)
 
     return {
@@ -178,6 +212,9 @@ def retrieve(
         "query_type": "direct" if chunks else "no_context",
         "retrieval_query": retrieval_query,
         "needs_retrieval": bool(chunks),
+        "ranking_backend": ranking_backend, "candidate_ids": candidate_ids,
+        "candidate_count": len(candidate_ids),
+        "candidate_ms": round(candidate_ms, 2), "ranking_ms": round(ranking_ms, 2),
     }
 
 

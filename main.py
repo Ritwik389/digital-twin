@@ -5,6 +5,7 @@ from contextlib import asynccontextmanager
 import logging
 import re
 import threading
+import hashlib
 from typing import Literal
 
 from dotenv import load_dotenv
@@ -45,6 +46,13 @@ app = FastAPI(title='Jensen Huang - Digital Twin API', lifespan=lifespan)
 app.mount('/static', StaticFiles(directory='static'), name='static')
 agent_instances = OrderedDict()
 _agents_lock = threading.RLock()
+_conversation_locks = [threading.RLock() for _ in range(128)]
+
+
+def conversation_lock(user_id):
+    """Stable across cache eviction; also serializes reset/save/clear with turns."""
+    index = int(hashlib.sha256(user_id.encode()).hexdigest(), 16) % len(_conversation_locks)
+    return _conversation_locks[index]
 
 
 def get_agent(user_id, session_id='default'):
@@ -71,6 +79,7 @@ class ChatRequest(SessionRequest):
     mode: Literal['conversation','beginner','pitch','architecture','compare'] = 'conversation'
     compare_years: list[int] | None = Field(default=None, min_length=2, max_length=2)
     use_graph: bool = True
+    retrieval_strategy: Literal['vector', 'reranked'] = 'reranked'
 
 
 def validate_comparison(req):
@@ -98,7 +107,10 @@ def health():
     import os
     return {'status': 'ok', 'chat_configured': bool(_collect_keys() or os.getenv('GROQ_API_KEY')),
             'tts_backend': 'pocket', 'tts_voice': 'jensen_reference', 'tts_loaded': tts_module.is_loaded(),
-            'neo4j_configured': graph.configured(), 'memory_update_turns': UPDATE_EVERY}
+            'neo4j_configured': graph.configured(), 'memory_update_turns': UPDATE_EVERY,
+            'chat_status': 'configured' if _collect_keys() or os.getenv('GROQ_API_KEY') else 'not_configured',
+            'voice_status': 'ready' if tts_module.is_loaded() else ('unavailable' if tts_module.get_error() else 'not_initialized'),
+            'voice_error': tts_module.get_error(), 'session_ownership': 'demo_visitor_id'}
 
 
 @app.post('/api/chat')
@@ -106,16 +118,17 @@ def chat_endpoint(req: ChatRequest, background_tasks: BackgroundTasks):
     if not req.message.strip():
         raise HTTPException(400, 'Message is required')
     validate_comparison(req)
-    agent = get_agent(req.user_id, req.session_id)
     knowledge_node = None
     if req.knowledge_node_id:
         knowledge_node = knowledge_map.node(req.knowledge_node_id)
         if knowledge_node is None:
             raise HTTPException(404, 'This source topic is unavailable. Refresh the Jensen map.')
     try:
-        with agent.lock:
-            agent.set_era(req.era)
-            result = agent.chat(req.message.strip(), knowledge_node=knowledge_node, mode=req.mode, compare_years=req.compare_years, use_graph=req.use_graph)
+        with conversation_lock(req.user_id):
+            agent = get_agent(req.user_id, req.session_id)
+            with agent.lock:
+                agent.set_era(req.era)
+                result = agent.chat(req.message.strip(), knowledge_node=knowledge_node, mode=req.mode, compare_years=req.compare_years, use_graph=req.use_graph, retrieval_strategy=req.retrieval_strategy)
     except GenerationError as exc:
         raise HTTPException(503, str(exc)) from None
     except Exception:
@@ -123,7 +136,7 @@ def chat_endpoint(req: ChatRequest, background_tasks: BackgroundTasks):
         raise HTTPException(500, 'Could not generate a reply. Please try again.') from None
     background_tasks.add_task(graph.update, req.user_id)
     # Voice is generated separately by the browser so it cannot delay a text answer.
-    return result | {'audio_file': None, 'tts_status': 'pending' if req.voice_enabled else 'disabled',
+    return result | {'audio_file': None, 'tts_status': ('unavailable' if tts_module.get_error() else 'pending') if req.voice_enabled else 'disabled',
                      'memory': graph.status(req.user_id)}
 
 
@@ -133,22 +146,25 @@ def chat_stream(req: ChatRequest):
     node = knowledge_map.node(req.knowledge_node_id) if req.knowledge_node_id else None
     if req.knowledge_node_id and node is None: raise HTTPException(404,'Source topic unavailable')
     validate_comparison(req)
-    agent = get_agent(req.user_id,req.session_id)
     def worker(emit,cancel):
         acquired=False
+        lock=conversation_lock(req.user_id)
         try:
             while not cancel.is_set():
-                if agent.lock.acquire(timeout=.2): acquired=True;break
+                if lock.acquire(timeout=.2): acquired=True;break
             if not acquired:return
+            # Lookup only after acquiring the stable lock; a waiting request
+            # must not keep an agent made stale by eviction or memory clearing.
+            agent = get_agent(req.user_id,req.session_id)
             agent.set_era(req.era)
-            for event in agent.stream(req.message.strip(),node,req.mode,req.compare_years,cancel,req.use_graph): emit(event)
+            for event in agent.stream(req.message.strip(),node,req.mode,req.compare_years,cancel,req.use_graph,req.retrieval_strategy): emit(event)
             if not cancel.is_set(): threading.Thread(target=graph.update,args=(req.user_id,),daemon=True).start()
         except GenerationCancelled: pass
-        except GenerationError as exc: emit({'type':'error','error':str(exc)})
+        except GenerationError as exc: emit({'type':'error','error':str(exc),'code':'generation_unavailable','retryable':True})
         except Exception:
             logger.exception('Chat stream failed');emit({'type':'error','error':'Could not complete the reply. Please retry.'})
         finally:
-            if acquired:agent.lock.release()
+            if acquired:lock.release()
     return event_response(worker)
 
 
@@ -163,26 +179,28 @@ _voice_jobs_lock=threading.Lock()
 
 @app.post('/api/speak/stream')
 def stream_speech(req: StreamSpeakRequest):
+    key=req.request_id
     if not req.text.strip():raise HTTPException(400,'Text is required')
     cancel=threading.Event()
     with _voice_jobs_lock:
-        if req.request_id in _voice_jobs:raise HTTPException(409,'Voice request is already active')
+        if key in _voice_jobs:raise HTTPException(409,'Voice request is already active')
         if len(_voice_jobs)>=8:raise HTTPException(429,'Voice queue is full. Retry shortly.')
-        _voice_jobs[req.request_id]=cancel
+        _voice_jobs[key]=cancel
     def worker(emit,stop):
         try:
             for event in tts_module.speak_stream(req.text,stop):emit(event)
-        except tts_module.VoiceSetupError as exc:emit({'type':'error','error':str(exc)})
+        except tts_module.VoiceSetupError as exc:emit({'type':'error','error':str(exc)+' You can still read the reply.','code':'tts_unavailable','retryable':True})
         except Exception:
             logger.exception('Voice stream failed');emit({'type':'error','error':'Voice could not finish. Please retry Play.'})
         finally:
-            with _voice_jobs_lock:_voice_jobs.pop(req.request_id,None)
+            with _voice_jobs_lock:_voice_jobs.pop(key,None)
     return event_response(worker,cancel)
 
 @app.post('/api/speak/cancel')
 def cancel_speech(req: CancelSpeakRequest):
+    key=req.request_id
     with _voice_jobs_lock:
-        job=_voice_jobs.get(req.request_id)
+        job=_voice_jobs.get(key)
         if job:job.set()
     return {'status':'stopped'}
 
@@ -216,9 +234,10 @@ def get_greeting(req: GreetRequest):
 
 @app.post('/api/session/save')
 def save_session(req: SessionRequest):
-    agent = get_agent(req.user_id, req.session_id)
-    with agent.lock:
-        state = agent.end_session()
+    with conversation_lock(req.user_id):
+        agent = get_agent(req.user_id, req.session_id)
+        with agent.lock:
+            state = agent.end_session()
     if state.get('state') == 'error':
         raise HTTPException(503, state.get('error'))
     return {'status': 'Memory saved.', 'memory': state}
@@ -226,9 +245,10 @@ def save_session(req: SessionRequest):
 
 @app.post('/api/session/reset')
 def reset_session(req: SessionRequest):
-    agent = get_agent(req.user_id, req.session_id)
-    with agent.lock:
-        agent.reset_conversation()
+    with conversation_lock(req.user_id):
+        agent = get_agent(req.user_id, req.session_id)
+        with agent.lock:
+            agent.reset_conversation()
     return {'status': 'Chat reset.'}
 
 
@@ -290,16 +310,23 @@ def forget_memory(req: FactDeleteRequest):
 class RetrievalRequest(BaseModel):
     query: str = Field(min_length=1,max_length=2000)
     era: Literal['all','pre_cuda','deep_learning','llm_era'] = 'all'
+    strategy: Literal['vector','reranked'] = 'reranked'
+    strict_reranker: bool = False
 
 @app.post('/api/retrieval/inspect')
 def inspect_retrieval(req: RetrievalRequest):
     import time
-    from rag import retrieve
+    from rag import retrieve, RerankerUnavailable
     from source_utils import ERA_YEAR_RANGES,citations_for
     start=time.perf_counter();low,high=ERA_YEAR_RANGES[req.era]
-    result=retrieve(req.query,year_min=low,year_max=high)
+    try:result=retrieve(req.query,year_min=low,year_max=high,strategy=req.strategy,strict_reranker=req.strict_reranker)
+    except RerankerUnavailable as exc:raise HTTPException(503,str(exc)) from None
+    except Exception:
+        logger.exception('Retrieval inspection failed')
+        raise HTTPException(503,'Source retrieval is temporarily unavailable; metadata filters were preserved.') from None
     return {'query_type':result['query_type'],'citations':citations_for(result['chunks'],req.era),
-            'retrieval_ms':round((time.perf_counter()-start)*1000,1)}
+            'retrieval_ms':round((time.perf_counter()-start)*1000,1),
+            **{key:result[key] for key in ('ranking_backend','candidate_ids','candidate_count','candidate_ms','ranking_ms')}}
 
 @app.get('/api/corpus/status')
 def corpus_status():
@@ -320,8 +347,21 @@ def benchmark_results():
     return json.loads(path.read_text()) if path.exists() else {'state':'not_run','message':'Benchmark results will appear after the evaluation run.'}
 
 
+@app.get('/api/evaluation')
+def paired_evaluation_results():
+    import json
+    from pathlib import Path
+    path=Path('reports/evaluation.json')
+    return json.loads(path.read_text()) if path.exists() else {'state':'not_run','message':'The labeled, paired evaluation has not been published yet.'}
+
+
 @app.delete('/api/memory/{user_id}')
 def clear_memories(user_id: str):
+    with conversation_lock(user_id):
+        return _clear_memories(user_id)
+
+
+def _clear_memories(user_id):
     try:
         graph.clear(user_id)
     except Exception:

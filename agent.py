@@ -7,7 +7,7 @@ import time
 from rag import retrieve
 from memory import ShortTermMemory, get_relevant_memories, save_session_memories
 from persona import build_system_prompt, get_analogy_for_concept
-from api_client import generate_text, generate_text_stream, GenerationCancelled
+from api_client import generate_text, generate_text_stream, GenerationCancelled, GenerationError
 from knowledge_graph import graph, record_turn, restore_history, reset_history
 from knowledge_map import knowledge_map
 from source_utils import ERA_YEAR_RANGES, citations_for, in_era, focus_excerpt, normalize_citations
@@ -53,12 +53,12 @@ class JensenAgent:
     def set_era(self, era):
         if era in ERA_YEAR_RANGES: self.era_filter = era
 
-    def prepare(self, query, knowledge_node=None, mode='conversation', compare_years=None, use_graph=True):
+    def prepare(self, query, knowledge_node=None, mode='conversation', compare_years=None, use_graph=True, retrieval_strategy='reranked'):
         start = time.perf_counter()
         low, high = ERA_YEAR_RANGES[self.era_filter]
         history = self.short_term.format_for_prompt()
         try:
-            result = retrieve(query=query, year_min=low, year_max=high, domain_filter=None, conversation_history=history)
+            result = retrieve(query=query, year_min=low, year_max=high, domain_filter=None, conversation_history=history, strategy=retrieval_strategy)
         except Exception:
             logger.exception('Retrieval unavailable')
             result = {'context': '', 'chunks': [], 'query_type': 'retrieval_unavailable', 'needs_retrieval': False}
@@ -67,7 +67,7 @@ class JensenAgent:
             records = []
             for year in compare_years:
                 if not in_era(year, self.era_filter): continue
-                try: records.extend(retrieve(query=query, year_min=year, year_max=year)['chunks'])
+                try: records.extend(retrieve(query=query, year_min=year, year_max=year,strategy=retrieval_strategy)['chunks'])
                 except Exception: logger.warning('Comparison year retrieval unavailable')
         graph_context = {'paths': [], 'evidence': [], 'backend': 'none'}
         if use_graph and not result['query_type'] == 'no_retrieval':
@@ -123,29 +123,40 @@ class JensenAgent:
                 'graph_paths': used_paths, 'graph_backend': graph_context['backend'],
                 'long_term_memories_used': memories, 'mode': mode,
                 'evidence_status': 'source_backed' if citations else ('conversation' if result['query_type']=='no_retrieval' else 'no_matching_sources'),
-                'retrieval_ms': round((time.perf_counter()-start)*1000, 1)}
+                'retrieval_ms': round((time.perf_counter()-start)*1000, 1),
+                'retrieval_strategy': retrieval_strategy, 'ranking_backend': result.get('ranking_backend', 'unavailable'),
+                'retrieval_status': 'unavailable' if result['query_type']=='retrieval_unavailable' else 'ready'}
         return prompt, meta
 
     def finish(self, query, answer, meta):
         allowed = {c['id'] for c in meta['citations']}
         answer = normalize_citations(answer,allowed)
+        if not answer.strip():
+            raise GenerationError('The chat provider returned no usable reply. Please retry.')
+        if meta.get('retrieval_status') == 'unavailable' and not meta['citations']:
+            return meta | {'answer': answer, 'completion_status': 'retrieval_unavailable'}
         record_turn(self.user_id, self.session_id, query, answer)
         self.short_term.add('user', query); self.short_term.add('assistant', answer)
         return meta | {'answer': answer}
 
-    def chat(self, query, knowledge_node=None, mode='conversation', compare_years=None, use_graph=True):
-        prompt, meta = self.prepare(query, knowledge_node, mode, compare_years, use_graph)
-        start = time.perf_counter(); answer = self.coverage_reply(meta) or generate_text(prompt)
-        return self.finish(query, answer, meta | {'generation_ms': round((time.perf_counter()-start)*1000, 1)})
+    def chat(self, query, knowledge_node=None, mode='conversation', compare_years=None, use_graph=True, retrieval_strategy='reranked'):
+        prompt, meta = self.prepare(query, knowledge_node, mode, compare_years, use_graph, retrieval_strategy)
+        start = time.perf_counter(); coverage = self.coverage_reply(meta)
+        answer = coverage or generate_text(prompt)
+        return self.finish(query, answer, meta | {'generation_ms': round((time.perf_counter()-start)*1000, 1), 'generation_path': 'coverage_reply' if coverage else 'provider'})
 
     def coverage_reply(self,meta):
+        if meta.get('retrieval_status') == 'unavailable' and not meta['citations']:
+            return 'Source retrieval is temporarily unavailable. I can’t provide a source-backed answer right now. Please try again shortly.'
         if self.era_filter != 'all' and not meta['citations'] and meta['evidence_status']!='conversation':
             return 'I don’t have reliable source material from this era for that question. Choose a year covered by the source timeline, or select All Eras.'
+        if not meta['citations'] and meta['evidence_status'] != 'conversation':
+            return 'I don’t have source evidence to answer that question. Please try a topic covered by the source map.'
         return None
 
-    def stream(self, query, knowledge_node=None, mode='conversation', compare_years=None, cancel=None, use_graph=True):
+    def stream(self, query, knowledge_node=None, mode='conversation', compare_years=None, cancel=None, use_graph=True, retrieval_strategy='reranked'):
         cancel = cancel or threading.Event()
-        prompt, meta = self.prepare(query, knowledge_node, mode, compare_years, use_graph)
+        prompt, meta = self.prepare(query, knowledge_node, mode, compare_years, use_graph, retrieval_strategy)
         if cancel.is_set(): raise GenerationCancelled()
         yield {'type': 'meta', **meta}
         start = time.perf_counter(); parts = []; first_token_ms = None
@@ -156,7 +167,7 @@ class JensenAgent:
             if first_token_ms is None: first_token_ms = round((time.perf_counter()-start)*1000 + meta['retrieval_ms'], 1)
             parts.append(piece); yield {'type': 'delta', 'text': piece}
         if cancel.is_set(): raise GenerationCancelled()
-        result = self.finish(query, ''.join(parts), meta | {'generation_ms': round((time.perf_counter()-start)*1000, 1), 'first_token_ms': first_token_ms})
+        result = self.finish(query, ''.join(parts), meta | {'generation_ms': round((time.perf_counter()-start)*1000, 1), 'first_token_ms': first_token_ms, 'generation_path': 'coverage_reply' if coverage else 'provider'})
         yield {'type': 'done', **result}
 
     def end_session(self):

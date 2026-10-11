@@ -89,7 +89,9 @@ function replyContent(container,msg) {
         }
         container.append(used);
     }
-    if(msg.evidence_status==='no_matching_sources') {
+    if(msg.retrieval_status==='unavailable') {
+        const note=document.createElement('small');note.textContent='Source retrieval is temporarily unavailable. Retry shortly; era restrictions remain in effect.';container.append(note);
+    } else if(msg.evidence_status==='no_matching_sources') {
         const note=document.createElement('small');note.textContent='No matching source passages in this era. Treat general advice separately from sourced history.';container.append(note);
     }
     if(msg.partial){const note=document.createElement('small');note.textContent='Reply stopped before completion.';container.append(note);}
